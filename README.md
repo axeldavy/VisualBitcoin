@@ -1,4 +1,4 @@
-Visual-BitCoin
+VisualBitCoin
 ==============
 
-A cloud-hosted website to give all the wanted informations on the current bitcoin state. 
+A cloud-hosted information website tracking Bitcoin transactions in real time.
