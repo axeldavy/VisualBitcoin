@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualBitcoin", "VisualBitcoin\VisualBitcoin.csproj", "{9DCCAC5A-65C3-460C-BBF2-7346405933CD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend", "Backend\Backend.csproj", "{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{9DCCAC5A-65C3-460C-BBF2-7346405933CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9DCCAC5A-65C3-460C-BBF2-7346405933CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9DCCAC5A-65C3-460C-BBF2-7346405933CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
