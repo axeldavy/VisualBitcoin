@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualBitcoin", "VisualBitcoin\VisualBitcoin.csproj", "{9DCCAC5A-65C3-460C-BBF2-7346405933CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualBitCoin", "VisualBitcoin\VisualBitCoin.csproj", "{9DCCAC5A-65C3-460C-BBF2-7346405933CD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend", "Backend\Backend.csproj", "{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}"
 EndProject
