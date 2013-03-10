@@ -9,8 +9,8 @@ using Microsoft.WindowsAzure.StorageClient;
 
 namespace Backend
 {
-    public class WindowsAzure
-    {
+	public class WindowsAzure
+	{
 		static void uploadContainer(string containerName)
 		{
 			// Variables for the cloud storage objects.
@@ -66,5 +66,5 @@ namespace Backend
 
 			Console.WriteLine("Upload blob \"" + blobName + "\" in container \"" + containerName + "\" from file \"" + fileName + "\"");
 		}
-    }
+	}
 }
