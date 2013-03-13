@@ -1,17 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerRole", "Backend\WorkerRole.csproj", "{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerRole", "WorkerRole\WorkerRole.csproj", "{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRole", "Frontend\WebRole.csproj", "{D388EE6F-8080-4154-A8E8-36DF660FDD3D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRole", "WebRole\WebRole.csproj", "{D388EE6F-8080-4154-A8E8-36DF660FDD3D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcoin", "BitcoinClient\Bitcoin.csproj", "{A9064A54-0350-4824-9E3A-E6D54C10FB33}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcoin", "Bitcoin\Bitcoin.csproj", "{A9064A54-0350-4824-9E3A-E6D54C10FB33}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "StorageClient\Storage.csproj", "{3643A959-44CF-4B8F-AA72-9765A9B438A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "Storage\Storage.csproj", "{3643A959-44CF-4B8F-AA72-9765A9B438A7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTesting", "UnitTesting\UnitTesting.csproj", "{0FF76911-3389-46B1-A428-E44C45C5463E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "DataClient\Data.csproj", "{ED6BD4F0-9BDF-444D-8C98-D2C89A877280}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Data", "Data\Data.csproj", "{ED6BD4F0-9BDF-444D-8C98-D2C89A877280}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
