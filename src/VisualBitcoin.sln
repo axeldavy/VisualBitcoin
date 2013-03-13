@@ -5,6 +5,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisualBitcoin", "VisualBitc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Backend", "Backend\Backend.csproj", "{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Frontend", "Frontend\Frontend.csproj", "{D388EE6F-8080-4154-A8E8-36DF660FDD3D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -19,6 +21,10 @@ Global
 		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D388EE6F-8080-4154-A8E8-36DF660FDD3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D388EE6F-8080-4154-A8E8-36DF660FDD3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D388EE6F-8080-4154-A8E8-36DF660FDD3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D388EE6F-8080-4154-A8E8-36DF660FDD3D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
