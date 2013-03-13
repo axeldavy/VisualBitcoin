@@ -1,7 +1,6 @@
-﻿using System.Web;
-using System.Web.Mvc;
+﻿using System.Web.Mvc;
 
-namespace Frontend
+namespace WebRole.App_Start
 {
     public class FilterConfig
     {
