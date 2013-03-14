@@ -1,8 +1,38 @@
 ﻿using System;
+using Microsoft.WindowsAzure;
+using Microsoft.WindowsAzure.StorageClient;
 
 namespace Storage
 {
-	public class WindowsAzure
+	// easy way: we choose how to connect (mockstorage or our windows azure storage)
+    // and then we return a blobClient we can use as we want.
+    // pros: fast to implement
+    // cons: we'll need to give a documentation to explain the useful blob functions, how to use them...
+    // Moreover the blobClient class can be used to get the credentials which we want to hide.
+    // Even from CloudBlob we can get CloudBlobClient and then the credentials.
+    public interface IStorageFirstProposition
+	{
+        CloudBlobClient GetBlobClient();
+	}
+    // second way : We write our functions that use the windows azure api
+    // pros: easier/faster to use
+    // cons: need to implement Ireader and Iwriter. 
+    public interface IStorageSecondProposition
+    {
+        bool Isconnected();
+        void Connect();
+        Ireader open_read_file(string directory, string name);
+        Iwriter open_write_file(string directory, string name);
+        bool delete_file(string directory, string name); // 0: didn't exist. 1: success
+        bool rename_file(string directory, string oldname, string newname);
+        bool copy_file(string directory, string oldfile, string newfile); // if newfile exists, overwrite
+        bool new_file(string directory, string name, ulong size);
+        // Do we need more functionalities?
+        // Maybe more advanced functionalities to take into account azure issues: sync, ...
+    }
+    
+    
+    public class WindowsAzure
 	{
 		static void uploadContainer(string containerName)
 		{
