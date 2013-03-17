@@ -4,7 +4,7 @@ to use a different color start by replacing all instances of
 #5c87b2 with your new color.
 ----------------------------------------------------------*/
 body {
-    background-color: #FFFFFF;
+    background-color: #5577AA;
     font-size: .85em;
     font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
     margin: 0;
@@ -35,12 +35,30 @@ p, ul {
     line-height: 1.6em;
 }
 
-header,
-footer,
-nav,
-section {
+body {
     display: block;
+    margin-left: 50px;
 }
+
+#content {
+    padding: 50px;
+    margin: 50px;
+    background-color: #FFFFFF;
+}
+
+#header ul {
+    list-style: none;
+    padding: 0;
+	margin: 0 30px 0 0;
+}
+
+#header li {
+	float: right;
+    background-color: #FFFFFF;
+	margin: 0 20px 0 0;
+    padding: 10px;
+}
+
 
 /* HEADINGS   
 ----------------------------------------------------------*/
@@ -51,8 +69,8 @@ h1, h2, h3, h4, h5, h6 {
 
 h1 {
     font-size: 2em;
-    padding-bottom: 0;
-    margin-bottom: 0;
+    padding: 0;
+    margin: 50px 0 0 0;
 }
 
 h2 {

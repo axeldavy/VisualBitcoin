@@ -10,12 +10,14 @@
     <body>
         <h1>Visual Bitcoin</h1>
         
-        <ul>
-            <li>@Html.ActionLink("Home", "Index", "Home")</li>
-            <li>@Html.ActionLink("About", "About", "Home")</li>
-        </ul>
+        <div id="header">
+            <ul>
+                <li>@Html.ActionLink("About", "About", "Home")</li>
+                <li>@Html.ActionLink("Home", "Index", "Home")</li>
+            </ul>
+        </div>
         
-        <div>
+        <div id="content">
             @RenderBody()
         </div>
 
