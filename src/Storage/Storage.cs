@@ -7,7 +7,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Storage
 {
-	// easy way: we choose how to connect (mockstorage or our windows azure storage)
+	/*// easy way: we choose how to connect (mockstorage or our windows azure storage)
     // and then we return a blobClient we can use as we want.
     // pros: fast to implement
     // cons: we'll need to give a documentation to explain the useful blob functions, how to use them...
@@ -92,5 +92,20 @@ namespace Storage
 
 			Console.WriteLine("Upload blob \"" + blobName + "\" in container \"" + containerName + "\" from file \"" + fileName + "\"");
 		}
-	}
+	}*/
+
+    public interface IStorage
+    {
+        CloudBlobClient GetBlobClient();
+    }
+    class MockStorage : IStorage
+    {
+        public CloudBlobClient GetBlobClient()
+        {
+            CloudStorageAccount storageAccount;
+            storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+            return storageAccount.CreateCloudBlobClient();
+        }
+
+    }
 }
