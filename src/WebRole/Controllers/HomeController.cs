@@ -10,7 +10,7 @@ namespace WebRole.Controllers
         public ActionResult Index()
         {
             ViewBag.Message = "Hello World !";
-            return View();
+            return View(Models.Example.Data);
         }
 
         public ActionResult About()

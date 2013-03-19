@@ -1,9 +1,43 @@
-﻿@model WebRole.Models.Transaction
+﻿@model IEnumerable<WebRole.Models.Block>
 
 @{
     ViewBag.Title = "Visual Bitcoin";
 }
 
-<h2>Index</h2>
+<h2>Latest mined blocks</h2>
 
-<p>@ViewBag.Message</p>
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Total)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RelayedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Blocks)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Hash)
+        </th>
+        <th></th>
+    </tr>
+@{ int num = 10; }
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Total) BTC
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.RelayedBy)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Blocks)
+        </td>
+        <td>
+            @Html.ActionLink(item.Hash, "Details", "Explore", new { id = item.Id },null)
+        </td>
+    </tr>
+    if (num-- == 0) { break; }
+}
+</table>

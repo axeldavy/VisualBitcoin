@@ -13,12 +13,12 @@ body {
 }
 
 a:link {
-    color: #034af3;
+    color: #00AAAA;
     text-decoration: underline;
 }
 
 a:visited {
-    color: #505abc;
+    color: #50AAAA;
 }
 
 a:hover {
@@ -92,8 +92,10 @@ h5, h6 {
 /* PRIMARY LAYOUT ELEMENTS   
 ----------------------------------------------------------*/
 
+
 /* you can specify a greater or lesser percentage for the 
 page width. Or, you can specify an exact pixel width. */
+
 .page {
     width: 90%;
     margin-left: auto;

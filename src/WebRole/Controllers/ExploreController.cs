@@ -13,7 +13,7 @@ namespace WebRole.Controllers
 
         public ActionResult Index()
         {
-            return View(Models.Example.Data);
+            return View();
         }
 
         //
