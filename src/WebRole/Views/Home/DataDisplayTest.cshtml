@@ -1,8 +1,12 @@
-﻿@{
-    ViewBag.Title = "DataDisplayTest";
+﻿@model List<string>
+@{
+    ViewBag.Title = "Data Display Test";
 }
 
 <h2>Data Display Test</h2>
-<p>
-    TODO
-</p>
+<ul>
+    @foreach (var item in Model)
+        {
+            <li>@item</li>
+        }
+</ul>

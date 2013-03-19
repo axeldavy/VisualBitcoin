@@ -98,12 +98,12 @@ namespace Storage
             // Retrieve reference to a blob.
             CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
 
-            string text;
-            using (var memoryStream = new MemoryStream())
-            {
-                blockBlob.DownloadToStream(memoryStream);
-                text = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
-            }
+	        string text = "";
+//            using (var memoryStream = new MemoryStream())
+//            {
+//                blockBlob.DownloadToStream(memoryStream);
+//                text = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
+//            }
 
             return text;
         }
