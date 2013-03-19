@@ -15,16 +15,15 @@ namespace UnitTesting
     class Program
     {
         static void Main(string[] args)
-        {
+        {   
+            // Test 1: Upload a blob to a container
+            WindowsAzureStorage storage = new WindowsAzureStorage();
+
+            CloudBlobClient blobClient = storage.RetrieveBlobClient();
+            storage.UploadContainer(blobClient, "test");
+            storage.UploadBlob(blobClient, "test", "testfile", "C://Users/Public/test.txt");
             
 
-
-            var useless = new WindowsAzureStorage();
-
-            CloudBlobClient blobClient = useless.RetrieveBlobClient();
-            useless.UploadContainer(blobClient, "test");
-            useless.UploadBlob(blobClient, "test", "testfile", "C://Users/Public/test.txt");
-            
         }
     }
 
