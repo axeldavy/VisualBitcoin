@@ -1,4 +1,5 @@
 ﻿<!DOCTYPE html>
+
 <html>
     <head>
         <meta charset="utf-8" />
@@ -9,14 +10,15 @@
     </head>
     <body>
         <h1>Visual Bitcoin</h1>
-        
+
         <div id="header">
             <ul>
                 <li>@Html.ActionLink("About", "About", "Home")</li>
                 <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                <li>@Html.ActionLink("Data Display Test", "DataDisplayTest", "Home")</li>
             </ul>
         </div>
-        
+
         <div id="content">
             @RenderBody()
         </div>
