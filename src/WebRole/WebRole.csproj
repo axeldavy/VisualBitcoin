@@ -225,6 +225,7 @@
     <Content Include="Views\Explore\Details.cshtml" />
     <Content Include="Views\Error\NotFound.cshtml" />
     <Content Include="Views\Home\DataDisplayTest.cshtml" />
+    <Content Include="Views\Shared\BlockList.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

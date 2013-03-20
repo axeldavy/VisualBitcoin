@@ -1,5 +1,4 @@
-﻿@using WebRole.Models
-@model IEnumerable<Block>
+﻿@model IEnumerable<WebRole.Models.Block>
 
 @{
     ViewBag.Title = "Search";
@@ -24,39 +23,14 @@
     }
 </div>
 
-@if (ViewBag.NoResult) { <p class="red">Your search did not match any entry.</p> }
-else {
-<table>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Total)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RelayedBy)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Transactions)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Hash)
-        </th>
-    </tr>
-    @foreach (Block item in Model)
+<div>
+    @if (ViewBag.NoResult)
     {
-        <tr>
-            <td>
-                @item.Total.ToString("#,#.00 'BTC'")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RelayedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Transactions)
-            </td>
-            <td>
-                @Html.ActionLink(item.Hash.Substring(0, 25) + "...", "Details", "Explore", new {id = item.Id}, null)
-            </td>
-        </tr>
+        <p class="red">Your search did not match any entry.</p>
     }
-</table>
-}
+    else
+    {
+        ViewBag.Length = 50;
+        Html.RenderPartial("BlockList");
+    }
+</div>
