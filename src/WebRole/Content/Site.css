@@ -3,6 +3,7 @@ The base color for this template is #5c87b2. If you'd like
 to use a different color start by replacing all instances of
 #5c87b2 with your new color.
 ----------------------------------------------------------*/
+
 body {
     background-color: #66BBDD;
     color: #696969;
@@ -19,7 +20,8 @@ a:link {
 
 a:visited { color: #50AAAA; }
 
-a:hover {
+a:hover
+{
     color: #1d60ff;
     text-decoration: none;
 }
@@ -60,7 +62,8 @@ body {
 /* HEADINGS   
 ----------------------------------------------------------*/
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6
+{
     color: #000;
     font-size: 1.5em;
 }
@@ -86,7 +89,9 @@ h5, h6 { font-size: 1em; }
 /* you can specify a greater or lesser percentage for the 
 page width. Or, you can specify an exact pixel width. */
 
-.page {
+.page
+{
+    width: 90%;
     margin-left: auto;
     margin-right: auto;
     width: 90%;
@@ -186,13 +191,15 @@ ul#menu li.selected a {
 /* FORM LAYOUT ELEMENTS   
 ----------------------------------------------------------*/
 
-fieldset {
+fieldset
+{
     border: 1px solid #ddd;
     margin: 0 0 1.5em 0;
     padding: 0 1.4em 1.4em 1.4em;
 }
 
-legend {
+legend
+{
     font-size: 1.2em;
     font-weight: bold;
 }
@@ -208,14 +215,16 @@ input[type="password"] {
     width: 200px;
 }
 
-select {
+select
+{
     border: 1px solid #ccc;
     color: #444;
     font-size: 1.2em;
     padding: 2px;
 }
 
-input[type="submit"] {
+input[type="submit"]
+{
     font-size: 1.2em;
     padding: 5px;
 }
@@ -223,7 +232,8 @@ input[type="submit"] {
 /* TABLE
 ----------------------------------------------------------*/
 
-table {
+table
+{
     border: solid 1px #e8eef4;
     border-collapse: collapse;
 }
@@ -250,33 +260,11 @@ table th {
 nav,
 #menucontainer { margin-top: 40px; }
 
-div#title {
+div#title
+{
     display: block;
     float: left;
     text-align: left;
-}
-
-#logindisplay {
-    color: White;
-    display: block;
-    font-size: 1.1em;
-    margin: 10px;
-    text-align: right;
-}
-
-#logindisplay a:link {
-    color: white;
-    text-decoration: underline;
-}
-
-#logindisplay a:visited {
-    color: white;
-    text-decoration: underline;
-}
-
-#logindisplay a:hover {
-    color: white;
-    text-decoration: none;
 }
 
 /* Styles for validation helpers
