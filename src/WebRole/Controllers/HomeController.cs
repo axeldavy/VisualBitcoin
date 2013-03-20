@@ -1,20 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
+using WebRole.Models;
 using Data;
 
 namespace WebRole.Controllers
 {
 	public class HomeController : Controller
-	{
-		//
-		// GET: /Home/
+    {
+        private readonly IEnumerable<Block> _blockList = Example.Data;
+        private Data.Data DataService = new Data.Data() ;
 
-		public Data.Data DataService = new Data.Data() ;
+        //
+        // GET: /Home/
 
-		public ActionResult Index()
-		{
-			return View();
-		}
+        public ActionResult Index()
+        {
+            return View(_blockList);
+        }
 
 		public ActionResult About()
 		{

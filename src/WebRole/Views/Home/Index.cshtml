@@ -1,7 +1,11 @@
-﻿@{
-    ViewBag.Title = "Index";
+@using WebRole.Models
+@model IEnumerable<Block>
+
+@{
+    ViewBag.Title = "Visual Bitcoin";
 }
 
+<<<<<<< HEAD
 <h2>Index</h2>
 <p>
     Welcome to VisualBitcoin website!
@@ -27,3 +31,45 @@
         <li><a href="http://www.w3schools.com/xml/default.asp">XML</a></li>
     </ul>
 </ul>
+=======
+<h2>Latest mined blocks</h2>
+
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Total)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RelayedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Transactions)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Hash)
+        </th>
+    </tr>
+    @{ int num = 10; }
+    @foreach (Block item in Model)
+    {
+        <tr>
+            <td>
+                @item.Total.ToString("#,#.00 'BTC'")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RelayedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Transactions)
+            </td>
+            <td>
+                @Html.ActionLink(item.Hash.Substring(0, 25) + "...", "Details", "Explore", new {id = item.Id}, null)
+            </td>
+        </tr>
+        if (num-- == 0)
+        {
+            break;
+        }
+    }
+</table>
+>>>>>>> c3a37724034afe7589a9ddc2fcbf2cb60d286b17
