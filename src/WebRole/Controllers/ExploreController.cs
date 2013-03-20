@@ -26,7 +26,7 @@ namespace WebRole.Controllers
 
             if (block == null)
             {
-                return HttpNotFound();
+                throw new HttpException(404, "Not found");
             }
 
             return View(block);

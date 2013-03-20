@@ -13,6 +13,8 @@ namespace WebRole.Controllers
 
         public ActionResult NotFound()
         {
+            Response.TrySkipIisCustomErrors = true;
+            Response.Status = "404 Not Found";
             Response.StatusCode = 404;
             return View();
         }

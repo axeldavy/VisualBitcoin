@@ -30,7 +30,7 @@ namespace WebRole.Models
 
     public class Example
     {
-        public static Block[] Data = new[]
+        public static List<Block> Data = new List<Block>()
             {
                 new Block(1,178004,1337.42m,"BTCEntity",999,"000000000000029eec98795fb7a77828493aa8bc3c14b01f83f46539580e87ba"),
                 new Block(2,345678,12345.6m,"Unknown",789,"0000000000000000123456789abcdef0123456789abcdef0123456789abcdef"),
@@ -39,7 +39,7 @@ namespace WebRole.Models
 
         public static Block Find(int id)
         {
-            return Array.Find(Data, e => e.Id == id);
+            return Data.Find(e => e.Id == id);
         }
     }
 }
