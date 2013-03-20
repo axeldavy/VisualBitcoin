@@ -8,11 +8,17 @@
     margin-left: 50px;
 }
 
-a:visited { color: #50AAAA; }
+a:link
+{
+    color: #009999;
+    text-decoration: none;
+}
+
+a:visited { color: #5088AA; }
 
 a:hover
 {
-    color: #1d60ff;
+    color: #1030ff;
     text-decoration: none;
 }
 
