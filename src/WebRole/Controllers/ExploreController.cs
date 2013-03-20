@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebRole.Models;
 
@@ -10,8 +9,6 @@ namespace WebRole.Controllers
     public class ExploreController : Controller
     {
         private readonly IEnumerable<Block> _blockList = Example.Data;
-        //
-        // GET: /Explore/Details/5
 
         public ActionResult Details(int id)
         {

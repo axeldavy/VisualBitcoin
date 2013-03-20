@@ -8,9 +8,6 @@ namespace WebRole.Controllers
     {
         private readonly IEnumerable<Block> _blockList = Example.Data;
 
-        //
-        // GET: /Home/
-
         public ActionResult Index()
         {
             return View(_blockList);
