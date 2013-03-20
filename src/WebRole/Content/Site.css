@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 ﻿/*----------------------------------------------------------
 The base color for this template is #5c87b2. If you'd like
 to use a different color start by replacing all instances of
@@ -27,6 +28,24 @@ a:link {
     text-decoration: underline;
 >>>>>>> c3a37724034afe7589a9ddc2fcbf2cb60d286b17
 }
+=======
+﻿body {
+    background-color: #9977FF;
+    color: #696969;
+    font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
+    font-size: .85em;
+    margin: 0;
+    padding: 0;
+    margin-left: 50px;
+}
+
+a:link {
+    color: #00AAAA;
+    text-decoration: none;
+}
+
+a:visited { color: #50AAAA; }
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
 
 a:visited { color: #50AAAA; }
 
@@ -44,6 +63,7 @@ p, ul {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 #content
 {
     margin: 70px 0px 0px 0px;
@@ -56,6 +76,10 @@ body {
 
 #content {
 >>>>>>> c3a37724034afe7589a9ddc2fcbf2cb60d286b17
+=======
+
+#content {
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
     background-color: #FFFFFF;
     margin: 50px;
     padding: 50px;
@@ -65,21 +89,33 @@ body {
     float: right;
     list-style: none;
 <<<<<<< HEAD
+<<<<<<< HEAD
     padding: 0px;
     margin: 0px 0px 20px 0px;
 =======
     margin: 0 30px 0 0;
     padding: 0;
 >>>>>>> c3a37724034afe7589a9ddc2fcbf2cb60d286b17
+=======
+    margin: 0 40px 0 0;
+    padding: 0;
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
 }
 
 #header li {
     background-color: #FFFFFF;
     float: left;
+<<<<<<< HEAD
     margin: 0 20px 0 0;
+=======
+    margin: 0 10px 0 0;
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
     padding: 10px;
 }
 
+.red {
+    color: red;
+}
 
 /* HEADINGS   
 ----------------------------------------------------------*/
@@ -91,6 +127,7 @@ h1, h2, h3, h4, h5, h6
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 h1
 {
     color: #FFFFFF;
@@ -100,6 +137,11 @@ h1 {
     font-size: 2em;
     margin: 50px 0 0 0;
 >>>>>>> c3a37724034afe7589a9ddc2fcbf2cb60d286b17
+=======
+h1 {
+    font-size: 2em;
+    margin: 50px 0 0 0;
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
     padding: 0;
 }
 
@@ -164,6 +206,7 @@ footer,
     margin: 0 0 30px 0;
     padding: 10px 0;
     text-align: center;
+<<<<<<< HEAD
 }
 
 /* TAB MENU   
@@ -217,6 +260,10 @@ ul#menu li.selected a {
     color: #000;
 }
 
+=======
+}
+
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
 /* FORM LAYOUT ELEMENTS   
 ----------------------------------------------------------*/
 
@@ -328,4 +375,8 @@ div#title
 
 .text-box.multi-line { height: 6.5em; }
 
+<<<<<<< HEAD
 .tri-state { width: 6em; }
+=======
+.tri-state { width: 6em; }
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897

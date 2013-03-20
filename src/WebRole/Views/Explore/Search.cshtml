@@ -1,5 +1,9 @@
 ﻿@using WebRole.Models
+<<<<<<< HEAD
 @model IEnumerable<WebRole.Models.Block>
+=======
+@model IEnumerable<Block>
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
 
 @{
     ViewBag.Title = "Search";
@@ -10,12 +14,31 @@
 <div>
     @using (Html.BeginForm())
     {
+<<<<<<< HEAD
         <p> Find hash: @Html.TextBox("HashSub")<br/>
             Relayer: @Html.TextBox("Relay")<br/>
             <input type="submit" value="Filter" /> </p>
     }
 </div>
 
+=======
+        <table>
+            <tr>
+                <th>Hash</th>
+                <td>@Html.TextBox("HashSub")</td>
+            </tr>
+            <tr>
+                <th>Relayed by</th>
+                <td>@Html.TextBox("Relay")</td>
+            </tr>
+        </table>
+        <input type="submit" value="Filter" /> 
+    }
+</div>
+
+@if (ViewBag.NoResult) { <p class="red">Your search did not match any entry.</p> }
+else {
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
 <table>
     <tr>
         <th>
@@ -48,4 +71,9 @@
             </td>
         </tr>
     }
+<<<<<<< HEAD
 </table>
+=======
+</table>
+}
+>>>>>>> 2e6ad6e99bd40c78ebd232a830a25600767ee897
