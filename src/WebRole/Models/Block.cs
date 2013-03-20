@@ -43,12 +43,7 @@ namespace WebRole.Models
                 new Block(4048, 221.35m, "BTC Entity", 14,
                           "00000000000003240a030a6a5b81c3cef05ab2ebaa6a5569e92db8120bd4ef6e"),
                 new Block(3164, 31990m, "Umbrella", 229,
-                          " 	00000000000002df1fa55099508ab1bd877356ea829b32ef558820b303a66cef")
+                          "00000000000002df1fa55099508ab1bd877356ea829b32ef558820b303a66cef")
             };
-
-        public static Block Find(int id)
-        {
-            return Data.Find(e => e.Id == id);
-        }
     }
 }
