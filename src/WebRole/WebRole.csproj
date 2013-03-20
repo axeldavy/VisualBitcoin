@@ -228,6 +228,7 @@
     <Content Include="Views\Explore\Details.cshtml" />
     <Content Include="Views\Home\DataDisplayTest.cshtml" />
     <Content Include="Views\Charts\ChartsTest.cshtml" />
+    <Content Include="Views\Shared\BlockList.cshtml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
