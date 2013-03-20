@@ -11,12 +11,13 @@ body
     margin: 0px;
     padding: 50px;
     color: #696969;
+    text-align: justify;
 }
 
 a:link
 {
     color: #034af3;
-    text-decoration: underline;
+    text-decoration: none;
 }
 
 a:visited
@@ -43,9 +44,8 @@ p, ul
 
 #content
 {
+    margin: 70px 0px 0px 0px;
     padding: 50px;
-    margin-top: 50px;
-    margin-bottom: 50px;
     background-color: #FFFFFF;
 }
 
@@ -53,7 +53,7 @@ p, ul
 {
     list-style: none;
     padding: 0px;
-    margin: 0px;
+    margin: 0px 0px 20px 0px;
 }
 
 #header li
@@ -75,7 +75,8 @@ h1, h2, h3, h4, h5, h6
 
 h1
 {
-    font-size: 3em;
+    color: #FFFFFF;
+    font-size: 4em;
     padding: 0;
     margin: 0px 0px 0px 50px;
 }
