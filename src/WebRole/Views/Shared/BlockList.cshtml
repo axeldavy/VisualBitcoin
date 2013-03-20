@@ -14,6 +14,9 @@
         <th>
             @Html.DisplayNameFor(model => model.Hash)
         </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Size)
+        </th>
     </tr>
     @{ int num = ViewBag.Length; }
     @foreach (WebRole.Models.Block item in Model)
@@ -30,6 +33,9 @@
             </td>
             <td>
                 @Html.ActionLink(item.Hash.Substring(0, 25) + "...", "Details", "Explore", new {id = item.Id}, null)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Size)
             </td>
         </tr>
         if (num-- == 0)

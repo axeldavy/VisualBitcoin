@@ -20,6 +20,7 @@ namespace WebRole.Models
         [DisplayName("ID")]
         public int Id { get; set; }
 
+        [DisplayName("Size (kB)")]
         public int Size { get; set; }
 
         [DisplayName("Relayed By")]
