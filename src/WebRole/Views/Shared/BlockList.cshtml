@@ -1,0 +1,40 @@
+﻿@model IEnumerable<WebRole.Models.Block>
+
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => model.Total)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.RelayedBy)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Transactions)
+        </th>
+        <th>
+            @Html.DisplayNameFor(model => model.Hash)
+        </th>
+    </tr>
+    @{ int num = ViewBag.Length; }
+    @foreach (WebRole.Models.Block item in Model)
+    {
+        <tr>
+            <td>
+                @item.Total.ToString("#,#.00 'BTC'")
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.RelayedBy)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Transactions)
+            </td>
+            <td>
+                @Html.ActionLink(item.Hash.Substring(0, 25) + "...", "Details", "Explore", new {id = item.Id}, null)
+            </td>
+        </tr>
+        if (num-- == 0)
+        {
+            break;
+        }
+    }
+</table>

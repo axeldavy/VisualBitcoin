@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Web;
 using System.Web.Mvc;
 using WebRole.Models;
 
@@ -10,8 +9,6 @@ namespace WebRole.Controllers
     public class ExploreController : Controller
     {
         private readonly IEnumerable<Block> _blockList = Example.Data;
-        //
-        // GET: /Explore/Details/5
 
         public ActionResult Details(int id)
         {
@@ -19,7 +16,7 @@ namespace WebRole.Controllers
 
             if (block == null)
             {
-                throw new HttpException(404, "Not found");
+                return HttpNotFound();
             }
 
             return View(block);
@@ -39,6 +36,8 @@ namespace WebRole.Controllers
             {
                 blocks = blocks.Where(b => b.RelayedBy.ToLower().Contains(relay.ToLower()));
             }
+
+            ViewBag.NoResult = (!blocks.Any());
 
             return View(blocks);
         }

@@ -1,29 +1,14 @@
-/*----------------------------------------------------------
-The base color for this template is #5c87b2. If you'd like
-to use a different color start by replacing all instances of
-#5c87b2 with your new color.
-----------------------------------------------------------*/
-body
-{
-    background-color: #5577AA;
-    font-size: .85em;
-    font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
-    margin: 0px;
-    padding: 50px;
+﻿body {
+    background-color: #9977FF;
     color: #696969;
-    text-align: justify;
+    font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
+    font-size: .85em;
+    margin: 0;
+    padding: 0;
+    margin-left: 50px;
 }
 
-a:link
-{
-    color: #034af3;
-    text-decoration: none;
-}
-
-a:visited
-{
-    color: #505abc;
-}
+a:visited { color: #50AAAA; }
 
 a:hover
 {
@@ -44,24 +29,25 @@ p, ul
 
 #content
 {
-    margin: 70px 0px 0px 0px;
+    margin: 80px;
     padding: 50px;
     background-color: #FFFFFF;
 }
 
 #header ul
 {
+    float:right;
     list-style: none;
-    padding: 0px;
-    margin: 0px 0px 20px 0px;
+    margin: 0 70px 0 0;
+    padding: 0;
 }
 
 #header li
 {
     background-color: #FFFFFF;
-    float: right;
-    margin: 0px 0px 0px 10px;
-    padding: 10px;
+    float: left;
+    margin: 0 10px 0 0;
+    padding: 10px 10px 5px 10px;
 }
 
 
@@ -118,7 +104,7 @@ page width. Or, you can specify an exact pixel width. */
 header, #header
 {
     color: #000;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     padding: 0;
     position: relative;
 }
@@ -158,65 +144,6 @@ footer,
     padding: 10px 0;
     text-align: center;
 }
-
-/* TAB MENU   
-----------------------------------------------------------*/
-
-ul#menu
-{
-    border-bottom: 1px #5C87B2 solid;
-    margin: 0;
-    padding: 0 0 2px;
-    position: relative;
-    text-align: right;
-}
-
-    ul#menu li
-    {
-        display: inline;
-        list-style: none;
-    }
-
-        ul#menu li#greeting
-        {
-            color: #fff;
-            font-weight: bold;
-            line-height: 2.8em;
-            padding: 10px 20px;
-            text-decoration: none;
-        }
-
-        ul#menu li a
-        {
-            -moz-border-radius: 4px 4px 0 0;
-            -webkit-border-radius: 4px 4px 0 0;
-            background-color: #e8eef4;
-            border-radius: 4px 4px 0 0;
-            color: #034af3;
-            font-weight: bold;
-            line-height: 2.8em;
-            padding: 10px 20px;
-            text-decoration: none;
-        }
-
-            ul#menu li a:hover
-            {
-                background-color: #fff;
-                text-decoration: none;
-            }
-
-            ul#menu li a:active
-            {
-                background-color: #a6e2a6;
-                text-decoration: none;
-            }
-
-        ul#menu li.selected a
-        {
-            background-color: #fff;
-            color: #000;
-        }
-
 
 /* FORM LAYOUT ELEMENTS   
 ----------------------------------------------------------*/

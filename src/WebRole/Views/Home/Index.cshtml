@@ -1,14 +1,24 @@
-@using WebRole.Models
-@model IEnumerable<Block>
+@model IEnumerable<WebRole.Models.Block>
 
 @{
     ViewBag.Title = "Visual Bitcoin";
 }
 
 <h2>Index</h2>
-<p>
-    Welcome to VisualBitcoin website!
-</p>
+
+<div>
+    <p>Welcome to Visual Bitcoin !</p>
+</div>
+
+<h2>Latest mined blocks</h2>
+
+<div>
+    @{
+        ViewBag.Length = 10;
+        Html.RenderPartial("BlockList");
+    }
+</div>
+
 <p>
     ######################<br />
     ## Description, TODO ##<br />
@@ -17,57 +27,20 @@
 
 <h2>Links</h2>
 <ul>
-    <li>Bitcoin</li>
-    <ul>
-        <li><a href="http://www.weusecoins.com">weusecoin.com</a></li>
-        <li><a href="http://bitcoin.org">bitcoin.org</a></li>
-        <li><a href="https://en.bitcoin.it/wiki/Main_Page">Wiki</a></li>
-    </ul>
-    <li>w3schools</li>
-    <ul>
-        <li><a href="http://www.w3schools.com/html/html5_intro.asp">HTML5</a></li>
-        <li><a href="http://www.w3schools.com/css3/default.asp">CSS3</a></li>
-        <li><a href="http://www.w3schools.com/xml/default.asp">XML</a></li>
-    </ul>
+    <li>
+        Bitcoin
+        <ul>
+            <li><a href="http://www.weusecoins.com">weusecoin.com</a></li>
+            <li><a href="http://bitcoin.org">bitcoin.org</a></li>
+            <li><a href="https://en.bitcoin.it/wiki/Main_Page">Wiki</a></li>
+        </ul>
+    </li>
+    <li>
+        w3schools
+        <ul>
+            <li><a href="http://www.w3schools.com/html/html5_intro.asp">HTML5</a></li>
+            <li><a href="http://www.w3schools.com/css3/default.asp">CSS3</a></li>
+            <li><a href="http://www.w3schools.com/xml/default.asp">XML</a></li>
+        </ul>
+    </li>
 </ul>
-
-<h2>Latest mined blocks</h2>
-
-<table>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Total)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.RelayedBy)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Transactions)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Hash)
-        </th>
-    </tr>
-    @{ int num = 10; }
-    @foreach (Block item in Model)
-    {
-        <tr>
-            <td>
-                @item.Total.ToString("#,#.00 'BTC'")
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RelayedBy)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Transactions)
-            </td>
-            <td>
-                @Html.ActionLink(item.Hash.Substring(0, 25) + "...", "Details", "Explore", new { id = item.Id }, null)
-            </td>
-        </tr>
-        if (num-- == 0)
-        {
-            break;
-        }
-    }
-</table>

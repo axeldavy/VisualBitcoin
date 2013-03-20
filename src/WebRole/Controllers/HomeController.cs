@@ -1,17 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using WebRole.Models;
-using Data;
 
 namespace WebRole.Controllers
 {
 	public class HomeController : Controller
     {
         private readonly IEnumerable<Block> _blockList = Example.Data;
-        private Data.Data DataService = new Data.Data() ;
-
-        //
-        // GET: /Home/
 
         public ActionResult Index()
         {
@@ -23,6 +18,8 @@ namespace WebRole.Controllers
 			return View();
 		}
 
+        private readonly Data.Data _dataService = new Data.Data();
+
 		public ActionResult DataDisplayTest()
 		{
 			// WARNING :
@@ -33,8 +30,8 @@ namespace WebRole.Controllers
 			// 3. In Azure Storage Explorer add a container and some blobs.
 			// 4. Change the containerName below.
 
-			string containerName = "container";
-			List<string> blobsList = DataService.RetrieveBlobsList(containerName);
+			const string containerName = "container";
+			List<string> blobsList = _dataService.RetrieveBlobsList(containerName);
 			return View(blobsList);
 		}
 	}
