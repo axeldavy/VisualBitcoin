@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using WebRole.Models;
 
 namespace WebRole.Controllers
 {
@@ -21,7 +22,14 @@ namespace WebRole.Controllers
 
         public ActionResult Details(int id)
         {
-            return View(Models.Example.Find(id));
+            Block block = Example.Find(id);
+
+            if (block == null)
+            {
+                return HttpNotFound();
+            }
+
+            return View(block);
         }
     }
 }
