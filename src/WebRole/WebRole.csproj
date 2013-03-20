@@ -221,7 +221,7 @@
     <Content Include="Views\Home\Index.cshtml" />
     <Content Include="Views\Home\About.cshtml" />
     <Content Include="Views\Charts\Index.cshtml" />
-    <Content Include="Views\Explore\Index.cshtml" />
+    <Content Include="Views\Explore\Search.cshtml" />
     <Content Include="Views\Explore\Details.cshtml" />
     <Content Include="Views\Error\NotFound.cshtml" />
   </ItemGroup>

@@ -5,11 +5,11 @@ to use a different color start by replacing all instances of
 ----------------------------------------------------------*/
 body {
     background-color: #66BBDD;
-    font-size: .85em;
+    color: #696969;
     font-family: "Trebuchet MS", Verdana, Helvetica, Sans-Serif;
+    font-size: .85em;
     margin: 0;
     padding: 0;
-    color: #696969;
 }
 
 a:link {
@@ -17,22 +17,18 @@ a:link {
     text-decoration: underline;
 }
 
-a:visited {
-    color: #50AAAA;
-}
+a:visited { color: #50AAAA; }
 
 a:hover {
     color: #1d60ff;
     text-decoration: none;
 }
 
-a:active {
-    color: #12eb87;
-}
+a:active { color: #12eb87; }
 
 p, ul {
-    margin-bottom: 20px;
     line-height: 1.6em;
+    margin-bottom: 20px;
 }
 
 body {
@@ -41,53 +37,46 @@ body {
 }
 
 #content {
-    padding: 50px;
-    margin: 50px;
     background-color: #FFFFFF;
+    margin: 50px;
+    padding: 50px;
 }
 
 #header ul {
     list-style: none;
+    margin: 0 30px 0 0;
     padding: 0;
-	margin: 0 30px 0 0;
 }
 
 #header li {
-	float: right;
     background-color: #FFFFFF;
-	margin: 0 20px 0 0;
+    float: right;
+    margin: 0 20px 0 0;
     padding: 10px;
 }
 
 
 /* HEADINGS   
 ----------------------------------------------------------*/
+
 h1, h2, h3, h4, h5, h6 {
-    font-size: 1.5em;
     color: #000;
+    font-size: 1.5em;
 }
 
 h1 {
     font-size: 2em;
-    padding: 0;
     margin: 50px 0 0 0;
+    padding: 0;
 }
 
-h2 {
-    padding: 0 0 10px 0;
-}
+h2 { padding: 0 0 10px 0; }
 
-h3 {
-    font-size: 1.2em;
-}
+h3 { font-size: 1.2em; }
 
-h4 {
-    font-size: 1.1em;
-}
+h4 { font-size: 1.1em; }
 
-h5, h6 {
-    font-size: 1em;
-}
+h5, h6 { font-size: 1em; }
 
 /* PRIMARY LAYOUT ELEMENTS   
 ----------------------------------------------------------*/
@@ -97,58 +86,59 @@ h5, h6 {
 page width. Or, you can specify an exact pixel width. */
 
 .page {
-    width: 90%;
     margin-left: auto;
     margin-right: auto;
+    width: 90%;
 }
 
 header, #header {
-    position: relative;
-    margin-bottom: 0px;
     color: #000;
+    margin-bottom: 0px;
     padding: 0;
+    position: relative;
 }
 
 header h1, #header h1 {
-    font-weight: bold;
-    padding: 5px 0;
-    margin: 0;
-    color: #fff;
     border: none;
-    line-height: 2em;
+    color: #fff;
     font-size: 32px !important;
+    font-weight: bold;
+    line-height: 2em;
+    margin: 0;
+    padding: 5px 0;
     text-shadow: 1px 1px 2px #111;
 }
 
 #main {
-    padding: 30px 30px 15px 30px;
-    background-color: #fff;
-    -webkit-border-radius: 4px 0 0 0;
     -moz-border-radius: 4px 0 0 0;
+    -webkit-border-radius: 4px 0 0 0;
+    background-color: #fff;
     border-radius: 4px 0 0 0;
+    padding: 30px 30px 15px 30px;
 }
 
-footer, 
+footer,
 #footer {
+    -moz-border-radius: 0 0 4px 4px;
+    -webkit-border-radius: 0 0 4px 4px;
     background-color: #fff;
+    border-radius: 0 0 4px 4px;
     color: #999;
-    padding: 10px 0;
-    text-align: center;
+    font-size: .9em;
     line-height: normal;
     margin: 0 0 30px 0;
-    font-size: .9em;
-    -webkit-border-radius: 0 0 4px 4px;
-    -moz-border-radius: 0 0 4px 4px;
-    border-radius: 0 0 4px 4px;
+    padding: 10px 0;
+    text-align: center;
 }
 
 /* TAB MENU   
 ----------------------------------------------------------*/
+
 ul#menu {
     border-bottom: 1px #5C87B2 solid;
+    margin: 0;
     padding: 0 0 2px;
     position: relative;
-    margin: 0;
     text-align: right;
 }
 
@@ -158,23 +148,23 @@ ul#menu li {
 }
 
 ul#menu li#greeting {
-    padding: 10px 20px;
-    font-weight: bold;
-    text-decoration: none;
-    line-height: 2.8em;
     color: #fff;
+    font-weight: bold;
+    line-height: 2.8em;
+    padding: 10px 20px;
+    text-decoration: none;
 }
 
 ul#menu li a {
-    padding: 10px 20px;
-    font-weight: bold;
-    text-decoration: none;
-    line-height: 2.8em;
-    background-color: #e8eef4;
-    color: #034af3;
-    -webkit-border-radius: 4px 4px 0 0;
     -moz-border-radius: 4px 4px 0 0;
+    -webkit-border-radius: 4px 4px 0 0;
+    background-color: #e8eef4;
     border-radius: 4px 4px 0 0;
+    color: #034af3;
+    font-weight: bold;
+    line-height: 2.8em;
+    padding: 10px 20px;
+    text-decoration: none;
 }
 
 ul#menu li a:hover {
@@ -197,8 +187,8 @@ ul#menu li.selected a {
 
 fieldset {
     border: 1px solid #ddd;
-    padding: 0 1.4em 1.4em 1.4em;
     margin: 0 0 1.5em 0;
+    padding: 0 1.4em 1.4em 1.4em;
 }
 
 legend {
@@ -206,24 +196,22 @@ legend {
     font-weight: bold;
 }
 
-textarea {
-    min-height: 75px;
-}
+textarea { min-height: 75px; }
 
-input[type="text"], 
+input[type="text"],
 input[type="password"] {
     border: 1px solid #ccc;
-    padding: 2px;
-    font-size: 1.2em;
     color: #444;
+    font-size: 1.2em;
+    padding: 2px;
     width: 200px;
 }
 
 select {
     border: 1px solid #ccc;
-    padding: 2px;
-    font-size: 1.2em;
     color: #444;
+    font-size: 1.2em;
+    padding: 2px;
 }
 
 input[type="submit"] {
@@ -240,31 +228,26 @@ table {
 }
 
 table td {
-    padding: 5px;
     border: solid 1px #e8eef4;
+    padding: 5px;
 }
 
 table th {
-    padding: 6px 5px;
-    text-align: left;
     background-color: #e8eef4;
     border: solid 1px #e8eef4;
+    padding: 6px 5px;
+    text-align: left;
 }
 
 /* MISC  
 ----------------------------------------------------------*/
-.clear {
-    clear: both;
-}
 
-.error {
-    color: Red;
-}
+.clear { clear: both; }
 
-nav, 
-#menucontainer {
-    margin-top: 40px;
-}
+.error { color: Red; }
+
+nav,
+#menucontainer { margin-top: 40px; }
 
 div#title {
     display: block;
@@ -273,11 +256,11 @@ div#title {
 }
 
 #logindisplay {
-    font-size: 1.1em;
-    display: block;
-    text-align: right;
-    margin: 10px;
     color: White;
+    display: block;
+    font-size: 1.1em;
+    margin: 10px;
+    text-align: right;
 }
 
 #logindisplay a:link {
@@ -297,48 +280,34 @@ div#title {
 
 /* Styles for validation helpers
 -----------------------------------------------------------*/
-.field-validation-error {
-    color: #ff0000;
-}
 
-.field-validation-valid {
-    display: none;
-}
+.field-validation-error { color: #ff0000; }
+
+.field-validation-valid { display: none; }
 
 .input-validation-error {
-    border: 1px solid #ff0000;
     background-color: #ffeeee;
+    border: 1px solid #ff0000;
 }
 
 .validation-summary-errors {
-    font-weight: bold;
     color: #ff0000;
+    font-weight: bold;
 }
 
-.validation-summary-valid {
-    display: none;
-}
+.validation-summary-valid { display: none; }
 
 /* Styles for editor and display helpers
 ----------------------------------------------------------*/
-.display-label, 
-.editor-label {
-    margin: 1em 0 0 0;
-}
 
-.display-field, 
-.editor-field {
-    margin: 0.5em 0 0 0;
-}
+.display-label,
+.editor-label { margin: 1em 0 0 0; }
 
-.text-box {
-    width: 30em;
-}
+.display-field,
+.editor-field { margin: 0.5em 0 0 0; }
 
-.text-box.multi-line {
-    height: 6.5em;
-}
+.text-box { width: 30em; }
 
-.tri-state {
-    width: 6em;
-}
+.text-box.multi-line { height: 6.5em; }
+
+.tri-state { width: 6em; }

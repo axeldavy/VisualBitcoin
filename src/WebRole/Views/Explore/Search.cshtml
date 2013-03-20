@@ -2,10 +2,19 @@
 @model IEnumerable<WebRole.Models.Block>
 
 @{
-    ViewBag.Title = "Visual Bitcoin";
+    ViewBag.Title = "Search";
 }
 
-<h2>Latest mined blocks</h2>
+<h2>Search</h2>
+
+<div>
+    @using (Html.BeginForm())
+    {
+        <p> Find hash: @Html.TextBox("HashSub")<br/>
+            Relayer: @Html.TextBox("Relay")<br/>
+            <input type="submit" value="Filter" /> </p>
+    }
+</div>
 
 <table>
     <tr>
@@ -22,7 +31,6 @@
             @Html.DisplayNameFor(model => model.Hash)
         </th>
     </tr>
-    @{ int num = 10; }
     @foreach (Block item in Model)
     {
         <tr>
@@ -39,9 +47,5 @@
                 @Html.ActionLink(item.Hash.Substring(0, 25) + "...", "Details", "Explore", new {id = item.Id}, null)
             </td>
         </tr>
-        if (num-- == 0)
-        {
-            break;
-        }
     }
 </table>
