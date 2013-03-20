@@ -7,7 +7,6 @@ namespace WebRole.Controllers
 	public class HomeController : Controller
     {
         private readonly IEnumerable<Block> _blockList = Example.Data;
-        private readonly Data.Data _dataService = new Data.Data() ;
 
         //
         // GET: /Home/
@@ -21,6 +20,8 @@ namespace WebRole.Controllers
 		{
 			return View();
 		}
+
+        private readonly Data.Data _dataService = new Data.Data();
 
 		public ActionResult DataDisplayTest()
 		{
