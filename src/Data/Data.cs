@@ -2,16 +2,19 @@
 using System.IO;
 using System.Xml.Serialization;
 using Storage;
+using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Data
 {
 
 	public class Data
 	{
+        public WindowsAzureStorage blobStorage = new WindowsAzureStorage();
+
         public List<string> RetrieveBlobsList(string containerName) 
-        { 
-            WindowsAzureStorage blobStorage = new WindowsAzureStorage();           
-            return blobStorage.RetrieveBlobsList(containerName);
+        {
+            CloudBlobClient emulatedBlobClient = blobStorage.RetrieveEmulatedBlobClient();         
+            return blobStorage.RetrieveBlobsList(emulatedBlobClient, containerName);
         }
 	}
 
