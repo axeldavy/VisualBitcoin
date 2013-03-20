@@ -39,18 +39,12 @@ namespace Storage
 		{
 			// Variables for the cloud storage objects.
 			CloudBlobContainer blobContainer;
-			//BlobContainerPermissions blobContainerPermissions;
 
 			// Get the container reference.
 			blobContainer = blobClient.GetContainerReference(containerName);
 
 			// Create the container if it does not exist.
             blobContainer.CreateIfNotExists();
-
-			// Set permissions on the container.
-			// blobContainerPermissions = new BlobContainerPermissions();
-			//blobContainerPermissions.PublicAccess = BlobContainerPublicAccessType.Blob;
-			//blobContainer.SetPermissions(blobContainerPermissions);
 
 			Console.WriteLine("Upload complete: container \"" + containerName + "\"");
 		}
