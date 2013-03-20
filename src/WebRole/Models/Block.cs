@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Xml.Serialization;
 
 namespace WebRole.Models
 {
     public class Block
     {
         private static int _fresh = 1;
+
+        public Block() { }
 
         public Block(int size, decimal total, string relayedby, int transactions, string hash)
         {
@@ -29,10 +33,21 @@ namespace WebRole.Models
         public int Transactions { get; set; }
         public decimal Total { get; set; } //BTC
         public string Hash { get; set; }
+
+        public string XMLSerialize()
+        {
+            XmlSerializer x = new XmlSerializer(this.GetType());
+            StringWriter writer = new StringWriter();
+            x.Serialize(writer, this);
+
+            return writer.ToString();
+        }
+
     }
 
     public class Example
     {
+
         public static List<Block> Data = new List<Block>
             {
                 new Block(178004, 1337.42m, "BTC Entity", 999,
