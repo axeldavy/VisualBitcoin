@@ -20,13 +20,12 @@
         <th>
             @Html.DisplayNameFor(model => model.Hash)
         </th>
-        <th></th>
     </tr>
 @{ int num = 10; }
 @foreach (var item in Model) {
     <tr>
         <td>
-            @Html.DisplayFor(modelItem => item.Total) BTC
+            @item.Total.ToString("#,#.00 'BTC'")
         </td>
         <td>
             @Html.DisplayFor(modelItem => item.RelayedBy)
