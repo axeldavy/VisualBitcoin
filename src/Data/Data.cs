@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
+using Storage;
 
 namespace Data
 {
@@ -12,6 +13,15 @@ namespace Data
         public string relayedby;
         public int transactions;
         public string hash;
+
+        public Data() 
+        {
+            this.size = 0;
+            this.total = 0;
+            this.relayedby = "";
+            this.transactions = 0;
+            this.hash = "";
+        }
 
         public Data(int size, decimal total, string relayedby, int transactions, string hash)
         {
@@ -29,6 +39,12 @@ namespace Data
             x.Serialize(writer, this);
 
             return writer.ToString();
+        }
+
+        public List<string> RetrieveBlobsList(string containerName) 
+        { 
+            WindowsAzureStorage blobStorage = new WindowsAzureStorage();           
+            return blobStorage.RetrieveBlobsList(containerName);
         }
 	}
 }

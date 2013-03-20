@@ -137,8 +137,9 @@ namespace Storage
             return blobClient.GetContainerReference(containerName);
         }
 
-        public List<string> RetrieveBlobsList(CloudBlobClient blobClient, string containerName)
+        public List<string> RetrieveBlobsList(string containerName)
         {
+            CloudBlobClient blobClient = RetrieveBlobClient();
             // Retrieve reference to a previously created container.
             CloudBlobContainer blobContainer = RetrieveContainer(blobClient, containerName);
 

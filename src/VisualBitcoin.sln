@@ -1,8 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2012
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkerRole", "WorkerRole\WorkerRole.csproj", "{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRole", "WebRole\WebRole.csproj", "{D388EE6F-8080-4154-A8E8-36DF660FDD3D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Bitcoin", "Bitcoin\Bitcoin.csproj", "{A9064A54-0350-4824-9E3A-E6D54C10FB33}"
@@ -22,10 +20,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3D3DDF9-8766-4AB2-B32C-67FF68B183FA}.Release|Any CPU.Build.0 = Release|Any CPU
 		{D388EE6F-8080-4154-A8E8-36DF660FDD3D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{D388EE6F-8080-4154-A8E8-36DF660FDD3D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D388EE6F-8080-4154-A8E8-36DF660FDD3D}.Release|Any CPU.ActiveCfg = Release|Any CPU
