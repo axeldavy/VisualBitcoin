@@ -19,7 +19,7 @@ namespace WebRole.Controllers
 
             if (block == null)
             {
-                throw new HttpException(404, "Not found");
+                return HttpNotFound();
             }
 
             return View(block);
@@ -39,6 +39,8 @@ namespace WebRole.Controllers
             {
                 blocks = blocks.Where(b => b.RelayedBy.ToLower().Contains(relay.ToLower()));
             }
+
+            ViewBag.NoResult = (!blocks.Any());
 
             return View(blocks);
         }
