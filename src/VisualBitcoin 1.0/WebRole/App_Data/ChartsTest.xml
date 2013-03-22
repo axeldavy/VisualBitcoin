@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" standalone="yes" ?>
+<NewDataSet xmlns="http://tempuri.org/ChartsTest.xsd">
+    <Employee>
+        <Name>Axel</Name>
+        <Sales>10440</Sales>
+    </Employee>
+    <Employee>
+        <Name>Nohemi</Name>
+        <Sales>17772</Sales>
+    </Employee>
+    <Employee>
+        <Name>Christophe</Name>
+        <Sales>23880</Sales>
+    </Employee>
+    <Employee>
+        <Name>Li Yao</Name>
+        <Sales>7663</Sales>
+    </Employee>
+    <Employee>
+        <Name>Andreea</Name>
+        <Sales>21773</Sales>
+    </Employee>
+    <Employee>
+        <Name></Name>
+        <Sales>32294</Sales>
+    </Employee>
+</NewDataSet>

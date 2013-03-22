@@ -1,0 +1,46 @@
+@model IEnumerable<WebRole.Models.Block>
+
+@{
+    ViewBag.Title = "Visual Bitcoin";
+}
+
+<h2>Index</h2>
+
+<div>
+    <p>Welcome to Visual Bitcoin !</p>
+</div>
+
+<h2>Latest mined blocks</h2>
+
+<div>
+    @{
+        ViewBag.Length = 10;
+        Html.RenderPartial("BlockList");
+    }
+</div>
+
+<p>
+    ######################<br />
+    ## Description, TODO ##<br />
+    ######################<br />
+</p>
+
+<h2>Links</h2>
+<ul>
+    <li>
+        Bitcoin
+        <ul>
+            <li><a href="http://www.weusecoins.com">weusecoin.com</a></li>
+            <li><a href="http://bitcoin.org">bitcoin.org</a></li>
+            <li><a href="https://en.bitcoin.it/wiki/Main_Page">Wiki</a></li>
+        </ul>
+    </li>
+    <li>
+        w3schools
+        <ul>
+            <li><a href="http://www.w3schools.com/html/html5_intro.asp">HTML5</a></li>
+            <li><a href="http://www.w3schools.com/css3/default.asp">CSS3</a></li>
+            <li><a href="http://www.w3schools.com/xml/default.asp">XML</a></li>
+        </ul>
+    </li>
+</ul>

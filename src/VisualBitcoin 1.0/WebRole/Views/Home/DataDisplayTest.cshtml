@@ -1,0 +1,16 @@
+﻿@model List<string>
+@{
+    ViewBag.Title = "Data Display Test";
+}
+
+<h2>Data display test</h2>
+@foreach (var item in Model)
+{
+    <p>@item</p>
+}
+
+<h2>Charts display test</h2>
+
+<ul>
+    <li>@Html.ActionLink("Charts", "Index", "Charts")</li>
+</ul>
