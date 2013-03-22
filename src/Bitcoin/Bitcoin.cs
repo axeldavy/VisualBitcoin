@@ -1,6 +1,0 @@
-﻿namespace Bitcoin
-{
-	class Bitcoin
-	{
-	}
-}
