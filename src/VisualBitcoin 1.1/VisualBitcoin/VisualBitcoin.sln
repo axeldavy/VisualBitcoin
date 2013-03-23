@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "VisualBitcoin", "VisualBitcoin\VisualBitcoin.ccproj", "{A814E0B9-8D75-4ADA-BFF6-88D9E867B77D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MvcWebRole1", "MvcWebRole1\MvcWebRole1.csproj", "{822F9B4E-02FD-4CE3-86C9-7530EF53D0E2}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A814E0B9-8D75-4ADA-BFF6-88D9E867B77D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A814E0B9-8D75-4ADA-BFF6-88D9E867B77D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A814E0B9-8D75-4ADA-BFF6-88D9E867B77D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A814E0B9-8D75-4ADA-BFF6-88D9E867B77D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{822F9B4E-02FD-4CE3-86C9-7530EF53D0E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{822F9B4E-02FD-4CE3-86C9-7530EF53D0E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{822F9B4E-02FD-4CE3-86C9-7530EF53D0E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{822F9B4E-02FD-4CE3-86C9-7530EF53D0E2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

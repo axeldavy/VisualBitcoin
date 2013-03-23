@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{CC5FD16D-436D-48AD-A40C-5A424C6E3E79}") = "VisualBitcoin", "VisualBitcoin\VisualBitcoin.ccproj", "{5F1744BB-5A0A-4389-8B3F-430244396DF7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebRole", "WebRole\WebRole.csproj", "{65145C8D-970E-40D1-9A96-A6BE9B18D2A1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5F1744BB-5A0A-4389-8B3F-430244396DF7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F1744BB-5A0A-4389-8B3F-430244396DF7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F1744BB-5A0A-4389-8B3F-430244396DF7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F1744BB-5A0A-4389-8B3F-430244396DF7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65145C8D-970E-40D1-9A96-A6BE9B18D2A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65145C8D-970E-40D1-9A96-A6BE9B18D2A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65145C8D-970E-40D1-9A96-A6BE9B18D2A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65145C8D-970E-40D1-9A96-A6BE9B18D2A1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
