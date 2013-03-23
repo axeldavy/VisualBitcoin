@@ -33,10 +33,11 @@ namespace COMBITCOIN
 {
     public class ComBitcoin
     {
-        void ask_last_transactions(int number)
+        public void RetrieveTransactions(String transactions)
         {
             JsonRpcClient client = new JsonRpcClient();
-
+            client.Url = "http://blockchain.info";
+            Console.WriteLine(client.InvokeVargs("listtransactions", transactions, "0"));
         }
     }
 }
