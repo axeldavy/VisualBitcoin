@@ -45,12 +45,6 @@
     <Compile Include="Data.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Storage\Storage.csproj">
-      <Project>{3643A959-44CF-4B8F-AA72-9765A9B438A7}</Project>
-      <Name>Storage</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="App.config" />
     <None Include="Credentials.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
