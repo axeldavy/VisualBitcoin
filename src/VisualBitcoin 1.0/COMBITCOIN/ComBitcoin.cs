@@ -26,8 +26,9 @@ using System.Linq;
 using System.Text;
 using System.Collections;
 using System.Net;
-using Jayrock.Json;
-using Jayrock.JsonRpc;
+using Bitnet.Client;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace COMBITCOIN
 {
@@ -35,9 +36,10 @@ namespace COMBITCOIN
     {
         public void RetrieveTransactions(String transactions)
         {
-            JsonRpcClient client = new JsonRpcClient();
-            client.Url = "http://blockchain.info";
-            Console.WriteLine(client.InvokeVargs("listtransactions", transactions, "0"));
+            BitnetClient bc = new BitnetClient("http://127.0.0.1:8332");
+            bc.Credentials = new NetworkCredential("user", "pass");
+            var l = bc.InvokeMethod("listtransactions")["result"] as JArray;
+            Console.WriteLine(l);
         }
     }
 }
