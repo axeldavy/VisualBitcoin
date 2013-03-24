@@ -1,4 +1,6 @@
-﻿@{
+﻿@using System.Collections
+@model IEnumerable<WebRole.Models.Block>
+@{
     ViewBag.Title = "Explorer";
 }
 
@@ -7,5 +9,37 @@
 </hgroup>
 
 <section class="contact">
-   <article>To do.</article>
+    <table>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Hash)
+                </th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Hash)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Version)
+                </th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Version)
+                </td>
+            </tr>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.PreviousBlock)
+                </th>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PreviousBlock)
+                </td>
+            </tr>
+            <!--To do. Add all fiels which appear in the Block Model.-->
+        }
+    </table>
+    <article>
+        If no table appears above this text then your Emulated Storage is empty.
+    </article>
 </section>
