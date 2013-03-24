@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
+using WebRole.App_Start;
+using Storage;
 
 namespace WebRole
 {
-	// Note: For instructions on enabling IIS6 or IIS7 classic mode, 
-	// visit http://go.microsoft.com/?LinkId=9394801
-
 	public class MvcApplication : System.Web.HttpApplication
 	{
 		protected void Application_Start()
@@ -22,6 +18,14 @@ namespace WebRole
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
+
+			// Check if all of the table, queue and blob containers used in this application
+			// exist, and create any that don't already exist.
+			var storage = new WindowsAzureStorage();
+			var tables = new List<string> {"tablescontainer"};
+			var blobs = new List<string> {"blobscontainer"};
+			var queues = new List<string> {"queuescontainer"};
+			storage.CreateIfNotExistsTablesQueuesBlobsContainers(tables, blobs, queues);
 		}
 	}
 }

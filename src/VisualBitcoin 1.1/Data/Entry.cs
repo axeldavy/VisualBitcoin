@@ -28,35 +28,23 @@ namespace Data
 		// Properties to hold information about entry
 
 		public string Hash { get; set; }
-
 		public string Version { get; set; }
-
 		public string PreviousBlock { get; set; }
-
 		public string MerkleRoot { get; set; }
-
 		public int Time { get; set; }
-
 		public int Bits { get; set; }
-
 		public int NumberOnce { get; set; }
-
 		public int NumberOfTransactions { get; set; }
-
 		public int Size { get; set; }
-
 		public int Index { get; set; }
-
 		public bool IsInMainChain { get; set; }
-
-		public int height { get; set; }
-
+		public int Height { get; set; }
 		public int ReceivedTime { get; set; }
-
 		public string RelayedBy { get; set; }
 
+		// We must change the schema of the entities stored in our application to support
+		// transaction entities.
+		//
 		// public Transaction[] Transactions { get; set; }
-
-
 	}
 }

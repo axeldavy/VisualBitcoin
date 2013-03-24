@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.StorageClient;
@@ -20,7 +21,7 @@ namespace Data
 		// the model defined by the Context class
 		static Source()
 		{
-			StorageAccount = CloudStorageAccount.FromConfigurationSetting("");
+			StorageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString);;
 			CloudTableClient.CreateTablesFromModel(
 				typeof(Context),
 				StorageAccount.TableEndpoint.AbsoluteUri,

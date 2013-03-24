@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.Storage;
-using Microsoft.WindowsAzure.Storage.Auth;
 using Microsoft.WindowsAzure.Storage.Blob;
 using System.Configuration;
+using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Storage
 {
@@ -13,6 +12,7 @@ namespace Storage
     {
         CloudBlobClient RetrieveBlobClient();
         CloudBlobClient RetrieveEmulatedBlobClient();
+	    void CreateIfNotExistsTablesQueuesBlobsContainers(List<string> tables, List<string> blobs, List<string> queues);
         void UploadContainer(CloudBlobClient blobClient, string containerName);
         void UploadBlob(CloudBlobClient blobClient, string containerName, string blobName, string fileName);
         void DownloadBlobToFile(CloudBlobClient blobClient, string containerName, string blobName, string destFileName);
@@ -24,8 +24,10 @@ namespace Storage
     
     public class WindowsAzureStorage : IStorage
 	{
-        public CloudBlobClient RetrieveBlobClient() {
-            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString);
+        public CloudBlobClient RetrieveBlobClient()
+        {
+	        var configurationString = ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString;
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(configurationString);
             return storageAccount.CreateCloudBlobClient();
         }
 
@@ -34,6 +36,43 @@ namespace Storage
             CloudStorageAccount storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
             return storageAccount.CreateCloudBlobClient();
         }
+
+
+		// Next method check if all of the table, queue and blob containers used in this
+		// application exist, and create any that don't already exist.
+		// Remember that containers must be a v valid DNS name:
+		//   1. Container names must start with a letter or number, and can contain only
+		//      letters, numbers, and the dash (-) character.
+		//   2. Every dash (-) character must be immediately preceded and followed by a
+		//      letter or number; consecutive dashes are not permitted in container names.
+		//   3. All letters in a container name must be lowercase.
+		//   4. Container names must be from 3 through 63 characters long.
+
+		public void CreateIfNotExistsTablesQueuesBlobsContainers(List<string> tables, List<string> blobs, List<string> queues)
+		{
+			var storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+
+			var tableClient = storageAccount.CreateCloudTableClient();
+			foreach (var tableName in tables)
+			{
+				var tableContainer = tableClient.GetTableReference(tableName);
+				tableContainer.CreateIfNotExists();
+			}
+			
+			var blobClient = storageAccount.CreateCloudBlobClient();
+			foreach (var blobName in blobs)
+			{
+				var blobContainer = blobClient.GetContainerReference(blobName);
+				blobContainer.CreateIfNotExists();	
+			}
+			
+			var queueClient = storageAccount.CreateCloudQueueClient();
+			foreach (var queueName in queues)
+			{
+				var queueContainer = queueClient.GetQueueReference(queueName);
+				queueContainer.CreateIfNotExists();	
+			}
+		}
 
         public void UploadContainer(CloudBlobClient blobClient, string containerName)
 		{
