@@ -3,11 +3,14 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace WebRole.Models
 {
-	public class Blockchain : TableEntity
+	public class Block : TableEntity
 	{
-        public Blockchain()
+		private static int _identifier = 0;
+
+        public Block()
         {
-	        this.RowKey = "blockchain";
+	        var id = _identifier++;
+	        this.RowKey = "block" + id.ToString();
         }
 
 		[Display(Name = "Hash")]
