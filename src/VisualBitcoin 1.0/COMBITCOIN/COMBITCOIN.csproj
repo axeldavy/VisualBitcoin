@@ -30,14 +30,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Jayrock">
-      <HintPath>..\dll\Jayrock.dll</HintPath>
+    <Reference Include="Bitnet.Client">
+      <HintPath>..\dll\Bitnet.Client.dll</HintPath>
     </Reference>
-    <Reference Include="Jayrock.Json">
-      <HintPath>..\dll\Jayrock.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="Jayrock.Sandbox">
-      <HintPath>..\dll\Jayrock.Sandbox.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\dll\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
