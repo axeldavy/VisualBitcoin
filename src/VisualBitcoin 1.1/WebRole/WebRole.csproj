@@ -189,7 +189,7 @@
     <Content Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\VisualBitcoin 1.0\Storage\Storage.csproj">
+    <ProjectReference Include="..\Storage\Storage.csproj">
       <Project>{3643a959-44cf-4b8f-aa72-9765a9b438a7}</Project>
       <Name>Storage</Name>
     </ProjectReference>
