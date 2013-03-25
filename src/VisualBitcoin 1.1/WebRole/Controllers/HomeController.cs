@@ -1,9 +1,15 @@
-﻿using System.Web.Mvc;
+﻿using System.Diagnostics;
+using System.Web.Mvc;
 
 namespace WebRole.Controllers
 {
 	public class HomeController : Controller
 	{
+		public HomeController()
+		{
+			Trace.WriteLine("Reach Home Controller");
+		}
+
 		public ActionResult Index()
 		{
 			return View();

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Xml;
+using System.Xml.Serialization;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Microsoft.WindowsAzure.Storage.Queue;
@@ -16,7 +18,7 @@ namespace Storage
 		void UploadContainer(CloudBlobClient blobClient, string containerName);
 		void UploadBlob(CloudBlobClient blobClient, string containerName, string blobName, string fileName);
 		void DownloadBlobToFile(CloudBlobClient blobClient, string containerName, string blobName, string destFileName);
-		String DownloadBlobToString(CloudBlobClient blobClient, string containerName, string blobName);
+		String DownloadBlobToString(string blobName);
 		void DeleteBlob(CloudBlobClient blobClient, string containerName, string blobName);
 		void DeleteContainer(CloudBlobClient blobClient, string containerName);
 		CloudBlobContainer RetrieveContainer(CloudBlobClient blobClient, string containerName);
@@ -125,22 +127,37 @@ namespace Storage
 			}
 		}
 
-		public String DownloadBlobToString(CloudBlobClient blobClient, string containerName, string blobName)
+		public String DownloadBlobToString(string blobName)
 		{
-			// Retrieve reference to a previously created container.
-			CloudBlobContainer container = blobClient.GetContainerReference(containerName);
-
 			// Retrieve reference to a blob.
-			CloudBlockBlob blockBlob = container.GetBlockBlobReference(blobName);
+			CloudBlockBlob blockBlob = _containerReference.GetBlockBlobReference(blobName);
 
-			string text = "";
-			// using (var memoryStream = new MemoryStream())
-			// {
-			// blockBlob.DownloadToStream(memoryStream);
-			// text = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
-			// }
-
+			string text;
+			using (var memoryStream = new MemoryStream())
+			{
+				blockBlob.DownloadToStream(memoryStream);
+				text = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
+			}
 			return text;
+		}
+
+		public static Block FromXml(string xml)
+		{
+			var xmlSerializer = new XmlSerializer(typeof(Block));
+			var stringReader = new StringReader(xml);
+			var xmlReader = new XmlTextReader(stringReader);
+			var block = xmlSerializer.Deserialize(xmlReader) as Block;
+			xmlReader.Close();
+			stringReader.Close();
+			return block;
+		}
+
+		public static Block GetExampleBlock()
+		{
+			var storage = new WindowsAzureStorage();
+			var blob = storage.DownloadBlobToString("block");
+			var block = FromXml(blob);
+			return block;
 		}
 
 		public void DeleteBlob(CloudBlobClient blobClient, string containerName, string blobName)
