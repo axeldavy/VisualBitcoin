@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using System.Configuration;
 using Microsoft.WindowsAzure.Storage.Queue;
 using Microsoft.WindowsAzure.Storage.Table;
 
@@ -29,55 +28,29 @@ namespace Storage
 		private static CloudBlobClient _blobClient;
 		private static CloudTableClient _tableClient;
 		private static CloudQueueClient _queueClient;
+		private static CloudBlobContainer _containerReference;
+		private static CloudTable _tableReference;
+		private static CloudQueue _queueReference;
 
-
-		// It will be better if the next constants are store in a configuration file.
-
-		// Definition of all our table, container and queue.
-		// Remember that names must be a v valid DNS name:
-		// 1. Names must start with a letter or number, and can contain only
-		// letters, numbers, and the dash (-) character.
-		// 2. Every dash (-) character must be immediately preceded and followed by a
-		// letter or number; consecutive dashes are not permitted in names.
-		// 3. All letters in a name must be lowercase.
-		// 4. Names must be from 3 through 63 characters long.
-		private const string Table = "table";
-		private const string Container = "container";
-		private const string Queue = "queue";
-
-		// Windows Azure Storage Emulator is used if true.
-		private const bool UseDevelopmentStorage = true;
-
-
-		// Set up the storage, only one call while application start.
-		public static void SetUp()
+		// Configure and start the storage, only one call made on application start.
+		public static void Start(bool useDevelopmentStorage, string connectionString, string containerName, string tableName, string queueName)
 		{
 			if (null != _storageAccount)
-			{
-				throw new Exception("Windows Azure Storage Account can not be initialize twice.");
-			}
+				throw new Exception("Windows Azure Storage can not be initialize twice.");
 
-			if (true == UseDevelopmentStorage)
-			{
-				_storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
-			}
-			else
-			{
-				var configurationString = ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString;
-				_storageAccount = CloudStorageAccount.Parse(configurationString);
-			}
+			_storageAccount = useDevelopmentStorage ? CloudStorageAccount.DevelopmentStorageAccount : CloudStorageAccount.Parse(connectionString);
 
 			_blobClient = _storageAccount.CreateCloudBlobClient();
-			var containerReference = _blobClient.GetContainerReference(Container);
-			containerReference.CreateIfNotExists();
+			_containerReference = _blobClient.GetContainerReference(containerName);
+			_containerReference.CreateIfNotExists();
 
 			_tableClient = _storageAccount.CreateCloudTableClient();
-			var tableReference = _tableClient.GetTableReference(Table);
-			tableReference.CreateIfNotExists();
+			_tableReference = _tableClient.GetTableReference(tableName);
+			_tableReference.CreateIfNotExists();
 
 			_queueClient = _storageAccount.CreateCloudQueueClient();
-			var queueReference = _queueClient.GetQueueReference(Queue);
-			queueReference.CreateIfNotExists();
+			_queueReference = _queueClient.GetQueueReference(queueName);
+			_queueReference.CreateIfNotExists();
 		}
 
 		// Retriving methods.
@@ -98,8 +71,7 @@ namespace Storage
 
 		public static CloudTable GetTableReference()
 		{
-			var tableReference = _tableClient.GetTableReference(Table);
-			return tableReference;
+			return _tableReference;
 		}
 
 		public void UploadContainer(CloudBlobClient blobClient, string containerName)

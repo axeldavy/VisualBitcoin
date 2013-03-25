@@ -1,4 +1,5 @@
-﻿using System.Web.Http;
+﻿using System.Configuration;
+using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
@@ -18,7 +19,13 @@ namespace WebRole
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-			WindowsAzureStorage.SetUp();
+			// Storage configuration and start.
+			var useDevelopmentStorage = bool.Parse(ConfigurationManager.AppSettings["useDevelopmentStorage"]);
+			var connectionString = ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString;
+			var containerName = ConfigurationManager.AppSettings["Container"];
+			var tableName = ConfigurationManager.AppSettings["Table"];
+			var queueName = ConfigurationManager.AppSettings["Queue"];
+			WindowsAzureStorage.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
 		}
 	}
 }
