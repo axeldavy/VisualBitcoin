@@ -10,9 +10,9 @@ namespace Data
 
 		}
 
-		public IQueryable<Entry> Entry
+		public IQueryable<Block> Block
 		{
-			get { return this.CreateQuery<Entry>("Entry"); }
+			get { return CreateQuery<Block>("Block"); }
 		}
 	}
 }

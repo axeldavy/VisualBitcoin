@@ -18,10 +18,7 @@ namespace WebRole
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-			// Check if all of the table, queue and blob containers used in this application
-			// exist, and create any that don't already exist.
-			var storage = new WindowsAzureStorage();
-			storage.CreateIfNotExistsTableBlobsContainerQueue();
+			WindowsAzureStorage.SetUp();
 		}
 	}
 }

@@ -14,7 +14,6 @@ namespace Storage
         CloudBlobClient RetrieveBlobClient();
 	    CloudTableClient RetrieveTableClient();
 	    CloudQueueClient RetrieveQueueClient();
-	    void CreateIfNotExistsTableBlobsContainerQueue();
         void UploadContainer(CloudBlobClient blobClient, string containerName);
         void UploadBlob(CloudBlobClient blobClient, string containerName, string blobName, string fileName);
         void DownloadBlobToFile(CloudBlobClient blobClient, string containerName, string blobName, string destFileName);
@@ -25,78 +24,85 @@ namespace Storage
     }
     
     public class WindowsAzureStorage : IStorage
-	{
-		// Definition of all our table, blob container and queue.
-		// Remember that containers must be a v valid DNS name:
-		//   1. Container names must start with a letter or number, and can contain only
+    {
+	    private static CloudStorageAccount _storageAccount;
+	    private static CloudBlobClient _blobClient;
+	    private static CloudTableClient _tableClient;
+	    private static CloudQueueClient _queueClient;
+
+
+		// It will be better if the next constants are store in a configuration file.
+
+		// Definition of all our table, container and queue.
+		// Remember that names must be a v valid DNS name:
+		//   1. Names must start with a letter or number, and can contain only
 		//      letters, numbers, and the dash (-) character.
 		//   2. Every dash (-) character must be immediately preceded and followed by a
-		//      letter or number; consecutive dashes are not permitted in container names.
-		//   3. All letters in a container name must be lowercase.
-		//   4. Container names must be from 3 through 63 characters long.
-		public const string Table = "table";
+		//      letter or number; consecutive dashes are not permitted in names.
+		//   3. All letters in a name must be lowercase.
+		//   4. Names must be from 3 through 63 characters long.
+		private const string Table = "table";
+		private const string Container = "container";
+		private const string Queue = "queue";
+
+		// Windows Azure Storage Emulator is used if true.
+	    private const bool UseDevelopmentStorage = true;
 		
-		public const string BlobsContainer = "blobscontainer";
 		
-		public const string Queue = "queue";
-
-		// Choose true if you want to work with the Compute Emulator and Storage Emulator.
-		// Don't forget to launch them before lauching Visual Studio.
-	    public const bool Emulated = true;
-
-
-		CloudStorageAccount SelectStorageAccount()
+		// Set up the storage, only one call while application start.
+		public static void SetUp()
 		{
-			CloudStorageAccount storageAccount;
-			if (true == Emulated)
+			if (null != _storageAccount)
 			{
-				storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
+				throw new Exception("Windows Azure Storage Account can not be initialize twice.");
+			}
+
+			if (true == UseDevelopmentStorage)
+			{
+				_storageAccount = CloudStorageAccount.DevelopmentStorageAccount;
 			}
 			else
 			{
 				var configurationString = ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString;
-				storageAccount = CloudStorageAccount.Parse(configurationString);	
+				_storageAccount = CloudStorageAccount.Parse(configurationString);
 			}
-			return storageAccount;
+
+			_blobClient = _storageAccount.CreateCloudBlobClient();
+			var containerReference = _blobClient.GetContainerReference(Container);
+			containerReference.CreateIfNotExists();
+
+			_tableClient = _storageAccount.CreateCloudTableClient();
+			var tableReference = _tableClient.GetTableReference(Table);
+			tableReference.CreateIfNotExists();
+
+			_queueClient = _storageAccount.CreateCloudQueueClient();
+			var queueReference = _queueClient.GetQueueReference(Queue);
+			queueReference.CreateIfNotExists();
 		}
 
 		// Retriving methods.
 	    public CloudBlobClient RetrieveBlobClient()
 	    {
-		    var storageAccount = SelectStorageAccount();
-		    return storageAccount.CreateCloudBlobClient();
+		    return _storageAccount.CreateCloudBlobClient();
 	    }
 
 		public CloudTableClient RetrieveTableClient()
 		{
-			var storageAccount = SelectStorageAccount();
-			return storageAccount.CreateCloudTableClient();
+			return _storageAccount.CreateCloudTableClient();
 		}
 		
 		public CloudQueueClient RetrieveQueueClient()
 		{
-			var storageAccount = SelectStorageAccount();
-			return storageAccount.CreateCloudQueueClient();
-		}
-		
-		// Next method check if all of the table, queue and blob containers used in this
-		// application exist, and create any that don't already exist.
-		public void CreateIfNotExistsTableBlobsContainerQueue()
-		{
-			var tableClient = RetrieveTableClient();
-			var tableContainer = tableClient.GetTableReference(Table);
-			tableContainer.CreateIfNotExists();
-			
-			var blobClient = RetrieveBlobClient();
-			var blobContainer = blobClient.GetContainerReference(BlobsContainer);
-			blobContainer.CreateIfNotExists();
-			
-			var queueClient = RetrieveQueueClient();
-			var queueContainer = queueClient.GetQueueReference(Queue);
-			queueContainer.CreateIfNotExists();
+			return _storageAccount.CreateCloudQueueClient();
 		}
 
-        public void UploadContainer(CloudBlobClient blobClient, string containerName)
+		public static CloudTable GetTableReference()
+		{
+			var tableReference = _tableClient.GetTableReference(Table);
+			return tableReference;
+		}
+		
+		public void UploadContainer(CloudBlobClient blobClient, string containerName)
 		{
 			// Variables for the cloud storage objects.
 			CloudBlobContainer blobContainer;

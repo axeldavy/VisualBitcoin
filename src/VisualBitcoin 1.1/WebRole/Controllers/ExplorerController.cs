@@ -13,24 +13,20 @@ namespace WebRole.Controllers
 {
 	public class ExplorerController : Controller
 	{
-		// Reference to our table in WindowsAzureStorage.
-		private readonly CloudTable _blockTable;
-
 		public ExplorerController()
 		{
-			var storage = new WindowsAzureStorage();
-			var tableClient = storage.RetrieveTableClient();
-			_blockTable = tableClient.GetTableReference(WindowsAzureStorage.Table);
+			Trace.WriteLine("Reach Explorer Controller");
 		}
 
 		private Block FindRow(string partitionKey, string rowKey)
 		{
+			var blockTable = WindowsAzureStorage.GetTableReference();
 			var retrieveOperation = TableOperation.Retrieve<Block>(partitionKey, rowKey);
-			var retrievedResult = _blockTable.Execute(retrieveOperation);
+			var retrievedResult = blockTable.Execute(retrieveOperation);
 			var blockList = retrievedResult.Result as Block;
 			if (blockList == null)
 			{
-				throw new Exception("WebRole/Explorer controller: No block found for: " + partitionKey + ", " + rowKey);
+				throw new Exception("Explorer controller: No block found for: " + partitionKey + ", " + rowKey);
 			}
 			return blockList;
 		}
@@ -45,8 +41,9 @@ namespace WebRole.Controllers
 			List<Block> lists;
 			try
 			{
-				var query = new TableQuery<Block>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, "mailinglist"));
-				lists = _blockTable.ExecuteQuery(query, reqOptions).ToList();
+				var blockTable = WindowsAzureStorage.GetTableReference();
+				var query = new TableQuery<Block>().Where(TableQuery.GenerateFilterCondition("RowKey", QueryComparisons.Equal, "block0"));
+				lists = blockTable.ExecuteQuery(query, reqOptions).ToList();
 			}
 			catch (StorageException se)
 			{

@@ -1,45 +1,121 @@
-﻿@using System.Collections
-@model IEnumerable<WebRole.Models.Block>
+﻿@model IEnumerable<WebRole.Models.Block>
+
 @{
     ViewBag.Title = "Explorer";
+    ViewBag.Message = "If no table appears above this text then your Emulated Storage is empty.";
 }
 
-<hgroup class="title">
-    <h1>@ViewBag.Title</h1>
-</hgroup>
+<h1>@ViewBag.Title</h1>
 
-<section class="contact">
-    <table>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Hash)
-                </th>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Hash)
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.Version)
-                </th>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Version)
-                </td>
-            </tr>
-            <tr>
-                <th>
-                    @Html.DisplayNameFor(model => model.PreviousBlock)
-                </th>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PreviousBlock)
-                </td>
-            </tr>
-            <!--To do. Add all fiels which appear in the Block Model.-->
-        }
-    </table>
-    <article>
-        If no table appears above this text then your Emulated Storage is empty.
-    </article>
-</section>
+
+<table>
+    @foreach (var item in Model)
+    {
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Hash)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Hash)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Version)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Version)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.PreviousBlock)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.PreviousBlock)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.MerkleRoot)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.MerkleRoot)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Time)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Time)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Bits)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Bits)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.NumberOnce)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.NumberOnce)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Size)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Size)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Index)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Index)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.IsInMainChain)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.IsInMainChain)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Height)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.Height)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.ReceivedTime)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.ReceivedTime)
+            </td>
+        </tr>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RelayedBy)
+            </th>
+            <td>
+                @Html.DisplayFor(modelItem => item.RelayedBy)
+            </td>
+        </tr>
+    }
+</table>
+<p>@ViewBag.Message</p>
+

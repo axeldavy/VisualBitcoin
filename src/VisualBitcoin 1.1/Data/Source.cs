@@ -9,8 +9,8 @@ namespace Data
 {
 	public class Source
 	{
-		// We define member fields for the data context and the storage account
-		// information.
+		// We create an object that implements the basic data access operations : read,
+		// update and delete.
 
 		// /!\ I don't know if readonly is required. (Baptiste)
 		private static readonly CloudStorageAccount StorageAccount;
@@ -21,7 +21,8 @@ namespace Data
 		// the model defined by the Context class
 		static Source()
 		{
-			StorageAccount = CloudStorageAccount.Parse(ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString);;
+			var connectionString = ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString;
+			StorageAccount = CloudStorageAccount.Parse(connectionString);
 			CloudTableClient.CreateTablesFromModel(
 				typeof(Context),
 				StorageAccount.TableEndpoint.AbsoluteUri,
@@ -32,29 +33,29 @@ namespace Data
 		// storage.
 		public Source()
 		{
-			this._context = new Context(StorageAccount.TableEndpoint.AbsoluteUri, StorageAccount.Credentials)
+			_context = new Context(StorageAccount.TableEndpoint.AbsoluteUri, StorageAccount.Credentials)
 				{
 					RetryPolicy = RetryPolicies.Retry(3, TimeSpan.FromSeconds(1))
 				};
 		}
 
 		// This method returns the contents of Entry tables.
-		public IEnumerable<Entry> Entries()
+		public IEnumerable<Block> Entries()
 		{
 			// We retrieve today entries which is used by WebRole to bind a data grid and
 			// display the blocks.
 			var results =
-				from g in this._context.Entry
+				from g in _context.Block
 				where g.PartitionKey == DateTime.UtcNow.ToString("YYYYMMDD")
 				select g;
 			return results;
 		}
 
 		// This method insert a new entry into the Entry table.
-		public void AddEntry(Entry entry)
+		public void AddEntry(Block entry)
 		{
-			this._context.AddObject("Entry", entry);
-			this._context.SaveChanges();
+			_context.AddObject("Entry", entry);
+			_context.SaveChanges();
 		}
 	}
 }
