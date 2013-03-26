@@ -97,8 +97,7 @@ publish/
 *.pubxml
 
 # NuGet Packages Directory
-packages/
-.nuget/
+src/VisualBitcoin 1.1/packages/*
 
 # Windows Azure Build Output
 csx
