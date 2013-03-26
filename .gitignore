@@ -98,7 +98,6 @@ publish/
 
 # NuGet Packages Directory
 src/VisualBitcoin 1.1/packages/*
-src/VisualBitcoin 1.1/.nuget/*
 
 # Windows Azure Build Output
 csx
