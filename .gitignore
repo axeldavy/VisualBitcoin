@@ -7,6 +7,7 @@
 *.sln.docstates
 
 Credentials.config
+CredentialsB.config
 visualbitcoin.azurewebsites.net
 
 # Build results
