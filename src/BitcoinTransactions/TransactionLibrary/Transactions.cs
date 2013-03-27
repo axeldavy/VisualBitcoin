@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using Bitnet.Client;
 using Newtonsoft.Json.Linq;
+using System.Configuration;
 
 namespace TransactionLibrary
 {
@@ -11,7 +12,8 @@ namespace TransactionLibrary
     {
         public void GetTransactions() 
         {
-            
+            var configurationString = ConfigurationManager.AppSettings["bitcoinuser"];
+
 
         }
 
