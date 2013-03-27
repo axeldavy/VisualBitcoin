@@ -9,7 +9,11 @@ namespace TransactionLibrary
 {
     public class Transactions
     {
+        public void GetTransactions() 
+        {
+            
 
+        }
 
     }
 }
