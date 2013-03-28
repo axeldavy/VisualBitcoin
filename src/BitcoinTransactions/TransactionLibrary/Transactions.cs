@@ -40,19 +40,71 @@ namespace TransactionLibrary
 
         }
 
-        public JObject GetTransaction(String txid) 
+        public JArray GetTransactionsFromBlock(JObject block) 
         {
-            return null;
+            JArray transactionsFromBlock = new JArray();
+            JToken txidList = block["result"]["tx"];
+            foreach (JValue txid in txidList)
+            {
+                JObject transaction = DecodeTransaction(txid);
+                if (transaction != null)
+                {
+                    transaction = ParseTransaction(transaction); // Parse relevant data from JObject
+                    transactionsFromBlock.Add(transaction);
+                }
+            }
+
+            return transactionsFromBlock;
+                
+        }
+
+        private JObject ParseTransaction(JObject tx)
+        {
+            JObject result = new JObject();
+            JArray transactionList = new JArray();
+            JToken txid = tx["result"]["txid"];
+            JToken vout = tx["result"]["vout"];
+            foreach (JObject v in vout)
+            {
+                JObject arr = new JObject();
+                arr.Add(new JProperty("txNumber", v["n"]));
+                arr.Add(new JProperty("amountPaid", v["value"]));
+                arr.Add(new JProperty("receivedByAddresses", v["scriptPubKey"]["addresses"]));
+
+                transactionList.Add(arr);
+            }
+
+            result.Add(txid.ToString(), transactionList);
+            return result;
+
+        }
+
+        private JObject DecodeTransaction(JValue txid) 
+        {
+            JObject txObject = this.bitClient.InvokeMethod("getrawtransaction", new object[] { txid }) as JObject;
+            JToken txHash = txObject["result"];
+
+            if (txHash == null) return null;
+            return this.bitClient.InvokeMethod("decoderawtransaction", new object[] { txHash }) as JObject;
         }
 
         public JObject GetLastBlock()
         {
-            return this.bitClient.InvokeMethod("listsinceblock")["result"] as JObject;
+            JObject lastBlock = this.bitClient.InvokeMethod("listsinceblock")["result"] as JObject;
+            JToken lastBlockHash = lastBlock["lastblock"];
+
+            return GetBlockByHash(lastBlockHash);
         }
 
         public JObject GetPreviousBlock(JObject obj)
         {
-            return null;
+            JToken prevBlockHash = obj["previoussinceblock"];
+            return GetBlockByHash(prevBlockHash);
+        }
+
+        private JObject GetBlockByHash(JToken hashToken)
+        {
+            return this.bitClient.InvokeMethod("getblock", new object[] { hashToken }) as JObject;
         }
     }
 }
