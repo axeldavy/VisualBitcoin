@@ -10,7 +10,7 @@ namespace BitcoinTransactions
     {
         static void Main(string[] args)
         {
-            Transactions trans = new Transactions();
+            BitcoinClient trans = new BitcoinClient();
             //Console.WriteLine(trans.GetTransactionsFromBlock(trans.GetLastBlock()));
             BlockandTransactionTransfer b = new BlockandTransactionTransfer( trans.GetLastBlock());
             b.toTest();

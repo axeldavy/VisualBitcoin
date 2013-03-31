@@ -9,12 +9,12 @@ using System.Configuration;
 
 namespace TransactionLibrary
 {
-    public class Transactions
+    public class BitcoinClient
     {
         BitnetClient bitClient;
         JObject lastBlockStored;
 
-        public Transactions()
+        public BitcoinClient()
         {
             var user = ConfigurationManager.AppSettings["bitcoinuser"];
             var password = ConfigurationManager.AppSettings["bitcoinpassword"];
@@ -39,43 +39,32 @@ namespace TransactionLibrary
 
         }
 
-        public JArray GetTransactionsFromBlock(JObject block) 
+        public Transaction[] GetTransactionsFromBlock(JObject block) 
         {
-            JArray transactionsFromBlock = new JArray();
             JToken txidList = block["tx"];
+            Transaction[] transactionsFromBlock = new Transaction[txidList.Count()];
+
+            int count = 0;
             foreach (JValue txid in txidList)
             {
                 JObject transaction = DecodeTransaction(txid);
-                if (transaction != null)
+                double amount = 0;
+                foreach (JObject v in transaction["vout"])
                 {
-                    transaction = ParseTransaction(transaction); // Parse relevant data from JObject
-                    transactionsFromBlock.Add(transaction);
+                    if (v["value"].Type == JTokenType.Float) 
+                        amount = amount + (double) v["value"]; // assert > 0
+                    else throw new Exception("type error in BlockandTransactionTransfer");
                 }
+                transactionsFromBlock[count] = new Transaction();
+                transactionsFromBlock[count].amount = amount;
+                transactionsFromBlock[count].txid = (string) txid;
+                transactionsFromBlock[count].version = (short) transaction["version"];
+                transactionsFromBlock[count].locktime = (long) transaction["locktime"];
+                count += 1;
             }
 
             return transactionsFromBlock;
                 
-        }
-
-        private JObject ParseTransaction(JObject tx)
-        {
-            JObject result = new JObject();
-            JArray transactionList = new JArray();
-            JToken txid = tx["txid"];
-            JToken vout = tx["vout"];
-            foreach (JObject v in vout)
-            {
-                JObject arr = new JObject();
-                arr.Add(new JProperty("txNumber", v["n"]));
-                arr.Add(new JProperty("amountPaid", v["value"]));
-                arr.Add(new JProperty("receivedByAddresses", v["scriptPubKey"]["addresses"]));
-
-                transactionList.Add(arr);
-            }
-
-            result.Add(txid.ToString(), transactionList);
-            return result;
-
         }
 
         public JObject DecodeTransaction(JValue txid) 
@@ -83,7 +72,7 @@ namespace TransactionLibrary
             JObject txObject = this.bitClient.InvokeMethod("getrawtransaction", new object[] { txid }) as JObject;
             JToken txHash = txObject["result"];
 
-            if (txHash == null) throw new Exception("null txHash value");
+            if (txHash == null) throw new Exception("null transaction hash value");
             return this.bitClient.InvokeMethod("decoderawtransaction", new object[] { txHash })["result"] as JObject;
         }
 
@@ -91,8 +80,6 @@ namespace TransactionLibrary
         {
             JObject lastBlock = this.bitClient.InvokeMethod("listsinceblock")["result"] as JObject;
             JToken lastBlockHash = lastBlock["lastblock"];
-            //Console.WriteLine(lastBlockHash);
-            //Console.ReadKey();
             
             return GetBlockByHash(lastBlockHash);
         }
@@ -108,6 +95,7 @@ namespace TransactionLibrary
             return this.bitClient.InvokeMethod("getblock", new object[] { hashToken })["result"]  as JObject;
         }
     }
+
     public class Transaction // vin, vout missing
     {
         public string txid { set; get; }
@@ -128,48 +116,23 @@ namespace TransactionLibrary
         public double difficulty { get; set; }
         public string previousBlockHash { get; set; }
         public Transaction[] transactionArray { get; set; }
-        public BlockandTransactionTransfer(JObject Block)
+        public BitcoinClient bitcoinClient;
+
+        public BlockandTransactionTransfer(JObject block)
         {
-            var temp = new Transactions();
-            this.hashblock = (string)Block["hash"];
-            JToken txidList = Block["tx"];
-            int count = 0;
-            foreach (JValue txid in txidList)
-            {
-                count = count + 1;
-            }
-            int sizeArray = count;
-            var transactionsFromBlock = new Transaction[sizeArray];
-            count = 0;
-            foreach (JValue txid in txidList)
-            {
-                //Console.WriteLine(txid);
-                //Console.ReadKey();
-                JObject transaction = temp.DecodeTransaction(txid);
-                double amountCalculate = 0;
-                foreach (JObject v in transaction["vout"])
-                {
-                    if (v["value"].Type == JTokenType.Float) // à tester
-                        amountCalculate = amountCalculate + (double)v["value"]; // assert >0
-                    else throw new Exception("type error in BlockandTransactionTransfer");
-                }
-                transactionsFromBlock[count] = new Transaction();
-                transactionsFromBlock[count].amount = amountCalculate;
-                transactionsFromBlock[count].txid = (string)txid;
-                transactionsFromBlock[count].version = (short)transaction["version"];
-                transactionsFromBlock[count].locktime = (long)transaction["locktime"];
-                count = count + 1;
-            }
-            this.transactionArray = transactionsFromBlock;
-            this.version = (short)Block["version"];
-            this.size = (long)Block["size"];
-            this.height = (long)Block["height"];
-            this.merkleroot = (string)Block["merkleroot"];
-            this.time = (long)Block["time"];
-            this.previousBlockHash = (string)Block["previousblockhash"];
-            this.bits = (string)Block["bits"];
-            this.difficulty = (double)Block["difficulty"];
+            this.bitcoinClient = new BitcoinClient();
+            this.transactionArray = this.bitcoinClient.GetTransactionsFromBlock(block);
+            this.hashblock = (string)block["hash"];
+            this.version = (short)block["version"];
+            this.size = (long)block["size"];
+            this.height = (long)block["height"];
+            this.merkleroot = (string)block["merkleroot"];
+            this.time = (long)block["time"];
+            this.previousBlockHash = (string)block["previousblockhash"];
+            this.bits = (string)block["bits"];
+            this.difficulty = (double)block["difficulty"];
         }
+
         public void toTest()
         {
             Console.WriteLine("hash: {0}",hashblock);
