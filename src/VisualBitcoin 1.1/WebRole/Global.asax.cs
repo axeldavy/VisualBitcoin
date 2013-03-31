@@ -25,7 +25,7 @@ namespace WebRole
 			var containerName = ConfigurationManager.AppSettings["Container"];
 			var tableName = ConfigurationManager.AppSettings["Table"];
 			var queueName = ConfigurationManager.AppSettings["Queue"];
-			WindowsAzureStorage.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
+			WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
 		}
 	}
 }

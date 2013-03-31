@@ -24,7 +24,7 @@ namespace WebRole.Controllers
 
 		public ActionResult Index()
 		{
-			var block = WindowsAzureStorage.GetExampleBlock();
+			var block = Storage.Storage.GetExampleBlock();
 			var blockModel = BlockModelOfBlock(block);
 			return View(blockModel);
 		}

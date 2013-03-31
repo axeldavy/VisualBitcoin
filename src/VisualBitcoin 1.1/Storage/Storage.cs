@@ -3,18 +3,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
-using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.Storage.Blob;
-using Microsoft.WindowsAzure.Storage.Queue;
-using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Storage
 {
 	public interface IStorage
 	{
-		CloudBlobClient RetrieveBlobClient();
-		CloudTableClient RetrieveTableClient();
-		CloudQueueClient RetrieveQueueClient();
 		void UploadContainer(CloudBlobClient blobClient, string containerName);
 		void UploadBlob(CloudBlobClient blobClient, string containerName, string blobName, string fileName);
 		void DownloadBlobToFile(CloudBlobClient blobClient, string containerName, string blobName, string destFileName);
@@ -24,58 +18,8 @@ namespace Storage
 		CloudBlobContainer RetrieveContainer(CloudBlobClient blobClient, string containerName);
 	}
 
-	public class WindowsAzureStorage : IStorage
+	public class Storage : IStorage
 	{
-		private static CloudStorageAccount _storageAccount;
-		private static CloudBlobClient _blobClient;
-		private static CloudTableClient _tableClient;
-		private static CloudQueueClient _queueClient;
-		private static CloudBlobContainer _containerReference;
-		private static CloudTable _tableReference;
-		private static CloudQueue _queueReference;
-
-		// Configure and start the storage, only one call made on application start.
-		public static void Start(bool useDevelopmentStorage, string connectionString, string containerName, string tableName, string queueName)
-		{
-			if (null != _storageAccount)
-				throw new Exception("Windows Azure Storage can not be initialize twice.");
-
-			_storageAccount = useDevelopmentStorage ? CloudStorageAccount.DevelopmentStorageAccount : CloudStorageAccount.Parse(connectionString);
-
-			_blobClient = _storageAccount.CreateCloudBlobClient();
-			_containerReference = _blobClient.GetContainerReference(containerName);
-			_containerReference.CreateIfNotExists();
-
-			_tableClient = _storageAccount.CreateCloudTableClient();
-			_tableReference = _tableClient.GetTableReference(tableName);
-			_tableReference.CreateIfNotExists();
-
-			_queueClient = _storageAccount.CreateCloudQueueClient();
-			_queueReference = _queueClient.GetQueueReference(queueName);
-			_queueReference.CreateIfNotExists();
-		}
-
-		// Retriving methods.
-		public CloudBlobClient RetrieveBlobClient()
-		{
-			return _storageAccount.CreateCloudBlobClient();
-		}
-
-		public CloudTableClient RetrieveTableClient()
-		{
-			return _storageAccount.CreateCloudTableClient();
-		}
-
-		public CloudQueueClient RetrieveQueueClient()
-		{
-			return _storageAccount.CreateCloudQueueClient();
-		}
-
-		public static CloudTable GetTableReference()
-		{
-			return _tableReference;
-		}
-
 		public void UploadContainer(CloudBlobClient blobClient, string containerName)
 		{
 			// Variables for the cloud storage objects.
@@ -102,7 +46,7 @@ namespace Storage
 			blockBlob = blobContainer.GetBlockBlobReference(blobName);
 
 			// Create or overwrite the blob with contents from a local file.
-			using (var fileStream = System.IO.File.OpenRead(@fileName))
+			using (var fileStream = File.OpenRead(@fileName))
 			{
 				blockBlob.UploadFromStream(fileStream);
 			}
@@ -121,7 +65,7 @@ namespace Storage
 			CloudBlockBlob blockBlob = blobContainer.GetBlockBlobReference(blobName);
 
 			// Save blob contents to a file.
-			using (var fileStream = System.IO.File.OpenWrite(@destFileName))
+			using (var fileStream = File.OpenWrite(@destFileName))
 			{
 				blockBlob.DownloadToStream(fileStream);
 			}
@@ -130,7 +74,7 @@ namespace Storage
 		public String DownloadBlobToString(string blobName)
 		{
 			// Retrieve reference to a blob.
-			CloudBlockBlob blockBlob = _containerReference.GetBlockBlobReference(blobName);
+			CloudBlockBlob blockBlob = Blob.CloudBlobContainer.GetBlockBlobReference(blobName);
 
 			string text;
 			using (var memoryStream = new MemoryStream())
@@ -154,7 +98,7 @@ namespace Storage
 
 		public static Block GetExampleBlock()
 		{
-			var storage = new WindowsAzureStorage();
+			var storage = new Storage();
 			var blob = storage.DownloadBlobToString("block");
 			var block = FromXml(blob);
 			return block;
@@ -197,7 +141,7 @@ namespace Storage
 			// Loop over blobs within the container and output the URI to each of them.
 			foreach (var blobItem in blobContainer.ListBlobs())
 			{
-				char[] separator = new char[] { '/' };
+				var separator = new[] { '/' };
 				string blobUri = blobItem.Uri.ToString();
 				string[] splitedBlobUri = blobUri.Split(separator);
 				string blobName = splitedBlobUri[splitedBlobUri.Length - 1];
