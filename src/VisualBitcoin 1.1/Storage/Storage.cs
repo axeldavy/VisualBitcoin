@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Xml;
-using System.Xml.Serialization;
 using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Storage
@@ -83,25 +81,6 @@ namespace Storage
 				text = System.Text.Encoding.UTF8.GetString(memoryStream.ToArray());
 			}
 			return text;
-		}
-
-		public static Block FromXml(string xml)
-		{
-			var xmlSerializer = new XmlSerializer(typeof(Block));
-			var stringReader = new StringReader(xml);
-			var xmlReader = new XmlTextReader(stringReader);
-			var block = xmlSerializer.Deserialize(xmlReader) as Block;
-			xmlReader.Close();
-			stringReader.Close();
-			return block;
-		}
-
-		public static Block GetExampleBlock()
-		{
-			var storage = new Storage();
-			var blob = storage.DownloadBlobToString("block");
-			var block = FromXml(blob);
-			return block;
 		}
 
 		public void DeleteBlob(CloudBlobClient blobClient, string containerName, string blobName)

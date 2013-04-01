@@ -7,6 +7,7 @@ All classes contain in this project are:
 	- Block
 	- Coding
 	- Queue
+	- Serialization
 	- Storage
 	- Table
 	- WindowsAzure
@@ -22,9 +23,9 @@ retrieve blobs, remove blobs. You have not to use this class and consider it
 only as a tool for the other classes which manage the storage.
 
 	TODO
-	- Adding blobs.
-	- Retrieving blobs.
-	- Removing blobs.
+	- Adding blobs
+	- Retrieving blobs
+	- Removing blobs
 
 ////////////////////////////////////////////////////////////////////////////////
 2.Block Class
@@ -35,7 +36,7 @@ representation of the blockchain's blocks can be different of the original
 information associate with blocks.
 
 	TODO
-	- Find the data structures for transactions.
+	- Find the data structures for transactions
 
 ////////////////////////////////////////////////////////////////////////////////
 3. Coding Class
@@ -44,7 +45,7 @@ Manage the efficency of connections with the storage with a code and decode
 method.
 
 	TODO
-	- Add a zipper.
+	- Add a zipper
 
 ////////////////////////////////////////////////////////////////////////////////
 4. Queue Class
@@ -57,28 +58,38 @@ in the storage.
 	- ...
 
 ////////////////////////////////////////////////////////////////////////////////
-5. Storage Class
+5. Serialization Class
+
+Manage the serialization and try to hide the conversion between the instance of 
+a class and its XML string.
+
+	TODO
+	- Analyze the current default serialization
+	- Replace the current serialization with something better
+
+////////////////////////////////////////////////////////////////////////////////
+6. Storage Class
 
 Historic class which contains all the source code. This code has to be organized
 and dispatched in the other classes.
 
 	TODO
-	- Dispatched the whole code in other classes.
+	- Dispatched the whole code in other classes
 
 ////////////////////////////////////////////////////////////////////////////////
-6. Table Class
+7. Table Class
 
 Manage the table storage. You will find methods to start the service, add rows, 
 retrieve rows, remove rows. You have not to use this class and consider it    
 only as a tool for the other classes which manage the storage.
 
 	TODO
-	- Adding rows.
-	- Retrieving rows.
-	- Removing rows.
+	- Adding rows
+	- Retrieving rows
+	- Removing rows
 
 ////////////////////////////////////////////////////////////////////////////////
-7. WindowsAzure Class
+8. WindowsAzure Class
 
 Manage the windows azure storage account. You will find a method to start the   
 service, only one call is made for this method at the begining of the

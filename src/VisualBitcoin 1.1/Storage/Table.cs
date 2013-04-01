@@ -3,7 +3,7 @@ using Microsoft.WindowsAzure.Storage.Table;
 
 namespace Storage
 {
-	class Table
+	public class Table
 	{
 		// Properties.
 		public static CloudTableClient CloudTableClient { get; private set; }
