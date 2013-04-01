@@ -30,6 +30,18 @@ namespace TransactionLibrary
             this.listSinceBlock = GetLastBlock();
         }
 
+
+        public JToken Invoke(string asMethod, params object[] aParams)
+        {
+            JObject received = this.bitClient.InvokeMethod(asMethod, aParams);
+            JToken result = received["result"];
+            //JToken error = received["error"]; // bitcoind always sends an error field // unuseful at the moment since an WebException is raised before
+            //bool hasError = error.ToString() != ""; // we have to test if the error field contain an error message.
+            //if (!hasError) return result; // may be null
+            //else throw new Exception("Invoke:" + error.ToString());
+            return result;
+        }
+
         public void PutBlocks(int max = 1000)
         {
 
@@ -37,7 +49,7 @@ namespace TransactionLibrary
 
         public Boolean HasNewBlocks()
         {
-            return this.lastBlockSent != this.listSinceBlock;
+            return this.lastBlockSent["hash"] != GetPrevBlock(this.listSinceBlock)["hash"];
         }
 
         public void UploadNewBlocks(JArray arr) 
@@ -73,33 +85,36 @@ namespace TransactionLibrary
                 
         }
 
-        public JObject DecodeTransaction(JValue txid) 
+        public JObject DecodeTransaction(JValue txid)
         {
-            JObject txObject = this.bitClient.InvokeMethod("getrawtransaction", new object[] { txid }) as JObject;
-            JToken txHash = txObject["result"];
-
+            JToken txHash = Invoke("getrawtransaction", new object[] {txid});
             if (txHash == null) throw new Exception("null transaction hash value");
-            return this.bitClient.InvokeMethod("decoderawtransaction", new object[] { txHash })["result"] as JObject;
+            return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
         }
 
         public JObject GetLastBlock()
         {
-            JObject lastBlock = this.bitClient.InvokeMethod("listsinceblock")["result"] as JObject;
+            JObject lastBlock = Invoke("listsinceblock") as JObject;
             JToken lastBlockHash = lastBlock["lastblock"];
             
             this.listSinceBlock = GetBlockByHash(lastBlockHash);
             return this.listSinceBlock;
         }
-
+        
+        public JObject GetPrevBlock(JObject obj)
+        {
+            JToken prevBlockHash = obj["prevblockhash"];
+            return GetBlockByHash(prevBlockHash) ;
+        }
         public JObject GetNextBlock(JObject obj)
         {
             JToken nextBlockHash = obj["nextblockhash"];
-            return GetBlockByHash(nextBlockHash) ;
+            return GetBlockByHash(nextBlockHash);
         }
 
         private JObject GetBlockByHash(JToken hashToken)
         {
-            return this.bitClient.InvokeMethod("getblock", new object[] { hashToken })["result"]  as JObject;
+            return Invoke("getblock", new object[] { hashToken }) as JObject;
         }
     }
 

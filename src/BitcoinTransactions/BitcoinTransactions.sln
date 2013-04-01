@@ -4,6 +4,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BitcoinTransactions", "BitcoinTransactions\BitcoinTransactions.csproj", "{57CE9936-D9B9-46A2-8E1D-8FCFBCA99AA9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TransactionLibrary", "TransactionLibrary\TransactionLibrary.csproj", "{7FF8A44F-3E40-43EC-A7FF-D310A99DA83F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{76AD887E-2669-4174-8F3A-D46C32A55EE9} = {76AD887E-2669-4174-8F3A-D46C32A55EE9}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Storage", "Storage\Storage.csproj", "{76AD887E-2669-4174-8F3A-D46C32A55EE9}"
 EndProject
