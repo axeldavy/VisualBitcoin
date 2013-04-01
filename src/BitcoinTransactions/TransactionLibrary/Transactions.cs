@@ -6,13 +6,16 @@ using System.Net;
 using Bitnet.Client;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
+using Storage;
 
 namespace TransactionLibrary
 {
     public class BitcoinClient
     {
         BitnetClient bitClient;
-        JObject lastBlockStored;
+        WindowsAzureStorage storage;
+        JObject lastBlockSent;
+        JObject listSinceBlock;
 
         public BitcoinClient()
         {
@@ -20,8 +23,11 @@ namespace TransactionLibrary
             var password = ConfigurationManager.AppSettings["bitcoinpassword"];
             this.bitClient = new BitnetClient("http://127.0.0.1:8332");
             this.bitClient.Credentials = new NetworkCredential(user, password);
+            this.storage = new WindowsAzureStorage();
 
-            //TODO: get last block stored from Storage
+            JToken lastBlockHash = new JObject(this.storage.DownloadBlobToString("LastBlockSent"));
+            this.lastBlockSent = GetBlockByHash(lastBlockHash);
+            this.listSinceBlock = GetLastBlock();
         }
 
         public void PutBlocks(int max = 1000)
@@ -31,7 +37,7 @@ namespace TransactionLibrary
 
         public Boolean HasNewBlocks()
         {
-            return false;
+            return this.lastBlockSent != this.listSinceBlock;
         }
 
         public void UploadNewBlocks(JArray arr) 
@@ -81,13 +87,14 @@ namespace TransactionLibrary
             JObject lastBlock = this.bitClient.InvokeMethod("listsinceblock")["result"] as JObject;
             JToken lastBlockHash = lastBlock["lastblock"];
             
-            return GetBlockByHash(lastBlockHash);
+            this.listSinceBlock = GetBlockByHash(lastBlockHash);
+            return this.listSinceBlock;
         }
 
-        public JObject GetPreviousBlock(JObject obj)
+        public JObject GetNextBlock(JObject obj)
         {
-            JToken prevBlockHash = obj["previoussinceblock"];
-            return GetBlockByHash(prevBlockHash) ;
+            JToken nextBlockHash = obj["nextblockhash"];
+            return GetBlockByHash(nextBlockHash) ;
         }
 
         private JObject GetBlockByHash(JToken hashToken)
