@@ -6,26 +6,22 @@ namespace UnitTest
 	[TestClass]
 	public class QueueTest
 	{
-		private const string Message = "Message.";
-
+		// Test the configuration and the start of the storage.
 		[TestMethod]
-		public void AddMessageToQueue()
+		public void MessageThroughQueue()
 		{
-			// Act.
-			Queue.AddMessage(Message);
-		}
+			const bool useDevelopmentStorage = true;
+			const string connectionString = "";
+			const string containerName = "visualbitcoincontainerunittest";
+			const string tableName = "visualbitcointableunittest";
+			const string queueName = "visualbitcoinqueueunittest";
+			const string message = "Message.";
 
-		[TestMethod]
-		public void GetMessageFromQueue()
-		{
-			// Arrange.
-			AddMessageToQueue();
-
-			// Act.
-			var message = Queue.GetMessage();
-
-			// Assert.
-			Assert.AreNotEqual(null, message);
+			WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
+			Queue.AddMessage(message);
+			var transmittedMessage = Queue.GetMessage();
+			
+			Assert.AreEqual(message, transmittedMessage);
 		}
 	}
 }

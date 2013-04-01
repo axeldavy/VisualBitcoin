@@ -1,8 +1,0 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
-<OrderedTest name="MessageThroughQueue" storage="c:\users\user\documents\visual studio 2012\projects\visualbitcoin\src\visualbitcoin 1.1\unittest\messagethroughqueue.orderedtest" id="ace0caf9-7f48-4c70-a224-2a679e60b40d" xmlns="http://microsoft.com/schemas/VisualStudio/TeamTest/2010">
-  <TestLinks>
-    <TestLink id="1cd254f2-4339-453d-4122-10d68b8f3316" name="StartStorage" storage="bin\debug\unittest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <TestLink id="153a52fa-f406-cacd-cbc5-5cbcdcea9e3d" name="AddMessageToQueue" storage="bin\debug\unittest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-    <TestLink id="339aca28-d2d5-ae66-904b-e31f8f5fc91c" name="GetMessageFromQueue" storage="bin\debug\unittest.dll" type="Microsoft.VisualStudio.TestTools.TestTypes.Unit.UnitTestElement, Microsoft.VisualStudio.QualityTools.Tips.UnitTest.ObjectModel, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
-  </TestLinks>
-</OrderedTest>

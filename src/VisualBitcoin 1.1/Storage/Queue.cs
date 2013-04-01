@@ -43,7 +43,7 @@ namespace Storage
 			Trace.WriteLine("Get message from queue.");
 
 			var cloudQueueMessage = CloudQueue.GetMessage();
-			var content = cloudQueueMessage.ToString();
+			var content = cloudQueueMessage.AsString;
 			var message = Coding.Decode(content);
 
 			return message;
