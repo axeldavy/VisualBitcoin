@@ -56,7 +56,7 @@ namespace Storage
 			return block;
 		}
 
-        //Retrieve the list of blocks.
+        //Retrieve the list of blocks (where the blocks' name begin by "block" : to be modified !).
         public static List<string> GetBlockList()
         {
             var blockList = CloudBlobContainer.ListBlobs(prefix: "block");

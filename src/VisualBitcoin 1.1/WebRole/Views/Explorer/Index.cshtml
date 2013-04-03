@@ -6,11 +6,16 @@
 
 <h1>@ViewBag.Title</h1>
 
+<script>
+    $(function () {
+        $("#accordion").accordion();
+    });
+</script>
+
 <div id="accordion">
 @{foreach(WebRole.Models.BlockModel modelItem in Model)
     {
-        
-        <h3> @Html.DisplayFor(modelItemProperty => modelItem.Hash)</h3>
+        <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Hash)</a></h3>
         <div>
             <table>
                 <tr>
