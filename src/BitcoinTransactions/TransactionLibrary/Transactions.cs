@@ -3,43 +3,112 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
-using Bitnet.Client;
 using Newtonsoft.Json.Linq;
 using System.Configuration;
 using Storage;
+using Newtonsoft.Json;
+using System.IO;
 
 namespace TransactionLibrary
 {
     public class BitcoinClient
     {
-        BitnetClient bitClient;
         WindowsAzureStorage storage;
-        JObject lastBlockSent;
+        //JObject lastBlockSent;
         JObject listSinceBlock;
+
+        private Uri Url;
+
+        private ICredentials Credentials;
 
         public BitcoinClient()
         {
             var user = ConfigurationManager.AppSettings["bitcoinuser"];
             var password = ConfigurationManager.AppSettings["bitcoinpassword"];
-            this.bitClient = new BitnetClient("http://127.0.0.1:8332");
-            this.bitClient.Credentials = new NetworkCredential(user, password);
+            this.Credentials = new NetworkCredential(user, password);
+            this.Url = new Uri("http://127.0.0.1:8332");
             this.storage = new WindowsAzureStorage();
 
-            JToken lastBlockHash = new JObject(this.storage.DownloadBlobToString("LastBlockSent"));
-            this.lastBlockSent = GetBlockByHash(lastBlockHash);
+            //JToken lastBlockHash = new JObject(this.storage.DownloadBlobToString("LastBlockSent"));
+            //this.lastBlockSent = GetBlockByHash(lastBlockHash);
+            
             this.listSinceBlock = GetLastBlock();
+            
         }
 
+        public JObject InvokeMethod(string a_sMethod, params object[] a_params) //adapted from bitnet, 04/2013, bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
+        {
+            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(Url);
+            webRequest.Credentials = Credentials;
+
+            webRequest.ContentType = "application/json-rpc";
+            webRequest.Method = "POST";
+
+            JObject joe = new JObject();
+            joe["jsonrpc"] = "1.0";
+            joe["id"] = "1";
+            joe["method"] = a_sMethod;
+
+            if (a_params != null)
+            {
+                if (a_params.Length > 0)
+                {
+                    JArray props = new JArray();
+                    foreach (var p in a_params)
+                    {
+                        props.Add(p);
+                    }
+                    joe.Add(new JProperty("params", props));
+                }
+            }
+
+            string s = JsonConvert.SerializeObject(joe);
+            // serialize json for the request
+            byte[] byteArray = Encoding.UTF8.GetBytes(s);
+            webRequest.ContentLength = byteArray.Length;
+
+            using (Stream dataStream = webRequest.GetRequestStream())
+            {
+                dataStream.Write(byteArray, 0, byteArray.Length);
+            }
+            try
+            {
+                using (WebResponse webResponse = webRequest.GetResponse())
+                {
+                    using (Stream str = webResponse.GetResponseStream())
+                    {
+                        using (StreamReader sr = new StreamReader(str))
+                        {
+                            return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
+                        }
+                    }
+                }
+            }
+            catch (WebException e)
+            {
+                if (e.Status == WebExceptionStatus.ProtocolError)
+                {
+                    using (Stream str = e.Response.GetResponseStream())
+                    {
+                        using (StreamReader sr = new StreamReader(str))
+                        {
+                            return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
+                        }
+                    }
+                }
+                else throw e;
+            }
+            
+        }
 
         public JToken Invoke(string asMethod, params object[] aParams)
         {
-            JObject received = this.bitClient.InvokeMethod(asMethod, aParams);
+            JObject received = InvokeMethod(asMethod, aParams);
             JToken result = received["result"];
-            //JToken error = received["error"]; // bitcoind always sends an error field // unuseful at the moment since an WebException is raised before
-            //bool hasError = error.ToString() != ""; // we have to test if the error field contain an error message.
-            //if (!hasError) return result; // may be null
-            //else throw new Exception("Invoke:" + error.ToString());
-            return result;
+            JToken error = received["error"]; // bitcoind always sends an error field
+            bool hasError = error.ToString() != ""; // we have to test if the error field contain an error message.
+            if (!hasError) return result; // may be null
+            else throw new Exception("Invoke:" + error.ToString());
         }
 
         public void PutBlocks(int max = 1000)
@@ -47,10 +116,10 @@ namespace TransactionLibrary
 
         }
 
-        public Boolean HasNewBlocks()
-        {
-            return this.lastBlockSent["hash"] != GetPrevBlock(this.listSinceBlock)["hash"];
-        }
+        //public Boolean HasNewBlocks()
+        //{
+        //    return this.lastBlockSent["hash"] != GetPrevBlock(this.listSinceBlock)["hash"];
+        //}
 
         public void UploadNewBlocks(JArray arr) 
         { 
