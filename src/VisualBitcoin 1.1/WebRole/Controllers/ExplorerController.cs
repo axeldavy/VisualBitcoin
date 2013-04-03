@@ -1,7 +1,9 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.Web.Mvc;
 using Storage;
 using WebRole.Models;
+
 
 namespace WebRole.Controllers
 {
@@ -19,14 +21,20 @@ namespace WebRole.Controllers
 			                                block.Time, block.Bits, block.NumberOnce, block.NumberOfTransactions,
 											block.Size, block.Index, block.IsInMainChain, block.Height,
 											block.ReceivedTime, block.RelayedBy);
+		    Trace.WriteLine(block.Hash);
 			return blockModel;
 		}
 
 		public ActionResult Index()
 		{
-			var block = Blob.GetExampleBlock();
-			var blockModel = BlockModelOfBlock(block);
-			return View(blockModel);
+		    var blockList = Blob.GetBlockList();
+		    var blockModelList = new List<BlockModel>();
+            foreach (string name in blockList)
+            {
+                var block = Blob.GetBlock(name);
+                blockModelList.Add(BlockModelOfBlock(block));
+            }
+			return View(blockModelList);
 		}
 	}
 }

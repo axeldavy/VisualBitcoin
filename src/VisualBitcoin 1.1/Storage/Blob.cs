@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Text;
 using Microsoft.WindowsAzure.Storage.Blob;
@@ -54,5 +55,19 @@ namespace Storage
 			var block = Serialization.FromXml<Block>(blockBlob);
 			return block;
 		}
+
+        //Retrieve the list of blocks.
+        public static List<string> GetBlockList()
+        {
+            var blockList = CloudBlobContainer.ListBlobs(prefix: "block");
+            var nameList = new List<string>();
+            foreach (IListBlobItem blob in blockList)
+            {
+                Trace.WriteLine("Here is one of the blocks :");
+                Trace.WriteLine(Path.GetFileNameWithoutExtension(blob.Uri.ToString()));
+                nameList.Add(Path.GetFileNameWithoutExtension(blob.Uri.ToString()));
+            }
+            return nameList;
+        }
 	}
 }

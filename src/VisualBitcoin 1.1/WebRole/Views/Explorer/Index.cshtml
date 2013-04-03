@@ -1,125 +1,125 @@
-﻿@model WebRole.Models.BlockModel
-
-@{
+﻿@{
     ViewBag.Title = "Explorer";
 }
 
+@model List<WebRole.Models.BlockModel>
+
 <h1>@ViewBag.Title</h1>
 
-
-<table>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Hash)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.Hash)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Version)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.Version)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.PreviousBlock)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.PreviousBlock)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.MerkleRoot)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.MerkleRoot)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Time)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.Time)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Bits)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.Bits)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.NumberOnce)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.NumberOnce)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.NumberOfTransactions)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.NumberOfTransactions)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Size)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.Size)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Index)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.Index)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.IsInMainChain)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.IsInMainChain)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.Height)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.Height)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.ReceivedTime)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.ReceivedTime)
-        </td>
-    </tr>
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.RelayedBy)
-        </th>
-        <td>
-            @Html.DisplayFor(modelItem => Model.RelayedBy)
-        </td>
-    </tr>
-</table>
-
+<div id="accordion">
+@{foreach(WebRole.Models.BlockModel modelItem in Model)
+    {
+        
+        <h3> @Html.DisplayFor(modelItemProperty => modelItem.Hash)</h3>
+        <div>
+            <table>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Version)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.Version)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.PreviousBlock)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.PreviousBlock)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.MerkleRoot)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.MerkleRoot)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Time)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.Time)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Bits)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.Bits)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.NumberOnce)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.NumberOnce)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.NumberOfTransactions)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.NumberOfTransactions)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Size)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.Size)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Index)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.Index)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.IsInMainChain)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.IsInMainChain)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Height)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.Height)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.ReceivedTime)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.ReceivedTime)
+                    </td>
+                </tr>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.RelayedBy)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.RelayedBy)
+                    </td>
+                </tr>
+            </table>
+    </div>
+    }
+}
+    </div>
 
