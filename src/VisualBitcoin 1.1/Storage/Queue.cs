@@ -24,7 +24,7 @@ namespace Storage
 		// Push a message in the queue with a 7 days time span. It could be a good thing to
 		// declare all the (data) models we need in the dedicated folder "Models". All our 
 		// models in one place.
-		public static void PushMessage<T>(T model)
+		public static void PushMessage<TModel>(TModel model)
 		{
 			Trace.WriteLine("Push message to queue");
 
@@ -41,14 +41,14 @@ namespace Storage
 		}
 
 		// Pop a message from the queue.
-		public static T PopMessage<T>() where T : class
+		public static TModel PopMessage<TModel>() where TModel : class
 		{
 			Trace.WriteLine("Pop message from queue.");
 
 			var cloudQueueMessage = CloudQueue.GetMessage();
 			var content = cloudQueueMessage.AsString;
 			var message = Coding.Decode(content);
-			var model = Serialization.FromXml<T>(message);
+			var model = Serialization.FromXml<TModel>(message);
 
 			return model;
 		}

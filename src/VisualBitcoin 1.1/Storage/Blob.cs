@@ -26,7 +26,7 @@ namespace Storage
 		// Upload a block Blob in the storage. It could be a good thing to declare all the 
 		// (data) models we need in the dedicated folder "Models". All our models in one  
 		// place.
-		public static void UploadBlockBlob<T>(string blockBlobName, T model)
+		public static void UploadBlockBlob<TModel>(string blockBlobName, TModel model)
 		{
 			Trace.WriteLine("Upload blockBlob");
 
@@ -40,7 +40,7 @@ namespace Storage
 		}
 
 		// Download a blockBlob.
-		private static T DownloadBlockBlob<T>(string blockBlobName) where T : class
+		private static TModel DownloadBlockBlob<TModel>(string blockBlobName) where TModel : class
 		{
 			Trace.WriteLine("Retrieve a blockBlob");
 
@@ -50,7 +50,7 @@ namespace Storage
 			var buffer = stream.ToArray();
 			var content = Encoding.UTF8.GetString(buffer);
 			var text = Coding.Decode(content);
-			var model = Serialization.FromXml<T>(text);
+			var model = Serialization.FromXml<TModel>(text);
 
 			return model;
 		}
