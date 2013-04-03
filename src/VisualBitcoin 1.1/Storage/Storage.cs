@@ -8,7 +8,6 @@ namespace Storage
 	public interface IStorage
 	{
 		void UploadContainer(CloudBlobClient blobClient, string containerName);
-		void UploadBlob(CloudBlobClient blobClient, string containerName, string blobName, string fileName);
 		void DownloadBlobToFile(CloudBlobClient blobClient, string containerName, string blobName, string destFileName);
 		String DownloadBlobToString(string blobName);
 		void DeleteBlob(CloudBlobClient blobClient, string containerName, string blobName);
@@ -30,26 +29,6 @@ namespace Storage
 			blobContainer.CreateIfNotExists();
 
 			Console.WriteLine("Upload complete: container \"" + containerName + "\"");
-		}
-
-		public void UploadBlob(CloudBlobClient blobClient, string containerName, string blobName, string fileName)
-		{
-			CloudBlobContainer blobContainer;
-			CloudBlockBlob blockBlob;
-
-			// Retrieve reference to a container.
-			blobContainer = blobClient.GetContainerReference(containerName);
-
-			// Retrieve reference to a blob.
-			blockBlob = blobContainer.GetBlockBlobReference(blobName);
-
-			// Create or overwrite the blob with contents from a local file.
-			using (var fileStream = File.OpenRead(@fileName))
-			{
-				blockBlob.UploadFromStream(fileStream);
-			}
-
-			Console.WriteLine("Upload Complete: \"" + blobName + "\" in container \"" + containerName + "\" from file \"" + fileName + "\"");
 		}
 
 		public void DownloadBlobToFile(CloudBlobClient blobClient, string containerName, string blobName, string destFileName)

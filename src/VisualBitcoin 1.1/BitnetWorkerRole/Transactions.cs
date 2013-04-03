@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Net;
@@ -13,45 +13,45 @@ namespace BitnetWorkerRole
     public class BitcoinClient
     {
         //JObject lastBlockSent;
-        JObject listSinceBlock;
+        JObject _listSinceBlock;
 
-        private Uri Url;
+        private readonly Uri _url;
 
-        private ICredentials Credentials;
+        private readonly ICredentials _credentials;
 
         public BitcoinClient()
         {
             var user = ConfigurationManager.AppSettings["bitcoinuser"];
             var password = ConfigurationManager.AppSettings["bitcoinpassword"];
-            this.Credentials = new NetworkCredential(user, password);
-            this.Url = new Uri("http://127.0.0.1:8332");
+            _credentials = new NetworkCredential(user, password);
+            _url = new Uri("http://127.0.0.1:8332");
 
             //JToken lastBlockHash = new JObject(this.storage.DownloadBlobToString("LastBlockSent"));
             //this.lastBlockSent = GetBlockByHash(lastBlockHash);
 
-            this.listSinceBlock = GetLastBlock();
+            _listSinceBlock = GetLastBlock();
 
         }
 
-        public JObject InvokeMethod(string a_sMethod, params object[] a_params) //adapted from bitnet, 04/2013, bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
+        public JObject InvokeMethod(string aSMethod, params object[] aParams) //adapted from bitnet, 04/2013, bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
         {
-            HttpWebRequest webRequest = (HttpWebRequest)WebRequest.Create(Url);
-            webRequest.Credentials = Credentials;
+            var webRequest = (HttpWebRequest)WebRequest.Create(_url);
+            webRequest.Credentials = _credentials;
 
             webRequest.ContentType = "application/json-rpc";
             webRequest.Method = "POST";
 
-            JObject joe = new JObject();
+            var joe = new JObject();
             joe["jsonrpc"] = "1.0";
             joe["id"] = "1";
-            joe["method"] = a_sMethod;
+            joe["method"] = aSMethod;
 
-            if (a_params != null)
+            if (aParams != null)
             {
-                if (a_params.Length > 0)
+                if (aParams.Length > 0)
                 {
-                    JArray props = new JArray();
-                    foreach (var p in a_params)
+                    var props = new JArray();
+                    foreach (var p in aParams)
                     {
                         props.Add(p);
                     }
@@ -74,7 +74,8 @@ namespace BitnetWorkerRole
                 {
                     using (Stream str = webResponse.GetResponseStream())
                     {
-                        using (StreamReader sr = new StreamReader(str))
+	                    Debug.Assert(str != null, "str != null");
+	                    using (var sr = new StreamReader(str))
                         {
                             return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
                         }
@@ -83,19 +84,19 @@ namespace BitnetWorkerRole
             }
             catch (WebException e)
             {
-                if (e.Status == WebExceptionStatus.ProtocolError)
+	            if (e.Status == WebExceptionStatus.ProtocolError)
                 {
                     using (Stream str = e.Response.GetResponseStream())
                     {
-                        using (StreamReader sr = new StreamReader(str))
+	                    Debug.Assert(str != null, "str != null");
+	                    using (var sr = new StreamReader(str))
                         {
                             return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
                         }
                     }
                 }
-                else throw e;
+	            throw;
             }
-
         }
 
         public JToken Invoke(string asMethod, params object[] aParams)
@@ -105,7 +106,7 @@ namespace BitnetWorkerRole
             JToken error = received["error"]; // bitcoind always sends an error field
             bool hasError = error.ToString() != ""; // we have to test if the error field contain an error message.
             if (!hasError) return result; // may be null
-            else throw new Exception("Invoke:" + error.ToString());
+	        throw new Exception("Invoke:" + error);
         }
 
         public void UploadNewBlocks(int max = 1000)
@@ -116,7 +117,7 @@ namespace BitnetWorkerRole
         public Transaction[] GetTransactionsFromBlock(JObject block)
         {
             JToken txidList = block["tx"];
-            Transaction[] transactionsFromBlock = new Transaction[txidList.Count()];
+            var transactionsFromBlock = new Transaction[txidList.Count()];
 
             int count = 0;
             foreach (JValue txid in txidList)
@@ -129,12 +130,14 @@ namespace BitnetWorkerRole
                         amount = amount + (double)v["value"]; // assert > 0
                     else throw new Exception("type error in BlockandTransactionTransfer");
                 }
-                transactionsFromBlock[count] = new Transaction();
-                transactionsFromBlock[count].amount = amount;
-                transactionsFromBlock[count].txid = (string)txid;
-                transactionsFromBlock[count].version = (short)transaction["version"];
-                transactionsFromBlock[count].locktime = (long)transaction["locktime"];
-                count += 1;
+                transactionsFromBlock[count] = new Transaction
+	                {
+		                Amount = amount,
+		                Txid = (string) txid,
+		                Version = (short) transaction["version"],
+		                Locktime = (long) transaction["locktime"]
+	                };
+	            count += 1;
             }
 
             return transactionsFromBlock;
@@ -150,11 +153,12 @@ namespace BitnetWorkerRole
 
         public JObject GetLastBlock()
         {
-            JObject lastBlock = Invoke("listsinceblock") as JObject;
-            JToken lastBlockHash = lastBlock["lastblock"];
+            var lastBlock = Invoke("listsinceblock") as JObject;
+	        Debug.Assert(lastBlock != null, "lastBlock != null");
+	        JToken lastBlockHash = lastBlock["lastblock"];
 
-            this.listSinceBlock = GetBlockByHash(lastBlockHash);
-            return this.listSinceBlock;
+            _listSinceBlock = GetBlockByHash(lastBlockHash);
+            return _listSinceBlock;
         }
 
         public JObject GetPrevBlock(JObject obj)
@@ -176,39 +180,39 @@ namespace BitnetWorkerRole
 
     public class Transaction // vin, vout missing
     {
-        public string txid { set; get; }
-        public double amount { get; set; } // double may be not precise enough
-        public short version { get; set; }
-        public long locktime { get; set; } // nut sure for 'long'
+        public string Txid { set; get; }
+        public double Amount { get; set; } // double may be not precise enough
+        public short Version { get; set; }
+        public long Locktime { get; set; } // nut sure for 'long'
     }
 
     public class BlockandTransactionTransfer
     {
-        public string hashblock { get; set; }
-        public short version { get; set; }
-        public long size { get; set; }
-        public long height { get; set; }
-        public string merkleroot { get; set; }
-        public long time { get; set; }
-        public string bits { get; set; }
-        public double difficulty { get; set; }
-        public string previousBlockHash { get; set; }
-        public Transaction[] transactionArray { get; set; }
-        public BitcoinClient bitcoinClient;
+        public string Hashblock { get; set; }
+        public short Version { get; set; }
+        public long Size { get; set; }
+        public long Height { get; set; }
+        public string Merkleroot { get; set; }
+        public long Time { get; set; }
+        public string Bits { get; set; }
+        public double Difficulty { get; set; }
+        public string PreviousBlockHash { get; set; }
+        public Transaction[] TransactionArray { get; set; }
+        public BitcoinClient BitcoinClient;
 
         public BlockandTransactionTransfer(JObject block)
         {
-            this.bitcoinClient = new BitcoinClient();
-            this.transactionArray = this.bitcoinClient.GetTransactionsFromBlock(block);
-            this.hashblock = (string)block["hash"];
-            this.version = (short)block["version"];
-            this.size = (long)block["size"];
-            this.height = (long)block["height"];
-            this.merkleroot = (string)block["merkleroot"];
-            this.time = (long)block["time"];
-            this.previousBlockHash = (string)block["previousblockhash"];
-            this.bits = (string)block["bits"];
-            this.difficulty = (double)block["difficulty"];
+            BitcoinClient = new BitcoinClient();
+            TransactionArray = BitcoinClient.GetTransactionsFromBlock(block);
+            Hashblock = (string)block["hash"];
+            Version = (short)block["version"];
+            Size = (long)block["size"];
+            Height = (long)block["height"];
+            Merkleroot = (string)block["merkleroot"];
+            Time = (long)block["time"];
+            PreviousBlockHash = (string)block["previousblockhash"];
+            Bits = (string)block["bits"];
+            Difficulty = (double)block["difficulty"];
         }
     }
 }
