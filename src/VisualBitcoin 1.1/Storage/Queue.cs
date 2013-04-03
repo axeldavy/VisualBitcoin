@@ -22,7 +22,8 @@ namespace Storage
 		}
 		
 		// Push a message in the queue with a 7 days time span. It could be a good thing to
-		// declare all the (data) models we need in the dedicated folder "Models".
+		// declare all the (data) models we need in the dedicated folder "Models". All our 
+		// models in one place.
 		public static void PushMessage<T>(T model)
 		{
 			Trace.WriteLine("Push message to queue");

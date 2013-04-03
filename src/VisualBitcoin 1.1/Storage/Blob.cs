@@ -22,18 +22,37 @@ namespace Storage
 			CloudBlobContainer = CloudBlobClient.GetContainerReference(containerName);
 			CloudBlobContainer.CreateIfNotExists();
 		}
+		
+		// Upload a block Blob in the storage. It could be a good thing to declare all the 
+		// (data) models we need in the dedicated folder "Models". All our models in one  
+		// place.
+		public static void UploadBlockBlob<T>(string blockBlobName, T model)
+		{
+			Trace.WriteLine("Upload blockBlob");
 
-		// Retrieve a blockBlob.
-		private static string DownloadBlockBlob(string blockBlobName)
+			var text = Serialization.ToXml(model);
+			var content = Coding.Code(text);
+			var blockBlob = CloudBlobContainer.GetBlockBlobReference(blockBlobName);
+			var buffer = Encoding.UTF8.GetBytes(content);
+			var stream = new MemoryStream(buffer);
+
+			blockBlob.UploadFromStream(stream);
+		}
+
+		// Download a blockBlob.
+		private static T DownloadBlockBlob<T>(string blockBlobName) where T : class
 		{
 			Trace.WriteLine("Retrieve a blockBlob");
 
 			var cloudBlockBlob = CloudBlobContainer.GetBlockBlobReference(blockBlobName);
-			var memoryStream = new MemoryStream();
-			cloudBlockBlob.DownloadToStream(memoryStream);
-			var text = Encoding.UTF8.GetString(memoryStream.ToArray());
+			var stream = new MemoryStream();
+			cloudBlockBlob.DownloadToStream(stream);
+			var buffer = stream.ToArray();
+			var content = Encoding.UTF8.GetString(buffer);
+			var text = Coding.Decode(content);
+			var model = Serialization.FromXml<T>(text);
 
-			return text;
+			return model;
 		}
 
 		// Retrieve the example block instance.
@@ -41,8 +60,7 @@ namespace Storage
 		{
 			Trace.WriteLine("Get example block instance.");
 
-			var blob = DownloadBlockBlob("block");
-			var block = Serialization.FromXml<Block>(blob);
+			var block = DownloadBlockBlob<Block>("block");
 			return block;
 		}
 
@@ -51,8 +69,7 @@ namespace Storage
 		{
 			Trace.WriteLine("Get a block instance.");
 
-			var blockBlob = DownloadBlockBlob(blockName);
-			var block = Serialization.FromXml<Block>(blockBlob);
+			var block = DownloadBlockBlob<Block>(blockName);
 			return block;
 		}
 
@@ -64,7 +81,7 @@ namespace Storage
             foreach (IListBlobItem blob in blockList)
             {
                 Trace.WriteLine("Here is one of the blocks :");
-                Trace.WriteLine(Path.GetFileNameWithoutExtension(blob.Uri.ToString()));
+                // Trace.WriteLine(Path.GetFileNameWithoutExtension(blob.Uri.ToString()));
                 nameList.Add(Path.GetFileNameWithoutExtension(blob.Uri.ToString()));
             }
             return nameList;
