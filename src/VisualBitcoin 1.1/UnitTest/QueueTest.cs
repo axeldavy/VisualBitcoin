@@ -18,8 +18,8 @@ namespace UnitTest
 			const string message = "Message.";
 
 			WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
-			Queue.AddMessage(message);
-			var transmittedMessage = Queue.GetMessage();
+			Queue.PushMessage(message);
+			var transmittedMessage = Queue.PopMessage<string>();
 			
 			Assert.AreEqual(message, transmittedMessage);
 		}

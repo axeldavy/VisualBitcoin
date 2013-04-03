@@ -21,11 +21,11 @@ namespace Storage
 			CloudQueue.CreateIfNotExists();
 		}
 		
-		// Add a message in the queue with a 7 days time span. It could be a good thing to 
+		// Push a message in the queue with a 7 days time span. It could be a good thing to
 		// declare all the (data) models we need in the dedicated folder "Models".
-		public static void AddMessage<T>(T model)
+		public static void PushMessage<T>(T model)
 		{
-			Trace.WriteLine("Add message to queue");
+			Trace.WriteLine("Push message to queue");
 
 			var message = Serialization.ToXml(model);
 			var content = Coding.Code(message);
@@ -39,10 +39,10 @@ namespace Storage
 			CloudQueue.AddMessage(cloudQueueMessage, timeSpan);
 		}
 
-		// Get a message from the queue.
-		public static T GetMessage<T>() where T : class
+		// Pop a message from the queue.
+		public static T PopMessage<T>() where T : class
 		{
-			Trace.WriteLine("Get message from queue.");
+			Trace.WriteLine("Pop message from queue.");
 
 			var cloudQueueMessage = CloudQueue.GetMessage();
 			var content = cloudQueueMessage.AsString;
