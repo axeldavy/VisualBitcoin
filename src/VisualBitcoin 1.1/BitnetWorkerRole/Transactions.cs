@@ -3,17 +3,15 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Net;
-using Newtonsoft.Json.Linq;
 using System.Configuration;
-using Storage;
-using Newtonsoft.Json;
 using System.IO;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
-namespace TransactionLibrary
+namespace BitnetWorkerRole
 {
     public class BitcoinClient
     {
-        WindowsAzureStorage storage;
         //JObject lastBlockSent;
         JObject listSinceBlock;
 
@@ -27,13 +25,12 @@ namespace TransactionLibrary
             var password = ConfigurationManager.AppSettings["bitcoinpassword"];
             this.Credentials = new NetworkCredential(user, password);
             this.Url = new Uri("http://127.0.0.1:8332");
-            this.storage = new WindowsAzureStorage();
 
             //JToken lastBlockHash = new JObject(this.storage.DownloadBlobToString("LastBlockSent"));
             //this.lastBlockSent = GetBlockByHash(lastBlockHash);
-            
+
             this.listSinceBlock = GetLastBlock();
-            
+
         }
 
         public JObject InvokeMethod(string a_sMethod, params object[] a_params) //adapted from bitnet, 04/2013, bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
@@ -98,7 +95,7 @@ namespace TransactionLibrary
                 }
                 else throw e;
             }
-            
+
         }
 
         public JToken Invoke(string asMethod, params object[] aParams)
@@ -111,22 +108,12 @@ namespace TransactionLibrary
             else throw new Exception("Invoke:" + error.ToString());
         }
 
-        public void PutBlocks(int max = 1000)
+        public void UploadNewBlocks(int max = 1000)
         {
-
+            // TODO, complete this method using the defined helper methods
         }
 
-        //public Boolean HasNewBlocks()
-        //{
-        //    return this.lastBlockSent["hash"] != GetPrevBlock(this.listSinceBlock)["hash"];
-        //}
-
-        public void UploadNewBlocks(JArray arr) 
-        { 
-
-        }
-
-        public Transaction[] GetTransactionsFromBlock(JObject block) 
+        public Transaction[] GetTransactionsFromBlock(JObject block)
         {
             JToken txidList = block["tx"];
             Transaction[] transactionsFromBlock = new Transaction[txidList.Count()];
@@ -138,25 +125,25 @@ namespace TransactionLibrary
                 double amount = 0;
                 foreach (JObject v in transaction["vout"])
                 {
-                    if (v["value"].Type == JTokenType.Float) 
-                        amount = amount + (double) v["value"]; // assert > 0
+                    if (v["value"].Type == JTokenType.Float)
+                        amount = amount + (double)v["value"]; // assert > 0
                     else throw new Exception("type error in BlockandTransactionTransfer");
                 }
                 transactionsFromBlock[count] = new Transaction();
                 transactionsFromBlock[count].amount = amount;
-                transactionsFromBlock[count].txid = (string) txid;
-                transactionsFromBlock[count].version = (short) transaction["version"];
-                transactionsFromBlock[count].locktime = (long) transaction["locktime"];
+                transactionsFromBlock[count].txid = (string)txid;
+                transactionsFromBlock[count].version = (short)transaction["version"];
+                transactionsFromBlock[count].locktime = (long)transaction["locktime"];
                 count += 1;
             }
 
             return transactionsFromBlock;
-                
+
         }
 
         public JObject DecodeTransaction(JValue txid)
         {
-            JToken txHash = Invoke("getrawtransaction", new object[] {txid});
+            JToken txHash = Invoke("getrawtransaction", new object[] { txid });
             if (txHash == null) throw new Exception("null transaction hash value");
             return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
         }
@@ -165,15 +152,15 @@ namespace TransactionLibrary
         {
             JObject lastBlock = Invoke("listsinceblock") as JObject;
             JToken lastBlockHash = lastBlock["lastblock"];
-            
+
             this.listSinceBlock = GetBlockByHash(lastBlockHash);
             return this.listSinceBlock;
         }
-        
+
         public JObject GetPrevBlock(JObject obj)
         {
             JToken prevBlockHash = obj["prevblockhash"];
-            return GetBlockByHash(prevBlockHash) ;
+            return GetBlockByHash(prevBlockHash);
         }
         public JObject GetNextBlock(JObject obj)
         {
@@ -222,27 +209,6 @@ namespace TransactionLibrary
             this.previousBlockHash = (string)block["previousblockhash"];
             this.bits = (string)block["bits"];
             this.difficulty = (double)block["difficulty"];
-        }
-
-        public void toTest()
-        {
-            Console.WriteLine("hash: {0}",hashblock);
-            Console.WriteLine("version: {0}", version);
-            Console.WriteLine("size: {0}", size);
-            Console.WriteLine("height: {0}", height);
-            Console.WriteLine("time: {0}", time);
-            Console.WriteLine("difficulty: {0}", difficulty);
-            Console.WriteLine("merkleroot: {0}", merkleroot);
-            Console.WriteLine("bits: {0}", bits);
-            Console.WriteLine("previousblockhash: {0}", previousBlockHash);
-            Console.WriteLine("transactions: ");
-            foreach (Transaction t in transactionArray)
-            {
-                Console.WriteLine("txid: {0}", t.txid);
-                Console.WriteLine("amount: {0}", t.amount);
-                Console.WriteLine("locktime: {0}", t.locktime);
-                Console.WriteLine("version: {0}", t.version);
-            }
         }
     }
 }

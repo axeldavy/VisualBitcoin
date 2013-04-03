@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Storage")]
+[assembly: AssemblyTitle("BitnetWorkerRole")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("Storage")]
+[assembly: AssemblyProduct("BitnetWorkerRole")]
 [assembly: AssemblyCopyright("Copyright ©  2013")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("0db0fcfc-4f65-40d9-8448-f3b373ecdc64")]
+[assembly: Guid("b2c0faaf-46c2-467a-a7ff-eefda11aa3a2")]
 
 // Version information for an assembly consists of the following four values:
 //
