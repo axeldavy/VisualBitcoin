@@ -1,22 +1,24 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text;
 using System.Net;
 using System.Configuration;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Storage;
 
 namespace BitnetWorkerRole
 {
     public class BitcoinClient
     {
-        //JObject lastBlockSent;
-        JObject _listSinceBlock;
+        Block _lastBlockSent;
+        Block _listSinceBlock;
 
         private readonly Uri _url;
-
         private readonly ICredentials _credentials;
 
         public BitcoinClient()
@@ -26,11 +28,8 @@ namespace BitnetWorkerRole
             _credentials = new NetworkCredential(user, password);
             _url = new Uri("http://127.0.0.1:8332");
 
-            //JToken lastBlockHash = new JObject(this.storage.DownloadBlobToString("LastBlockSent"));
-            //this.lastBlockSent = GetBlockByHash(lastBlockHash);
-
+            _lastBlockSent = Blob.GetBlock("LastBlockSent");
             _listSinceBlock = GetLastBlock();
-
         }
 
         public JObject InvokeMethod(string aSMethod, params object[] aParams) //adapted from bitnet, 04/2013, bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
@@ -111,13 +110,21 @@ namespace BitnetWorkerRole
 
         public void UploadNewBlocks(int max = 1000)
         {
-            // TODO, complete this method using the defined helper methods
+            Block block = this._lastBlockSent;
+            int count = 0; 
+
+            while (count < max && block.Hash != this._listSinceBlock.Hash) {
+                //TODO, figure out how to use TModel as input 
+                //Blob.UploadBlockBlob<Block>(block, Block);
+                block = GetNextBlock(block);
+                count += 1;
+            }            
         }
 
-        public Transaction[] GetTransactionsFromBlock(JObject block)
+        public Transactions[] GetTransactionsFromBlock(JObject block)
         {
             JToken txidList = block["tx"];
-            var transactionsFromBlock = new Transaction[txidList.Count()];
+            var transactionsFromBlock = new Transactions[txidList.Count()];
 
             int count = 0;
             foreach (JValue txid in txidList)
@@ -130,12 +137,12 @@ namespace BitnetWorkerRole
                         amount = amount + (double)v["value"]; // assert > 0
                     else throw new Exception("type error in BlockandTransactionTransfer");
                 }
-                transactionsFromBlock[count] = new Transaction
+                transactionsFromBlock[count] = new Transactions
 	                {
 		                Amount = amount,
 		                Txid = (string) txid,
-		                Version = (short) transaction["version"],
-		                Locktime = (long) transaction["locktime"]
+		                Version = (int) transaction["version"],
+		                Locktime = (int) transaction["locktime"]
 	                };
 	            count += 1;
             }
@@ -151,7 +158,7 @@ namespace BitnetWorkerRole
             return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
         }
 
-        public JObject GetLastBlock()
+        public Block GetLastBlock()
         {
             var lastBlock = Invoke("listsinceblock") as JObject;
 	        Debug.Assert(lastBlock != null, "lastBlock != null");
@@ -161,58 +168,51 @@ namespace BitnetWorkerRole
             return _listSinceBlock;
         }
 
-        public JObject GetPrevBlock(JObject obj)
+        public Block GetPrevBlock(Block block)
         {
-            JToken prevBlockHash = obj["prevblockhash"];
-            return GetBlockByHash(prevBlockHash);
-        }
-        public JObject GetNextBlock(JObject obj)
-        {
-            JToken nextBlockHash = obj["nextblockhash"];
-            return GetBlockByHash(nextBlockHash);
+            return GetBlockByHash(block.PreviousBlock);
         }
 
-        private JObject GetBlockByHash(JToken hashToken)
+        public Block GetNextBlock(Block block)
         {
-            return Invoke("getblock", new object[] { hashToken }) as JObject;
+            return GetBlockByHash(block.NextBlock);
         }
-    }
 
-    public class Transaction // vin, vout missing
-    {
-        public string Txid { set; get; }
-        public double Amount { get; set; } // double may be not precise enough
-        public short Version { get; set; }
-        public long Locktime { get; set; } // nut sure for 'long'
-    }
-
-    public class BlockandTransactionTransfer
-    {
-        public string Hashblock { get; set; }
-        public short Version { get; set; }
-        public long Size { get; set; }
-        public long Height { get; set; }
-        public string Merkleroot { get; set; }
-        public long Time { get; set; }
-        public string Bits { get; set; }
-        public double Difficulty { get; set; }
-        public string PreviousBlockHash { get; set; }
-        public Transaction[] TransactionArray { get; set; }
-        public BitcoinClient BitcoinClient;
-
-        public BlockandTransactionTransfer(JObject block)
+        private Block GetBlockByHash(JToken hashToken)
         {
-            BitcoinClient = new BitcoinClient();
-            TransactionArray = BitcoinClient.GetTransactionsFromBlock(block);
-            Hashblock = (string)block["hash"];
-            Version = (short)block["version"];
-            Size = (long)block["size"];
-            Height = (long)block["height"];
-            Merkleroot = (string)block["merkleroot"];
-            Time = (long)block["time"];
-            PreviousBlockHash = (string)block["previousblockhash"];
-            Bits = (string)block["bits"];
-            Difficulty = (double)block["difficulty"];
+            JObject block = Invoke("getblock", new object[] { hashToken }) as JObject;
+            return GetBlockModel(block);
         }
+
+        private Block GetBlockModel(JObject block)
+        {
+            string hash = (string) block["hash"];
+            string version = (string) block["version"];
+            string previousBlock = (string) block["previousblockhash"]; // TODO, throw error if not exists
+            string nextBlock = (string) block["nextblockhash"]; // TODO, throw error if not exists
+            string merkleRoot = (string) block["merkleroot"];
+            int time = (int) block["time"];
+            int bits = (int) block["bits"];
+            int numberOnce = 0; // default
+            Transactions[] transactions = GetTransactionsFromBlock(block);
+            int numberOfTransactions = transactions.Count();
+            int size = (int) block["size"];
+            int index = 0; // default
+            bool isInMainChain = false; // default
+            int height = (int) block["height"];
+            int receivedTime = 0;
+            try 
+            {
+                receivedTime = int.Parse(DateTime.Now.ToString("HH:mm:ss tt"));
+            }
+            catch (Exception e) 
+            {
+                Trace.WriteLine("Exception occured in creating Block Model");   
+            }
+            string relayedBy = ""; // default
+            return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, bits, numberOnce, 
+                numberOfTransactions, size, index, isInMainChain, height, receivedTime, relayedBy, transactions);
+        }
+
     }
 }
