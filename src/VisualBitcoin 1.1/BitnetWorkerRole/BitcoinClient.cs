@@ -15,6 +15,7 @@ namespace BitnetWorkerRole
     public class BitcoinClient
     {
 	    readonly Block _lastBlockSent;
+	    readonly BlockReference _lastBlockReferenceSent;
         Block _listSinceBlock;
 
         private readonly Uri _url;
@@ -28,6 +29,7 @@ namespace BitnetWorkerRole
             _url = new Uri("http://127.0.0.1:8332");
 
             _lastBlockSent = Blob.GetBlock("LastBlockSent");
+			_lastBlockReferenceSent = new BlockReference(_lastBlockSent.Hash);
             _listSinceBlock = GetLastBlock();
         }
 
@@ -109,13 +111,16 @@ namespace BitnetWorkerRole
 
         public void UploadNewBlocks(int max = 1000)
         {
-            Block block = _lastBlockSent;
-            int count = 0; 
+            var block = _lastBlockSent;
+	        var blockReference = _lastBlockReferenceSent;
+            var count = 0;
 
             while (count < max && block.Hash != _listSinceBlock.Hash) {
                 block = GetNextBlock(block);
-                Blob.UploadBlockBlob<Block>(block.Hash, block);
-                Blob.UploadBlockBlob<Block>("LastBlockSent", block);
+	            blockReference.Hash = block.Hash;
+                Blob.UploadBlockBlob(block.Hash, block);
+                Blob.UploadBlockBlob("LastBlockSent", block);
+				Queue.PushMessage(blockReference);
                 count += 1;
             }            
         }
