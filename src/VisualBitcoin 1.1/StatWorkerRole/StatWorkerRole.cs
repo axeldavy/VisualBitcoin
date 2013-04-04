@@ -1,4 +1,5 @@
 ﻿using System;
+using Storage.Models;
 
 namespace WorkerRole
 {
@@ -43,7 +44,7 @@ namespace WorkerRole
             Review_Statistics(block);
         }
 
-        static void Review_Statistics(Storage.Block x) //Update statistics
+        static void Review_Statistics(Block x) //Update statistics
         {
             _numberOfBlocks += 1;
             _numberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions); 

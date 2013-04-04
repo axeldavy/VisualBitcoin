@@ -1,4 +1,4 @@
-﻿namespace Storage
+﻿namespace Storage.Models
 {
     public class Transactions // vin and vout not included
     {

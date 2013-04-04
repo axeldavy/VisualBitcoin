@@ -1,4 +1,4 @@
-﻿namespace Storage
+﻿namespace Storage.Models
 {
 	public class Block
 	{

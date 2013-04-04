@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Linq;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Text;
 using System.Net;
 using System.Configuration;
@@ -10,12 +8,13 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Storage;
+using Storage.Models;
 
 namespace BitnetWorkerRole
 {
     public class BitcoinClient
     {
-        Block _lastBlockSent;
+	    readonly Block _lastBlockSent;
         Block _listSinceBlock;
 
         private readonly Uri _url;
@@ -110,10 +109,10 @@ namespace BitnetWorkerRole
 
         public void UploadNewBlocks(int max = 1000)
         {
-            Block block = this._lastBlockSent;
+            Block block = _lastBlockSent;
             int count = 0; 
 
-            while (count < max && block.Hash != this._listSinceBlock.Hash) {
+            while (count < max && block.Hash != _listSinceBlock.Hash) {
                 //TODO, figure out how to use TModel as input 
                 //Blob.UploadBlockBlob<Block>(block, Block);
                 block = GetNextBlock(block);
@@ -180,36 +179,36 @@ namespace BitnetWorkerRole
 
         private Block GetBlockByHash(JToken hashToken)
         {
-            JObject block = Invoke("getblock", new object[] { hashToken }) as JObject;
+            var block = Invoke("getblock", new object[] { hashToken }) as JObject;
             return GetBlockModel(block);
         }
 
         private Block GetBlockModel(JObject block)
         {
-            string hash = (string) block["hash"];
-            string version = (string) block["version"];
-            string previousBlock = (string) block["previousblockhash"]; // TODO, throw error if not exists
-            string nextBlock = (string) block["nextblockhash"]; // TODO, throw error if not exists
-            string merkleRoot = (string) block["merkleroot"];
-            int time = (int) block["time"];
-            int bits = (int) block["bits"];
-            int numberOnce = 0; // default
+            var hash = (string) block["hash"];
+            var version = (string) block["version"];
+            var previousBlock = (string) block["previousblockhash"]; // TODO, throw error if not exists
+            var nextBlock = (string) block["nextblockhash"]; // TODO, throw error if not exists
+            var merkleRoot = (string) block["merkleroot"];
+            var time = (int) block["time"];
+            var bits = (int) block["bits"];
+            const int numberOnce = 0; // default
             Transactions[] transactions = GetTransactionsFromBlock(block);
-            int numberOfTransactions = transactions.Count();
-            int size = (int) block["size"];
-            int index = 0; // default
-            bool isInMainChain = false; // default
-            int height = (int) block["height"];
-            int receivedTime = 0;
+            var numberOfTransactions = transactions.Count();
+            var size = (int) block["size"];
+            const int index = 0; // default
+            const bool isInMainChain = false; // default
+            var height = (int) block["height"];
+            var receivedTime = 0;
             try 
             {
                 receivedTime = int.Parse(DateTime.Now.ToString("HH:mm:ss tt"));
             }
-            catch (Exception e) 
+            catch (Exception) 
             {
                 Trace.WriteLine("Exception occured in creating Block Model");   
             }
-            string relayedBy = ""; // default
+            const string relayedBy = ""; // default
             return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, bits, numberOnce, 
                 numberOfTransactions, size, index, isInMainChain, height, receivedTime, relayedBy, transactions);
         }
