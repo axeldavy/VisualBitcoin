@@ -113,9 +113,9 @@ namespace BitnetWorkerRole
             int count = 0; 
 
             while (count < max && block.Hash != _listSinceBlock.Hash) {
-                //TODO, figure out how to use TModel as input 
-                //Blob.UploadBlockBlob<Block>(block, Block);
                 block = GetNextBlock(block);
+                Blob.UploadBlockBlob<Block>(block.Hash, block);
+                Blob.UploadBlockBlob<Block>("LastBlockSent", block);
                 count += 1;
             }            
         }

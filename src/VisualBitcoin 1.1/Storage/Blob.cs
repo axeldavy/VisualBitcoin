@@ -27,7 +27,7 @@ namespace Storage
 		// Upload a block Blob in the storage. It could be a good thing to declare all the 
 		// (data) models we need in the dedicated folder "Models". All our models in one  
 		// place.
-		public static void UploadBlockBlob<TModel>(string blockBlobName, TModel model) where TModel : class
+		public static void UploadBlockBlob<TModel>(string blockBlobName, TModel model)
 		{
 			Trace.WriteLine("Upload blockBlob");
 
