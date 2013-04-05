@@ -28,6 +28,7 @@ namespace StorageWorkerRole
 				"VisualBitcoin.StorageWorkerRole.WorkerRole Information");
 
 			// TODO: Configure the StorageWorkerRole.
+            // TODO: needed three BlobContainers: for brute blocks, for clear blocks, for transactions
 
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;

@@ -59,9 +59,21 @@ namespace Storage
 			var content = Encoding.UTF8.GetString(buffer);
 			var text = Coding.Decode(content);
 			var model = Serialization.FromXml<TModel>(text);
-
+            
 			return model;
 		}
+
+        //Deleting the blob from container
+        public static void DeleteBlockBlob(string blockBlobName)
+        {
+            Trace.WriteLine("Delete", "VisualBitcoin.Storage.Blob Information");
+
+            if (null == CloudBlobContainer)
+                throw new Exception("Test");
+
+            var cloudBlockBlob = CloudBlobContainer.GetBlockBlobReference(blockBlobName);
+            cloudBlockBlob.Delete();
+        }
 
 		// Retrieve the example block instance.
 		public static Block GetExampleBlock()
