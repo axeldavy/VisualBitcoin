@@ -12,7 +12,8 @@ namespace WebRole.Controllers
 	{
 		public ExplorerController()
 		{
-			Trace.WriteLine("Reach Explorer Controller");
+			Trace.WriteLine("Entry point called",
+				"VisualBitcoin.WebRole.Controllers.ExplorerController Information");
 		}
 
 
@@ -22,7 +23,6 @@ namespace WebRole.Controllers
 			                                block.Time, block.Bits, block.NumberOnce, block.NumberOfTransactions,
 											block.Size, block.Index, block.IsInMainChain, block.Height,
 											block.ReceivedTime, block.RelayedBy);
-		    Trace.WriteLine(block.Hash);
 			return blockModel;
 		}
 

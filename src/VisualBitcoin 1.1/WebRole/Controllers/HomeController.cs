@@ -7,7 +7,8 @@ namespace WebRole.Controllers
 	{
 		public HomeController()
 		{
-			Trace.WriteLine("Reach Home Controller");
+			Trace.WriteLine("Entry point called",
+				"VisualBitcoin.WebRole.Controllers.HomeController Information");
 		}
 
 		public ActionResult Index()

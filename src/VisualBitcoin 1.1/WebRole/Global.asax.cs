@@ -1,10 +1,11 @@
-﻿using System.Configuration;
+﻿using System.Diagnostics;
 using System.Web.Http;
 using System.Web.Mvc;
 using System.Web.Optimization;
 using System.Web.Routing;
-using WebRole.App_Start;
+using Microsoft.WindowsAzure;
 using Storage;
+using WebRole.App_Start;
 
 namespace WebRole
 {
@@ -12,6 +13,9 @@ namespace WebRole
 	{
 		protected void Application_Start()
 		{
+			Trace.WriteLine("Application start",
+				"VisualBitcoin.WebRole Information");
+			
 			AreaRegistration.RegisterAllAreas();
 
 			WebApiConfig.Register(GlobalConfiguration.Configuration);
@@ -20,11 +24,11 @@ namespace WebRole
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 			// Storage configuration and start.
-			var useDevelopmentStorage = bool.Parse(ConfigurationManager.AppSettings["useDevelopmentStorage"]);
-			var connectionString = ConfigurationManager.ConnectionStrings["StorageConnectionString"].ConnectionString;
-			var containerName = ConfigurationManager.AppSettings["Container"];
-			var tableName = ConfigurationManager.AppSettings["Table"];
-			var queueName = ConfigurationManager.AppSettings["Queue"];
+			var useDevelopmentStorage = bool.Parse(CloudConfigurationManager.GetSetting("UseDevelopmentStorage"));
+			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
+			var containerName = CloudConfigurationManager.GetSetting("Container");
+			var tableName = CloudConfigurationManager.GetSetting("Table");
+			var queueName = CloudConfigurationManager.GetSetting("Queue");
 			WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
 		}
 	}

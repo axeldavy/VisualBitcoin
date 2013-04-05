@@ -13,7 +13,8 @@ namespace Storage
 		// Configure and start the table storage, only one call make on application start.
 		public static void Start(string tableName)
 		{
-			Trace.WriteLine("Configure and start the table storage");
+			Trace.WriteLine("On start",
+				"VisualBitcoin.Storage.Table Information");
 
 			CloudTableClient = WindowsAzure.StorageAccount.CreateCloudTableClient();
 			CloudTable = CloudTableClient.GetTableReference(tableName);

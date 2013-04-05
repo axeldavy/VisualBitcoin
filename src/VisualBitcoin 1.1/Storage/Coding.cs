@@ -8,14 +8,16 @@ namespace Storage
 
 		public static string Code(string content)
 		{
-			Trace.WriteLine("Code message");
+			Trace.WriteLine("Message coded",
+				"VisualBitcoin.Storage.Coding Information");
 
 			return content;
 		}
 
 		public static string Decode(string content)
 		{
-			Trace.WriteLine("Decode message");
+			Trace.WriteLine("Message decoded",
+				"VisualBitcoin.Storage.Coding Information");
 
 			return content;
 		}

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
@@ -17,7 +18,8 @@ namespace Storage
 		// Configure and start the blob storage, only one call make on application start.
 		public static void Start(string containerName)
 		{
-			Trace.WriteLine("Configure and start the blob storage");
+			Trace.WriteLine("Start",
+				"VisualBitcoin.Storage.Blob Information");
 
 			CloudBlobClient = WindowsAzure.StorageAccount.CreateCloudBlobClient();
 			CloudBlobContainer = CloudBlobClient.GetContainerReference(containerName);
@@ -29,7 +31,8 @@ namespace Storage
 		// place.
 		public static void UploadBlockBlob<TModel>(string blockBlobName, TModel model)
 		{
-			Trace.WriteLine("Upload blockBlob");
+			Trace.WriteLine("Upload",
+				"VisualBitcoin.Storage.Blob Information");
 
 			var text = Serialization.ToXml(model);
 			var content = Coding.Code(text);
@@ -41,9 +44,13 @@ namespace Storage
 		}
 
 		// Download a blockBlob.
-		private static TModel DownloadBlockBlob<TModel>(string blockBlobName) where TModel : class
+		public static TModel DownloadBlockBlob<TModel>(string blockBlobName) where TModel : class
 		{
-			Trace.WriteLine("Retrieve a blockBlob");
+			Trace.WriteLine("Download",
+				"VisualBitcoin.Storage.Blob Information");
+
+			if (null == CloudBlobContainer)
+				throw new Exception("Test");
 
 			var cloudBlockBlob = CloudBlobContainer.GetBlockBlobReference(blockBlobName);
 			var stream = new MemoryStream();
@@ -59,7 +66,8 @@ namespace Storage
 		// Retrieve the example block instance.
 		public static Block GetExampleBlock()
 		{
-			Trace.WriteLine("Get example block instance.");
+			Trace.WriteLine("Example block download",
+				"VisualBitcoin.Storage.Blob Information");
 
 			var block = DownloadBlockBlob<Block>("block");
 			return block;
@@ -68,7 +76,8 @@ namespace Storage
 		// Retrieve a block instance.
 		public static Block GetBlock(string blockName)
 		{
-			Trace.WriteLine("Get a block instance.");
+			Trace.WriteLine("Block download",
+				"VisualBitcoin.Storage.Blob Information");
 
 			var block = DownloadBlockBlob<Block>(blockName);
 			return block;
@@ -77,14 +86,16 @@ namespace Storage
         //Retrieve the list of blocks (where the blocks' name begin by "block" : to be modified !).
         public static List<string> GetBlockList()
         {
-            var blockList = CloudBlobContainer.ListBlobs(prefix: "block");
+			Trace.WriteLine("Block list download",
+				"VisualBitcoin.Storage.Blob Information");
+
+			var blockList = CloudBlobContainer.ListBlobs(prefix: "block");
             var nameList = new List<string>();
             foreach (IListBlobItem blob in blockList)
             {
-                Trace.WriteLine("Here is one of the blocks :");
-                // Trace.WriteLine(Path.GetFileNameWithoutExtension(blob.Uri.ToString()));
                 nameList.Add(Path.GetFileNameWithoutExtension(blob.Uri.ToString()));
             }
+
             return nameList;
         }
 	}

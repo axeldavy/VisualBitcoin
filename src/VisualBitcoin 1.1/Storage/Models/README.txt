@@ -32,3 +32,7 @@ Transactions is a subpart for the Block type-class.
 	- Is "split the storage between a primary storage and a structured storage" 
 	  a good idea?
 	- Is "use the table storage to have structured data" a good idea?
+	- How could we organize the storage to enable interessant queries from the  
+	  WebRole?
+	- How could we organize the storage to enable fast queries from the        
+	  WebRole?
