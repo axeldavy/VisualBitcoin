@@ -14,7 +14,8 @@ namespace Storage
 		// Configure and start the queue storage, only one call make on application start.
 		public static void Start(string queueName)
 		{
-			Trace.WriteLine("Configure and start the queue storage");
+			Trace.WriteLine("On start",
+				"VisualBitcoin.Storage.Queue Information");
 
 			CloudQueueClient = WindowsAzure.StorageAccount.CreateCloudQueueClient();
 			CloudQueue = CloudQueueClient.GetQueueReference(queueName);
@@ -26,7 +27,8 @@ namespace Storage
 		// models in one place.
 		public static void PushMessage<TModel>(TModel model)
 		{
-			Trace.WriteLine("Push message to queue");
+			Trace.WriteLine("Message pushed",
+				"VisualBitcoin.Storage.Queue Information");
 
 			var message = Serialization.ToXml(model);
 			var content = Coding.Code(message);
@@ -43,7 +45,8 @@ namespace Storage
 		// Pop a message from the queue.
 		public static TModel PopMessage<TModel>() where TModel : class
 		{
-			Trace.WriteLine("Pop message from queue.");
+			Trace.WriteLine("Message popped",
+				"VisualBitcoin.Storage.Queue Information");
 
 			var cloudQueueMessage = CloudQueue.GetMessage();
 			var content = cloudQueueMessage.AsString;

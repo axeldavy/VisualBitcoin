@@ -14,7 +14,8 @@ namespace Storage
 		public static void Start(bool useDevelopmentStorage, string connectionString,
 			string containerName, string tableName, string queueName)
 		{
-			Trace.WriteLine("Configure and start the storage");
+			Trace.WriteLine("On start",
+				"VisualBitcoin.Storage.WindowsAzure Information");
 
 			if (null != StorageAccount)
 				throw new Exception("VisualBitcoin storage can not be initialize twice.");

@@ -10,7 +10,8 @@ namespace Storage
 		// Retrieve an object from a XML description of it.
 		public static T FromXml<T>(string xmlString) where T : class
 		{
-			Trace.WriteLine("Deserialize " + typeof (T));
+			Trace.WriteLine("Deserialization",
+				"VisualBitcoin.Storage.Serialization Information");
 
 			var xmlSerializer = new XmlSerializer(typeof (T));
 			var stringReader = new StringReader(xmlString);
@@ -26,7 +27,8 @@ namespace Storage
 		// Create the XML description of an object.
 		public static string ToXml<T>(T xmlObject)
 		{
-			Trace.WriteLine("Serialize " + typeof (T));
+			Trace.WriteLine("Serialization",
+				"VisualBitcoin.Storage.Serialization Information");
 
 			var xmlSerializer = new XmlSerializer(typeof (T));
 			var stringWriter = new StringWriter();

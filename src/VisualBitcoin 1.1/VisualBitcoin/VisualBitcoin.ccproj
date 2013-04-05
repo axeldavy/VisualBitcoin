@@ -37,6 +37,22 @@
     <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\BitcoinWorkerRole\BitcoinWorkerRole.csproj">
+      <Name>BitcoinWorkerRole</Name>
+      <Project>{ee927049-9a74-48a7-b21a-af1d617c7c42}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>BitcoinWorkerRole</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
+    <ProjectReference Include="..\StorageWorkerRole\StorageWorkerRole.csproj">
+      <Name>StorageWorkerRole</Name>
+      <Project>{0831dec7-8ea9-446a-83c1-7e84f6cf5c6f}</Project>
+      <Private>True</Private>
+      <RoleType>Worker</RoleType>
+      <RoleName>StorageWorkerRole</RoleName>
+      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+    </ProjectReference>
     <ProjectReference Include="..\WebRole\WebRole.csproj">
       <Name>WebRole</Name>
       <Project>{65145c8d-970e-40d1-9a96-a6be9b18d2a1}</Project>

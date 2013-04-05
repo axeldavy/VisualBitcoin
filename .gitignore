@@ -9,6 +9,8 @@
 Credentials.config
 CredentialsB.config
 visualbitcoin.azurewebsites.net
+ServiceConfiguration.Cloud.cscfg
+ServiceConfiguration.Local.cscfg
 
 # Build results
 
