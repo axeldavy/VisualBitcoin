@@ -40,11 +40,28 @@ namespace StorageWorkerRole
 
 
 		// Retrieve a block from queue and call Review_Statics.
+        // Added parsing here
         static void Main()
         {
             var hash = Queue.PopMessage<string>();
             var block = Blob.GetBlock(hash);
+            
             Review_Statistics(block);
+
+            /*Parsing of the block*/
+            var parsed = ParseBlock(block);
+            var clearBlock = parsed.Item1;
+            /*
+             * Can't add this because I can't test it(((
+            //Blob.DeleteBlockBlob(hash);
+            
+            //Sending clear block to the Blob storage
+            Blob.UploadBlockBlob<BlockClear>(clearBlock.Hash, clearBlock);
+            //Sending transactions to the Blob storage
+            foreach (Transactions singleTransaction in parsed.Item2)
+            {
+                Blob.UploadBlockBlob<Transactions>(singleTransaction.Txid, singleTransaction);
+            }*/
         }
 
 		// Update statistics.
@@ -79,6 +96,20 @@ namespace StorageWorkerRole
         static double Variance(ulong somme,double average, ulong nb)
         {
             return somme*(somme - 2*average)/nb + average*average;
+        }
+
+        public static Tuple<BlockClear, Transactions[]> ParseBlock(Block _block)
+        {
+            var clearBlock = new BlockClear(_block);
+            var transactions = new Transactions [clearBlock.NumberOfTransactions];
+
+            int i = 0;
+            foreach (Transactions currentTr in _block.Transactions)
+            {
+                transactions[i] = currentTr;
+                ++i;
+            }
+            return new Tuple<BlockClear, Transactions[]>(clearBlock, transactions);
         }
 	}
 }
