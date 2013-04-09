@@ -7,6 +7,7 @@ using System.Configuration;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.WindowsAzure;
 using Storage;
 using Storage.Models;
 
@@ -18,13 +19,10 @@ namespace BitcoinWorkerRole
         public static Uri Uri { get; private set; }
         public static ICredentials Credentials { get; private set; }
 
-		public static void Start()
+		public static void Init()
 		{
-            Trace.WriteLine("Start",
-                "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
-
-			var user = ConfigurationManager.AppSettings["bitcoinuser"];
-			var password = ConfigurationManager.AppSettings["bitcoinpassword"];
+			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
+			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
 			Credentials = new NetworkCredential(user, password);
 			Uri = new Uri("http://127.0.0.1:8332");
 			ListSinceBlock = GetLastBlock();
@@ -203,21 +201,13 @@ namespace BitcoinWorkerRole
 			var time = (int)block["time"];
 			var bits = 0; // default
 			const int numberOnce = 0; // default
-			var transactions = GetTransactionsFromBlock(block);
+			var transactions = new Transactions[0];/* TODO, fix binding error GetTransactionsFromBlock(block);*/
 			var numberOfTransactions = transactions.Count();
 			var size = (int)block["size"];
 			const int index = 0; // default
 			const bool isInMainChain = false; // default
 			var height = (int)block["height"];
-			var receivedTime = 0;
-			try
-			{
-				receivedTime = int.Parse(DateTime.Now.ToString("HH:mm:ss tt"));
-			}
-			catch (Exception)
-			{
-				Trace.WriteLine("Exception occured in creating Block Model");
-			}
+			var receivedTime = 0; // Parse DateTime.Now
 			const string relayedBy = ""; // default
 			return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, bits, numberOnce,
 				numberOfTransactions, size, index, isInMainChain, height, receivedTime, relayedBy, transactions);

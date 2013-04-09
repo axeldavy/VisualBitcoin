@@ -12,8 +12,6 @@ namespace BitcoinWorkerRole
 			Trace.WriteLine("Entry point called",
 				"VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
-            BitcoinClient.Start();
-
 			while (true)
 			{
                 BitcoinClient.UploadNewBlocks(5);
@@ -29,7 +27,7 @@ namespace BitcoinWorkerRole
 			Trace.WriteLine("On start",
 				"VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
-			// TODO: configure the BitcoinWorkerRole.
+            BitcoinClient.Init();
 
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;
