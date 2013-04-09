@@ -14,9 +14,9 @@ namespace BitcoinWorkerRole
 {
 	public class BitcoinClient
 	{
-        public static Block _listSinceBlock { get; private set; }
-        public static Uri _uri { get; private set; }
-        public static ICredentials _credentials { get; private set; }
+        public static Block ListSinceBlock { get; private set; }
+        public static Uri Uri { get; private set; }
+        public static ICredentials Credentials { get; private set; }
 
 		public static void Start()
 		{
@@ -25,17 +25,17 @@ namespace BitcoinWorkerRole
 
 			var user = ConfigurationManager.AppSettings["bitcoinuser"];
 			var password = ConfigurationManager.AppSettings["bitcoinpassword"];
-			_credentials = new NetworkCredential(user, password);
-			_uri = new Uri("http://127.0.0.1:8332");
-			_listSinceBlock = GetLastBlock();
+			Credentials = new NetworkCredential(user, password);
+			Uri = new Uri("http://127.0.0.1:8332");
+			ListSinceBlock = GetLastBlock();
         }
 
         // The following method was adapted from bitnet on 04/2013
         // bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
 		private static JObject InvokeMethod(string aSMethod, params object[] aParams) 
 		{
-			var webRequest = (HttpWebRequest)WebRequest.Create(_uri);
-			webRequest.Credentials = _credentials;
+			var webRequest = (HttpWebRequest)WebRequest.Create(Uri);
+			webRequest.Credentials = Credentials;
 
 			webRequest.ContentType = "application/json-rpc";
 			webRequest.Method = "POST";
@@ -67,18 +67,36 @@ namespace BitcoinWorkerRole
 			{
 				dataStream.Write(byteArray, 0, byteArray.Length);
 			}
-			using (WebResponse webResponse = webRequest.GetResponse())
+			try
 			{
-				using (Stream str = webResponse.GetResponseStream())
+				using (WebResponse webResponse = webRequest.GetResponse())
 				{
-					Debug.Assert(str != null, "str != null");
-					using (var sr = new StreamReader(str))
-					{                       
-						return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
+					using (Stream str = webResponse.GetResponseStream())
+					{
+						Debug.Assert(str != null, "str != null");
+						using (var sr = new StreamReader(str))
+						{                       
+							return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
+						}
 					}
 				}
 			}
-			
+			catch (WebException e)
+			{
+				if (e.Status == WebExceptionStatus.ProtocolError)
+				{
+					using (Stream str = e.Response.GetResponseStream())
+					{
+						Debug.Assert(str != null, "str != null");
+						using (var sr = new StreamReader(str))
+						{
+                            Console.WriteLine(sr.ReadToEnd());
+							return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
+						}
+					}
+				}
+				throw;
+			}
 		}
 
 		private static JToken Invoke(string asMethod, params object[] aParams)
@@ -98,7 +116,7 @@ namespace BitcoinWorkerRole
 			var block = Blob.DownloadBlockBlob<Block>(backup.Hash);
 			var count = backup.Count;
 
-			while (count < max && block.Hash != _listSinceBlock.Hash)
+			while (count < max && block.Hash != ListSinceBlock.Hash)
 			{
 				block = GetNextBlock(block);
 				var blockReference = new BlockReference(block.Hash);
@@ -155,8 +173,8 @@ namespace BitcoinWorkerRole
 			Debug.Assert(lastBlock != null, "lastBlock != null");
 			JToken lastBlockHash = lastBlock["lastblock"];
 
-			_listSinceBlock = GetBlockByHash(lastBlockHash);
-			return _listSinceBlock;
+			ListSinceBlock = GetBlockByHash(lastBlockHash);
+			return ListSinceBlock;
 		}
 
 		private static Block GetPrevBlock(Block block)
@@ -183,7 +201,7 @@ namespace BitcoinWorkerRole
 			var nextBlock = (string)block["nextblockhash"]; // TODO, throw error if not exists
 			var merkleRoot = (string)block["merkleroot"];
 			var time = (int)block["time"];
-			var bits = (int)block["bits"];
+			var bits = 0; // default
 			const int numberOnce = 0; // default
 			var transactions = GetTransactionsFromBlock(block);
 			var numberOfTransactions = transactions.Count();
