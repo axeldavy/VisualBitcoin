@@ -1,7 +1,11 @@
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
+using System.Configuration;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Storage;
 
 namespace StorageWorkerRole
 {
@@ -11,6 +15,15 @@ namespace StorageWorkerRole
 		{
 			Trace.WriteLine("Entry point called",
 				"VisualBitcoin.StorageWorkerRole.WorkerRole Information");
+            
+            // TODO: get configuration settings from cscfg file
+            bool useDevelopmentStorage = Boolean.Parse(RoleEnvironment.GetConfigurationSettingValue("UseDevelopmentStorage"));
+            string connectionString = RoleEnvironment.GetConfigurationSettingValue("StorageConnectionString");
+            string containerName = RoleEnvironment.GetConfigurationSettingValue("Container");
+            string tableName = RoleEnvironment.GetConfigurationSettingValue("Table");
+            string queueName = RoleEnvironment.GetConfigurationSettingValue("Queue");
+
+            WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);            
 
 			while (true)
 			{
