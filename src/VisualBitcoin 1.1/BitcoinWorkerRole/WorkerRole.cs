@@ -12,9 +12,11 @@ namespace BitcoinWorkerRole
 			Trace.WriteLine("Entry point called",
 				"VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
+            BitcoinClient.Start();
+
 			while (true)
 			{
-				// TODO: retrieve blocks from bitcoind.
+                BitcoinClient.UploadNewBlocks(5);
 
 				Thread.Sleep(10000);
 				Trace.WriteLine("Working",

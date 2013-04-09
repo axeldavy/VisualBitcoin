@@ -14,24 +14,27 @@ namespace BitcoinWorkerRole
 {
 	public class BitcoinClient
 	{
-		Block _listSinceBlock;
+        public static Block _listSinceBlock { get; private set; }
+        public static Uri _uri { get; private set; }
+        public static ICredentials _credentials { get; private set; }
 
-		private readonly Uri _url;
-		private readonly ICredentials _credentials;
-
-		public BitcoinClient()
+		public static void Start()
 		{
+            Trace.WriteLine("Start",
+                "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
 			var user = ConfigurationManager.AppSettings["bitcoinuser"];
 			var password = ConfigurationManager.AppSettings["bitcoinpassword"];
 			_credentials = new NetworkCredential(user, password);
-			_url = new Uri("http://127.0.0.1:8332");
-
+			_uri = new Uri("http://127.0.0.1:8332");
 			_listSinceBlock = GetLastBlock();
-		}
+        }
 
-		public JObject InvokeMethod(string aSMethod, params object[] aParams) //adapted from bitnet, 04/2013, bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
+        // The following method was adapted from bitnet on 04/2013
+        // bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
+		private static JObject InvokeMethod(string aSMethod, params object[] aParams) 
 		{
-			var webRequest = (HttpWebRequest)WebRequest.Create(_url);
+			var webRequest = (HttpWebRequest)WebRequest.Create(_uri);
 			webRequest.Credentials = _credentials;
 
 			webRequest.ContentType = "application/json-rpc";
@@ -64,38 +67,21 @@ namespace BitcoinWorkerRole
 			{
 				dataStream.Write(byteArray, 0, byteArray.Length);
 			}
-			try
+			using (WebResponse webResponse = webRequest.GetResponse())
 			{
-				using (WebResponse webResponse = webRequest.GetResponse())
+				using (Stream str = webResponse.GetResponseStream())
 				{
-					using (Stream str = webResponse.GetResponseStream())
-					{
-						Debug.Assert(str != null, "str != null");
-						using (var sr = new StreamReader(str))
-						{
-							return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
-						}
+					Debug.Assert(str != null, "str != null");
+					using (var sr = new StreamReader(str))
+					{                       
+						return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
 					}
 				}
 			}
-			catch (WebException e)
-			{
-				if (e.Status == WebExceptionStatus.ProtocolError)
-				{
-					using (Stream str = e.Response.GetResponseStream())
-					{
-						Debug.Assert(str != null, "str != null");
-						using (var sr = new StreamReader(str))
-						{
-							return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
-						}
-					}
-				}
-				throw;
-			}
+			
 		}
 
-		public JToken Invoke(string asMethod, params object[] aParams)
+		private static JToken Invoke(string asMethod, params object[] aParams)
 		{
 			JObject received = InvokeMethod(asMethod, aParams);
 			JToken result = received["result"];
@@ -105,7 +91,7 @@ namespace BitcoinWorkerRole
 			throw new Exception("Invoke:" + error);
 		}
 
-		public void UploadNewBlocks(int max = 1000)
+		public static void UploadNewBlocks(int max = 1000)
 		{
 			// Retrieve information from the BitnetWorkerRole backup.
 			var backup = Blob.DownloadBlockBlob<BitnetBackup>("bitnetbackup");
@@ -126,7 +112,7 @@ namespace BitcoinWorkerRole
 			}
 		}
 
-		public Transactions[] GetTransactionsFromBlock(JObject block)
+		private static Transactions[] GetTransactionsFromBlock(JObject block)
 		{
 			JToken txidList = block["tx"];
 			var transactionsFromBlock = new Transactions[txidList.Count()];
@@ -156,14 +142,14 @@ namespace BitcoinWorkerRole
 
 		}
 
-		public JObject DecodeTransaction(JValue txid)
+		private static JObject DecodeTransaction(JValue txid)
 		{
 			JToken txHash = Invoke("getrawtransaction", new object[] { txid });
 			if (txHash == null) throw new Exception("null transaction hash value");
 			return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
 		}
 
-		public Block GetLastBlock()
+		public static Block GetLastBlock()
 		{
 			var lastBlock = Invoke("listsinceblock") as JObject;
 			Debug.Assert(lastBlock != null, "lastBlock != null");
@@ -173,23 +159,23 @@ namespace BitcoinWorkerRole
 			return _listSinceBlock;
 		}
 
-		public Block GetPrevBlock(Block block)
+		private static Block GetPrevBlock(Block block)
 		{
 			return GetBlockByHash(block.PreviousBlock);
 		}
 
-		public Block GetNextBlock(Block block)
+		private static Block GetNextBlock(Block block)
 		{
 			return GetBlockByHash(block.NextBlock);
 		}
 
-		private Block GetBlockByHash(JToken hashToken)
+		private static Block GetBlockByHash(JToken hashToken)
 		{
 			var block = Invoke("getblock", new object[] { hashToken }) as JObject;
 			return GetBlockModel(block);
 		}
 
-		private Block GetBlockModel(JObject block)
+		private static Block GetBlockModel(JObject block)
 		{
 			var hash = (string)block["hash"];
 			var version = (string)block["version"];
