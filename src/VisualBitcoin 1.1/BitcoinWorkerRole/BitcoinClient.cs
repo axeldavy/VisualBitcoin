@@ -7,6 +7,7 @@ using System.Configuration;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.WindowsAzure;
 using Storage;
 using Storage.Models;
 
@@ -14,25 +15,25 @@ namespace BitcoinWorkerRole
 {
 	public class BitcoinClient
 	{
-		Block _listSinceBlock;
+        public static Block ListSinceBlock { get; private set; }
+        public static Uri Uri { get; private set; }
+        public static ICredentials Credentials { get; private set; }
 
-		private readonly Uri _url;
-		private readonly ICredentials _credentials;
-
-		public BitcoinClient()
+		public static void Init()
 		{
-			var user = ConfigurationManager.AppSettings["bitcoinuser"];
-			var password = ConfigurationManager.AppSettings["bitcoinpassword"];
-			_credentials = new NetworkCredential(user, password);
-			_url = new Uri("http://127.0.0.1:8332");
+			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
+			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
+			Credentials = new NetworkCredential(user, password);
+			Uri = new Uri("http://127.0.0.1:8332");
+			ListSinceBlock = GetLastBlock();
+        }
 
-			_listSinceBlock = GetLastBlock();
-		}
-
-		public JObject InvokeMethod(string aSMethod, params object[] aParams) //adapted from bitnet, 04/2013, bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
+        // The following method was adapted from bitnet on 04/2013
+        // bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
+		private static JObject InvokeMethod(string aSMethod, params object[] aParams) 
 		{
-			var webRequest = (HttpWebRequest)WebRequest.Create(_url);
-			webRequest.Credentials = _credentials;
+			var webRequest = (HttpWebRequest)WebRequest.Create(Uri);
+			webRequest.Credentials = Credentials;
 
 			webRequest.ContentType = "application/json-rpc";
 			webRequest.Method = "POST";
@@ -72,7 +73,7 @@ namespace BitcoinWorkerRole
 					{
 						Debug.Assert(str != null, "str != null");
 						using (var sr = new StreamReader(str))
-						{
+						{                       
 							return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
 						}
 					}
@@ -87,6 +88,7 @@ namespace BitcoinWorkerRole
 						Debug.Assert(str != null, "str != null");
 						using (var sr = new StreamReader(str))
 						{
+                            Console.WriteLine(sr.ReadToEnd());
 							return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
 						}
 					}
@@ -95,7 +97,7 @@ namespace BitcoinWorkerRole
 			}
 		}
 
-		public JToken Invoke(string asMethod, params object[] aParams)
+		private static JToken Invoke(string asMethod, params object[] aParams)
 		{
 			JObject received = InvokeMethod(asMethod, aParams);
 			JToken result = received["result"];
@@ -105,14 +107,14 @@ namespace BitcoinWorkerRole
 			throw new Exception("Invoke:" + error);
 		}
 
-		public void UploadNewBlocks(int max = 1000)
+		public static void UploadNewBlocks(int max = 1000)
 		{
 			// Retrieve information from the BitnetWorkerRole backup.
 			var backup = Blob.DownloadBlockBlob<BitnetBackup>("bitnetbackup");
 			var block = Blob.DownloadBlockBlob<Block>(backup.Hash);
 			var count = backup.Count;
 
-			while (count < max && block.Hash != _listSinceBlock.Hash)
+			while (count < max && block.Hash != ListSinceBlock.Hash)
 			{
 				block = GetNextBlock(block);
 				var blockReference = new BlockReference(block.Hash);
@@ -126,7 +128,7 @@ namespace BitcoinWorkerRole
 			}
 		}
 
-		public Transactions[] GetTransactionsFromBlock(JObject block)
+		private static Transactions[] GetTransactionsFromBlock(JObject block)
 		{
 			JToken txidList = block["tx"];
 			var transactionsFromBlock = new Transactions[txidList.Count()];
@@ -156,40 +158,40 @@ namespace BitcoinWorkerRole
 
 		}
 
-		public JObject DecodeTransaction(JValue txid)
+		private static JObject DecodeTransaction(JValue txid)
 		{
 			JToken txHash = Invoke("getrawtransaction", new object[] { txid });
 			if (txHash == null) throw new Exception("null transaction hash value");
 			return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
 		}
 
-		public Block GetLastBlock()
+		public static Block GetLastBlock()
 		{
 			var lastBlock = Invoke("listsinceblock") as JObject;
 			Debug.Assert(lastBlock != null, "lastBlock != null");
 			JToken lastBlockHash = lastBlock["lastblock"];
 
-			_listSinceBlock = GetBlockByHash(lastBlockHash);
-			return _listSinceBlock;
+			ListSinceBlock = GetBlockByHash(lastBlockHash);
+			return ListSinceBlock;
 		}
 
-		public Block GetPrevBlock(Block block)
+		private static Block GetPrevBlock(Block block)
 		{
 			return GetBlockByHash(block.PreviousBlock);
 		}
 
-		public Block GetNextBlock(Block block)
+		private static Block GetNextBlock(Block block)
 		{
 			return GetBlockByHash(block.NextBlock);
 		}
 
-		private Block GetBlockByHash(JToken hashToken)
+		private static Block GetBlockByHash(JToken hashToken)
 		{
 			var block = Invoke("getblock", new object[] { hashToken }) as JObject;
 			return GetBlockModel(block);
 		}
 
-		private Block GetBlockModel(JObject block)
+		private static Block GetBlockModel(JObject block)
 		{
 			var hash = (string)block["hash"];
 			var version = (string)block["version"];
@@ -197,23 +199,15 @@ namespace BitcoinWorkerRole
 			var nextBlock = (string)block["nextblockhash"]; // TODO, throw error if not exists
 			var merkleRoot = (string)block["merkleroot"];
 			var time = (int)block["time"];
-			var bits = (int)block["bits"];
+			var bits = 0; // default
 			const int numberOnce = 0; // default
-			var transactions = GetTransactionsFromBlock(block);
+			var transactions = new Transactions[0];/* TODO, fix binding error GetTransactionsFromBlock(block);*/
 			var numberOfTransactions = transactions.Count();
 			var size = (int)block["size"];
 			const int index = 0; // default
 			const bool isInMainChain = false; // default
 			var height = (int)block["height"];
-			var receivedTime = 0;
-			try
-			{
-				receivedTime = int.Parse(DateTime.Now.ToString("HH:mm:ss tt"));
-			}
-			catch (Exception)
-			{
-				Trace.WriteLine("Exception occured in creating Block Model");
-			}
+			var receivedTime = 0; // Parse DateTime.Now
 			const string relayedBy = ""; // default
 			return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, bits, numberOnce,
 				numberOfTransactions, size, index, isInMainChain, height, receivedTime, relayedBy, transactions);

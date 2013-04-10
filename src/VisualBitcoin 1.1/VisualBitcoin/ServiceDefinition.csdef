@@ -26,6 +26,10 @@
     <Imports>
       <Import moduleName="Diagnostics" />
     </Imports>
+    <ConfigurationSettings>
+      <Setting name="BitcoinUser" />
+      <Setting name="BitcoinPassword"/>
+    </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="StorageWorkerRole" vmsize="Small">
     <Imports>

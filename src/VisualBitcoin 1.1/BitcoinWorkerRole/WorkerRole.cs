@@ -14,7 +14,7 @@ namespace BitcoinWorkerRole
 
 			while (true)
 			{
-				// TODO: retrieve blocks from bitcoind.
+                BitcoinClient.UploadNewBlocks(5);
 
 				Thread.Sleep(10000);
 				Trace.WriteLine("Working",
@@ -27,7 +27,7 @@ namespace BitcoinWorkerRole
 			Trace.WriteLine("On start",
 				"VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
-			// TODO: configure the BitcoinWorkerRole.
+            BitcoinClient.Init();
 
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;

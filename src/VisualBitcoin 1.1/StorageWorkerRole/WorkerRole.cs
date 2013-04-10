@@ -1,7 +1,11 @@
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
+using System.Configuration;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Storage;
 
 namespace StorageWorkerRole
 {
@@ -12,7 +16,7 @@ namespace StorageWorkerRole
 			Trace.WriteLine("Entry point called",
 				"VisualBitcoin.StorageWorkerRole.WorkerRole Information");
 
-			while (true)
+            while (true)
 			{
 				// TODO: check queue and process data.
 
