@@ -33,8 +33,7 @@
   <!-- Items for the project -->
   <ItemGroup>
     <ServiceDefinition Include="ServiceDefinition.csdef" />
-    <ServiceConfiguration Include="ServiceConfiguration.Local.cscfg" />
-    <ServiceConfiguration Include="ServiceConfiguration.Cloud.cscfg" />
+    <ServiceConfiguration Include="ServiceConfiguration.Configuration.cscfg" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\BitcoinWorkerRole\BitcoinWorkerRole.csproj">
@@ -43,7 +42,7 @@
       <Private>True</Private>
       <RoleType>Worker</RoleType>
       <RoleName>BitcoinWorkerRole</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+      <UpdateDiagnosticsConnectionStringOnPublish>False</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
     <ProjectReference Include="..\StorageWorkerRole\StorageWorkerRole.csproj">
       <Name>StorageWorkerRole</Name>
@@ -51,7 +50,7 @@
       <Private>True</Private>
       <RoleType>Worker</RoleType>
       <RoleName>StorageWorkerRole</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+      <UpdateDiagnosticsConnectionStringOnPublish>False</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
     <ProjectReference Include="..\WebRole\WebRole.csproj">
       <Name>WebRole</Name>
@@ -59,7 +58,7 @@
       <Private>True</Private>
       <RoleType>Web</RoleType>
       <RoleName>WebRole</RoleName>
-      <UpdateDiagnosticsConnectionStringOnPublish>True</UpdateDiagnosticsConnectionStringOnPublish>
+      <UpdateDiagnosticsConnectionStringOnPublish>False</UpdateDiagnosticsConnectionStringOnPublish>
     </ProjectReference>
   </ItemGroup>
   <!-- Import the target files for this project template -->
