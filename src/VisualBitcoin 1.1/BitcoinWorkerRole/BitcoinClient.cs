@@ -22,16 +22,12 @@ namespace BitcoinWorkerRole
 		{
 			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
 			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
-
-			// TODO: The following URI can not be on GitHub, define it in the VisualBitcoin project
-			// TODO: right click on BitcoinWorkerRole, properties and settings.
-			// TODO: var uri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
+			var uri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
 			
-			const string uri = "http://127.0.0.1:8332";
 			Credentials = new NetworkCredential(user, password);
 			Uri = new Uri(uri);
 			
-			// TODO: ListSinceBlock = GetLastBlock();
+			ListSinceBlock = GetListSinceBlock();
         }
 
         // The following method was adapted from bitnet on 04/2013
@@ -116,23 +112,50 @@ namespace BitcoinWorkerRole
 		public static void UploadNewBlocks(int max = 1000)
 		{
 			// Retrieve information from the BitnetWorkerRole backup.
+            // TODO: we don't need an entirely new backup object. The only thing we're retrieving
+            // from the backup is the block hash, which can be a new constructor in the Block class
 			var backup = Blob.DownloadBlockBlob<BitnetBackup>("bitnetbackup");
-			var block = Blob.DownloadBlockBlob<Block>(backup.Hash);
-			var count = backup.Count;
+            Block block;
+            int count;
+            if (backup == null)
+            {
+                block = ListSinceBlock;
+                count = 0;
+            }
+            else
+            {
+                block = UpdateNextBlockHash(Blob.DownloadBlockBlob<Block>(backup.Hash));
+                count = backup.Count;
+            }
 
+            // TODO: originally the max was set to limit number of new blocks being uploaded
+            // we will want to remove "old" blocks from Azure and replace with new ones here
 			while (count < max && block.Hash != ListSinceBlock.Hash)
 			{
-				block = GetNextBlock(block);
-				var blockReference = new BlockReference(block.Hash);
-
-				Blob.UploadBlockBlob(block.Hash, block);
-				Queue.PushMessage(blockReference);
-				count += 1;
-
-				backup = new BitnetBackup(block.Hash, count);
-				Blob.UploadBlockBlob("bitnetbackup", backup);
+                UploadBlock(block, count);
+                count += 1;
+                block = GetNextBlock(block);
 			}
+            UploadBlock(block, count);
 		}
+
+        private static Block UpdateNextBlockHash(Block block)
+        {
+            var blockJObject = Invoke("getblock", new object[] { block.Hash }) as JObject;
+            block.NextBlock = (string) blockJObject["nextblockhash"];
+            return block;
+        }
+
+        private static void UploadBlock(Block block, int count)
+        {
+            var blockReference = new BlockReference(block.Hash);
+
+            Blob.UploadBlockBlob(block.Hash, block);
+            Queue.PushMessage(blockReference);
+
+            BitnetBackup backup = new BitnetBackup(block.Hash, count);
+            Blob.UploadBlockBlob("bitnetbackup", backup);
+        }
 
 		private static Transactions[] GetTransactionsFromBlock(JObject block)
 		{
@@ -171,7 +194,7 @@ namespace BitcoinWorkerRole
 			return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
 		}
 
-		public static Block GetLastBlock()
+		public static Block GetListSinceBlock()
 		{
 			var lastBlock = Invoke("listsinceblock") as JObject;
 			Debug.Assert(lastBlock != null, "lastBlock != null");
@@ -194,10 +217,10 @@ namespace BitcoinWorkerRole
 		private static Block GetBlockByHash(JToken hashToken)
 		{
 			var block = Invoke("getblock", new object[] { hashToken }) as JObject;
-			return GetBlockModel(block);
+			return GetBlockFromJObject(block);
 		}
 
-		private static Block GetBlockModel(JObject block)
+		private static Block GetBlockFromJObject(JObject block)
 		{
 			var hash = (string)block["hash"];
 			var version = (string)block["version"];

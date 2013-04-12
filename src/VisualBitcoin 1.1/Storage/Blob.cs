@@ -52,7 +52,14 @@ namespace Storage
 
 			var cloudBlockBlob = CloudBlobContainer.GetBlockBlobReference(blockBlobName);
 			var stream = new MemoryStream();
-			cloudBlockBlob.DownloadToStream(stream);
+            try
+            {
+                cloudBlockBlob.DownloadToStream(stream);
+            }
+            catch (Exception e) {
+                Trace.WriteLine("Warning", e.Message);
+                return null;
+            }
 			var buffer = stream.ToArray();
 			var content = Encoding.UTF8.GetString(buffer);
 			var text = Coding.Decode(content);

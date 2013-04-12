@@ -14,7 +14,7 @@ namespace BitcoinWorkerRole
 
 			while (true)
 			{
-                // BitcoinClient.UploadNewBlocks(5);
+                BitcoinClient.UploadNewBlocks(1);
 
 				Thread.Sleep(10000);
 				Trace.WriteLine("Working", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
@@ -30,7 +30,7 @@ namespace BitcoinWorkerRole
 			WindowsAzure.Start(connectionString);
 
 			// Bitcoin connexion configuration.
-            // TODO: BitcoinClient.Init();
+            BitcoinClient.Init();
 
 			return base.OnStart();
 		}

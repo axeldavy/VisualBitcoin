@@ -17,7 +17,7 @@ namespace Storage
 
 			CloudTableClient = WindowsAzure.StorageAccount.CreateCloudTableClient();
 			CloudTable = CloudTableClient.GetTableReference(tableName);
-			CloudTable.CreateIfNotExists();
+			//CloudTable.CreateIfNotExists(); TODO, temporarily disable until binding issues resolved
 		}
 	}
 }
