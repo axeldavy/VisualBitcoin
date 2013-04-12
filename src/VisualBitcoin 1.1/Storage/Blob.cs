@@ -18,8 +18,7 @@ namespace Storage
 		// Configure and start the blob storage, only one call make on application start.
 		public static void Start(string containerName)
 		{
-			Trace.WriteLine("Start",
-				"VisualBitcoin.Storage.Blob Information");
+			Trace.WriteLine("Start", "VisualBitcoin.Storage.Blob Information");
 
 			CloudBlobClient = WindowsAzure.StorageAccount.CreateCloudBlobClient();
 			CloudBlobContainer = CloudBlobClient.GetContainerReference(containerName);
@@ -31,8 +30,7 @@ namespace Storage
 		// place.
 		public static void UploadBlockBlob<TModel>(string blockBlobName, TModel model)
 		{
-			Trace.WriteLine("Upload",
-				"VisualBitcoin.Storage.Blob Information");
+			Trace.WriteLine("Upload", "VisualBitcoin.Storage.Blob Information");
 
 			var text = Serialization.ToXml(model);
 			var content = Coding.Code(text);
@@ -78,8 +76,7 @@ namespace Storage
 		// Retrieve the example block instance.
 		public static Block GetExampleBlock()
 		{
-			Trace.WriteLine("Example block download",
-				"VisualBitcoin.Storage.Blob Information");
+			Trace.WriteLine("Example block download", "VisualBitcoin.Storage.Blob Information");
 
 			var block = DownloadBlockBlob<Block>("block");
 			return block;
@@ -88,8 +85,7 @@ namespace Storage
 		// Retrieve a block instance.
 		public static Block GetBlock(string blockName)
 		{
-			Trace.WriteLine("Block download",
-				"VisualBitcoin.Storage.Blob Information");
+			Trace.WriteLine("Block download", "VisualBitcoin.Storage.Blob Information");
 
 			var block = DownloadBlockBlob<Block>(blockName);
 			return block;
@@ -98,8 +94,7 @@ namespace Storage
         //Retrieve the list of blocks (where the blocks' name begin by "block" : to be modified !).
         public static List<string> GetBlockList()
         {
-			Trace.WriteLine("Block list download",
-				"VisualBitcoin.Storage.Blob Information");
+			Trace.WriteLine("Block list download", "VisualBitcoin.Storage.Blob Information");
 
 			var blockList = CloudBlobContainer.ListBlobs(prefix: "block");
             var nameList = new List<string>();

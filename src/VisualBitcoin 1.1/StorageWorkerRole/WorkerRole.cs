@@ -31,7 +31,10 @@ namespace StorageWorkerRole
 			Trace.WriteLine("On start",
 				"VisualBitcoin.StorageWorkerRole.WorkerRole Information");
 
-			// TODO: Configure the StorageWorkerRole.
+			// Storage configuration and start.
+			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
+			WindowsAzure.Start(connectionString);
+
             // TODO: needed three BlobContainers: for brute blocks, for clear blocks, for transactions
 
 			// Set the maximum number of concurrent connections 

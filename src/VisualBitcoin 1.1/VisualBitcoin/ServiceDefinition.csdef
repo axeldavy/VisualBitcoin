@@ -15,10 +15,6 @@
     </Imports>
     <ConfigurationSettings>
       <Setting name="StorageConnectionString" />
-      <Setting name="UseDevelopmentStorage" />
-      <Setting name="Container" />
-      <Setting name="Queue" />
-      <Setting name="Table" />
     </ConfigurationSettings>
   </WebRole>
   <WorkerRole name="BitcoinWorkerRole" vmsize="Small">
@@ -28,6 +24,7 @@
       <Setting name="BitcoinUser" />
       <Setting name="BitcoinPassword" />
       <Setting name="StorageConnectionString" />
+      <Setting name="BitcoinVirtualMachineUri" />
     </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="StorageWorkerRole" vmsize="Small">

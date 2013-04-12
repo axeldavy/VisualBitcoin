@@ -24,12 +24,8 @@ namespace WebRole
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
 
 			// Storage configuration and start.
-			var useDevelopmentStorage = bool.Parse(CloudConfigurationManager.GetSetting("UseDevelopmentStorage"));
 			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-			var containerName = CloudConfigurationManager.GetSetting("Container");
-			var tableName = CloudConfigurationManager.GetSetting("Table");
-			var queueName = CloudConfigurationManager.GetSetting("Queue");
-			WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
+			WindowsAzure.Start(connectionString);
 		}
 	}
 }

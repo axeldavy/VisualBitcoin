@@ -1,6 +1,8 @@
 ﻿using System.Diagnostics;
 using System.Threading;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Storage;
 
 namespace WebRole
 {
@@ -23,6 +25,10 @@ namespace WebRole
 		{
 			Trace.WriteLine("On start",
 				"VisualBitcoin.WebRole.WebRole Information");
+
+			// Storage configuration and start.
+			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
+			WindowsAzure.Start(connectionString);
 
 			return base.OnStart();
 		}

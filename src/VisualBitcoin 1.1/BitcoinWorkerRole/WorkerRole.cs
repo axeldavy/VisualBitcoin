@@ -1,7 +1,8 @@
 using System.Diagnostics;
-using System.Net;
 using System.Threading;
+using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Storage;
 
 namespace BitcoinWorkerRole
 {
@@ -9,29 +10,28 @@ namespace BitcoinWorkerRole
 	{
 		public override void Run()
 		{
-			Trace.WriteLine("Entry point called",
-				"VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
+			Trace.WriteLine("Entry point called", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
 			while (true)
 			{
                 // BitcoinClient.UploadNewBlocks(5);
 
 				Thread.Sleep(10000);
-				Trace.WriteLine("Working",
-					"VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
+				Trace.WriteLine("Working", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 			}
 		}
 
 		public override bool OnStart()
 		{
-			Trace.WriteLine("On start",
-				"VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
+			Trace.WriteLine("Start", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
-            // BitcoinClient.Init();
+			// Storage configuration and start.
+			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
+			WindowsAzure.Start(connectionString);
 
-			// Set the maximum number of concurrent connections 
-			ServicePointManager.DefaultConnectionLimit = 12;
-			
+			// Bitcoin connexion configuration.
+            // TODO: BitcoinClient.Init();
+
 			return base.OnStart();
 		}
 	}

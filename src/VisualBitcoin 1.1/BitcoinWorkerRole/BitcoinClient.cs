@@ -3,7 +3,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Net;
-using System.Configuration;
 using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -23,9 +22,16 @@ namespace BitcoinWorkerRole
 		{
 			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
 			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
+
+			// TODO: The following URI can not be on GitHub, define it in the VisualBitcoin project
+			// TODO: right click on BitcoinWorkerRole, properties and settings.
+			// TODO: var uri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
+			
+			const string uri = "http://127.0.0.1:8332";
 			Credentials = new NetworkCredential(user, password);
-			Uri = new Uri("http://127.0.0.1:8332");
-			ListSinceBlock = GetLastBlock();
+			Uri = new Uri(uri);
+			
+			// TODO: ListSinceBlock = GetLastBlock();
         }
 
         // The following method was adapted from bitnet on 04/2013
