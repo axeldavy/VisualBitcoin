@@ -112,15 +112,13 @@ namespace BitcoinWorkerRole
 		public static void UploadNewBlocks(int max = 1000)
 		{
 			// Retrieve information from the BitnetWorkerRole backup.
-            // TODO: we don't need an entirely new backup object. The only thing we're retrieving
-            // from the backup is the block hash, which can be a new constructor in the Block class
 			var backup = Blob.DownloadBlockBlob<BitnetBackup>("bitnetbackup");
             Block block;
             int count;
             if (backup == null)
             {
                 block = ListSinceBlock;
-                count = 0;
+                count = 1;
             }
             else
             {
@@ -128,10 +126,13 @@ namespace BitcoinWorkerRole
                 count = backup.Count;
             }
 
-            // TODO: originally the max was set to limit number of new blocks being uploaded
-            // we will want to remove "old" blocks from Azure and replace with new ones here
 			while (count < max && block.Hash != ListSinceBlock.Hash)
 			{
+                if (count == max)
+                {
+                    // TODO: Get oldest block, delete it.
+                    count -= 1;
+                }
                 UploadBlock(block, count);
                 count += 1;
                 block = GetNextBlock(block);
@@ -150,7 +151,7 @@ namespace BitcoinWorkerRole
         {
             var blockReference = new BlockReference(block.Hash);
 
-            Blob.UploadBlockBlob(block.Hash, block);
+            Blob.UploadBlockBlob("block" + block.Hash, block);
             Queue.PushMessage(blockReference);
 
             BitnetBackup backup = new BitnetBackup(block.Hash, count);
