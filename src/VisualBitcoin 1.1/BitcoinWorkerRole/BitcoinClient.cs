@@ -15,6 +15,7 @@ namespace BitcoinWorkerRole
 	public class BitcoinClient
 	{
         public static Block ListSinceBlock { get; private set; }
+        public static Block FirstBlock { get; private set; }
         public static Uri Uri { get; private set; }
         public static ICredentials Credentials { get; private set; }
 
@@ -27,7 +28,8 @@ namespace BitcoinWorkerRole
 			Credentials = new NetworkCredential(user, password);
 			Uri = new Uri(uri);
 			
-			ListSinceBlock = GetListSinceBlock();
+			SetListSinceBlock();
+            SetFirstBlock();
         }
 
         // The following method was adapted from bitnet on 04/2013
@@ -122,15 +124,20 @@ namespace BitcoinWorkerRole
             }
             else
             {
-                block = UpdateNextBlockHash(Blob.DownloadBlockBlob<Block>(backup.Hash));
+                String backupBlobName = GetBlockBlobName(backup.Hash);
+                block = UpdateNextBlockHash(Blob.DownloadBlockBlob<Block>(backupBlobName));
                 count = backup.Count;
             }
 
-			while (count < max && block.Hash != ListSinceBlock.Hash)
+			while (block.Hash != ListSinceBlock.Hash)
 			{
+                // Keep a max number of blocks in WindowsAzureStorage by deleting older blocks first
                 if (count == max)
                 {
-                    // TODO: Get oldest block, delete it.
+                    Blob.DeleteBlockBlob(GetBlockBlobName(FirstBlock.Hash));
+                    String nextBlockBlobName = GetBlockBlobName(FirstBlock.NextBlock);
+                    FirstBlock = Blob.DownloadBlockBlob<Block>(nextBlockBlobName);
+                    Blob.UploadBlockBlob<Block>("headblock", FirstBlock);
                     count -= 1;
                 }
                 UploadBlock(block, count);
@@ -139,6 +146,11 @@ namespace BitcoinWorkerRole
 			}
             UploadBlock(block, count);
 		}
+
+        private static String GetBlockBlobName(String hash)
+        {
+            return "block" + hash;
+        }
 
         private static Block UpdateNextBlockHash(Block block)
         {
@@ -149,12 +161,13 @@ namespace BitcoinWorkerRole
 
         private static void UploadBlock(Block block, int count)
         {
-            var blockReference = new BlockReference(block.Hash);
+            String hash = block.Hash;
+            var blockReference = new BlockReference(hash);
 
-            Blob.UploadBlockBlob("block" + block.Hash, block);
+            Blob.UploadBlockBlob(GetBlockBlobName(hash), block);
             Queue.PushMessage(blockReference);
 
-            BitnetBackup backup = new BitnetBackup(block.Hash, count);
+            BitnetBackup backup = new BitnetBackup(hash, count);
             Blob.UploadBlockBlob("bitnetbackup", backup);
         }
 
@@ -195,15 +208,28 @@ namespace BitcoinWorkerRole
 			return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
 		}
 
-		public static Block GetListSinceBlock()
+		public static void SetListSinceBlock()
 		{
 			var lastBlock = Invoke("listsinceblock") as JObject;
 			Debug.Assert(lastBlock != null, "lastBlock != null");
 			JToken lastBlockHash = lastBlock["lastblock"];
 
 			ListSinceBlock = GetBlockByHash(lastBlockHash);
-			return ListSinceBlock;
 		}
+
+        public static void SetFirstBlock()
+        {
+            Block block = Blob.DownloadBlockBlob<Block>("headblock");
+            if (block == null)
+            {
+                FirstBlock = ListSinceBlock;
+                Blob.UploadBlockBlob<Block>("headblock", FirstBlock);
+            }
+            else
+            {
+                FirstBlock = block;
+            }
+        }
 
 		private static Block GetPrevBlock(Block block)
 		{
