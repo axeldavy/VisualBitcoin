@@ -21,6 +21,8 @@ namespace BitcoinWorkerRole
 
 		public static void Init()
 		{
+			Trace.WriteLine("Initialisation", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
 			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
 			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
 			var uri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
@@ -113,6 +115,8 @@ namespace BitcoinWorkerRole
 
 		public static void UploadNewBlocks(int max = 1000)
 		{
+			Trace.WriteLine("Upload new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
 			// Retrieve information from the BitnetWorkerRole backup.
 			var backup = Blob.DownloadBlockBlob<BitnetBackup>("bitnetbackup");
             Block block;
@@ -135,7 +139,8 @@ namespace BitcoinWorkerRole
                 if (count == max)
                 {
                     Blob.DeleteBlockBlob(GetBlockBlobName(FirstBlock.Hash));
-                    String nextBlockBlobName = GetBlockBlobName(FirstBlock.NextBlock);
+	                Debug.Assert(FirstBlock != null, "FirstBlock != null");
+	                String nextBlockBlobName = GetBlockBlobName(FirstBlock.NextBlock);
                     FirstBlock = Blob.DownloadBlockBlob<Block>(nextBlockBlobName);
                     Blob.UploadBlockBlob<Block>("headblock", FirstBlock);
                     count -= 1;
@@ -210,6 +215,8 @@ namespace BitcoinWorkerRole
 
 		public static void SetListSinceBlock()
 		{
+			Trace.WriteLine("Set ListSinceBlock", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
 			var lastBlock = Invoke("listsinceblock") as JObject;
 			Debug.Assert(lastBlock != null, "lastBlock != null");
 			JToken lastBlockHash = lastBlock["lastblock"];
@@ -219,6 +226,8 @@ namespace BitcoinWorkerRole
 
         public static void SetFirstBlock()
         {
+			Trace.WriteLine("Set FirstBlock", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
             Block block = Blob.DownloadBlockBlob<Block>("headblock");
             if (block == null)
             {

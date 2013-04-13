@@ -14,10 +14,11 @@ namespace BitcoinWorkerRole
 
 			while (true)
 			{
+				Trace.WriteLine("Working", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
+
                 BitcoinClient.UploadNewBlocks(1);
 
 				Thread.Sleep(10000);
-				Trace.WriteLine("Working", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 			}
 		}
 
