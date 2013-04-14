@@ -14,14 +14,18 @@ namespace BitcoinWorkerRole
 {
 	public class BitcoinClient
 	{
+		private const int MaximumNumberOfBlocksInTheStorage = 30;
+
         public static Block ListSinceBlock { get; private set; }
         public static Block FirstBlock { get; private set; }
+		public static Block LastBlock { get; private set; }
+		public static int NumberOfBlocksInTheStorage { get; private set; }
         public static Uri Uri { get; private set; }
         public static ICredentials Credentials { get; private set; }
 
 		public static void Init()
 		{
-			Trace.WriteLine("Initialisation", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+			Trace.WriteLine("Init", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
 			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
 			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
@@ -33,6 +37,46 @@ namespace BitcoinWorkerRole
 			SetListSinceBlock();
             SetFirstBlock();
         }
+
+		public static void Initialisation()
+		{
+			Trace.WriteLine("Initialisation without backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
+			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
+			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
+			var virtualMachineUri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
+
+			Credentials = new NetworkCredential(user, password);
+			Uri = new Uri(virtualMachineUri);
+
+			var listSinceBlock = Invoke("listsinceblock") as JObject;
+			Debug.Assert(listSinceBlock != null, "lastBlock != null");
+			var lastBlockHash = listSinceBlock["lastblock"];
+			var lastBlock = GetBlockByHash(lastBlockHash);
+
+			NumberOfBlocksInTheStorage = 0;
+			FirstBlock = lastBlock;
+			LastBlock = lastBlock;
+
+			UploadBlock(lastBlock, 0);
+		}
+
+		public static void Initialisation(int numberOfBlocksInTheStorage, string firstBlockHash, string lastBlockHash)
+		{
+			Trace.WriteLine("Initialisation without backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
+			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
+			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
+			var virtualMachineUri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
+			var firstBlockBlobName = GetBlockBlobName(firstBlockHash);
+			var lastBlockBlobName = GetBlockBlobName(lastBlockHash);
+
+			Credentials = new NetworkCredential(user, password);
+			Uri = new Uri(virtualMachineUri);
+			NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;
+			FirstBlock = Blob.DownloadBlockBlob<Block>(firstBlockBlobName);
+			LastBlock = Blob.DownloadBlockBlob<Block>(lastBlockBlobName);
+		}
 
         // The following method was adapted from bitnet on 04/2013
         // bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
@@ -113,6 +157,25 @@ namespace BitcoinWorkerRole
 			throw new Exception("Invoke:" + error);
 		}
 
+		public static void UploadNewBlocks()
+		{
+			if (MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
+				return;
+
+			Trace.WriteLine("Upload new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
+			var block = UpdateNextBlockHash(LastBlock);
+			UpdateBlock(block);
+			
+			while (!string.IsNullOrEmpty(LastBlock.NextBlock))
+			{
+				Trace.WriteLine("\"\" != \"" + block.NextBlock + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+
+				block = GetNextBlock(block);
+				UploadBlock(block, 0);
+			}
+		}
+
 		public static void UploadNewBlocks(int max = 1000)
 		{
 			Trace.WriteLine("Upload new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
@@ -142,7 +205,7 @@ namespace BitcoinWorkerRole
 	                Debug.Assert(FirstBlock != null, "FirstBlock != null");
 	                String nextBlockBlobName = GetBlockBlobName(FirstBlock.NextBlock);
                     FirstBlock = Blob.DownloadBlockBlob<Block>(nextBlockBlobName);
-                    Blob.UploadBlockBlob<Block>("headblock", FirstBlock);
+                    Blob.UploadBlockBlob("headblock", FirstBlock);
                     count -= 1;
                 }
                 UploadBlock(block, count);
@@ -160,21 +223,38 @@ namespace BitcoinWorkerRole
         private static Block UpdateNextBlockHash(Block block)
         {
             var blockJObject = Invoke("getblock", new object[] { block.Hash }) as JObject;
-            block.NextBlock = (string) blockJObject["nextblockhash"];
+	        Debug.Assert(blockJObject != null, "blockJObject != null");
+	        block.NextBlock = (string) blockJObject["nextblockhash"];
             return block;
         }
 
         private static void UploadBlock(Block block, int count)
         {
-            String hash = block.Hash;
-            var blockReference = new BlockReference(hash);
+	        var blockBlobName = GetBlockBlobName(block.Hash);
+            var blockReference = new BlockReference(block.Hash);
 
-            Blob.UploadBlockBlob(GetBlockBlobName(hash), block);
+            Blob.UploadBlockBlob(blockBlobName, block);
             Queue.PushMessage(blockReference);
 
-            BitnetBackup backup = new BitnetBackup(hash, count);
-            Blob.UploadBlockBlob("bitnetbackup", backup);
+            var bitnetBackup = new BitnetBackup(block.Hash, count);
+            Blob.UploadBlockBlob("bitnetbackup", bitnetBackup);
+
+	        NumberOfBlocksInTheStorage = NumberOfBlocksInTheStorage + 1;
+	        LastBlock = block;
+
+	        var bitcoinWorkerRoleBackup = new BitcoinWorkerRoleBackup(NumberOfBlocksInTheStorage, FirstBlock.Hash,
+	                                                                  LastBlock.Hash);
+			Blob.UploadBlockBlob("bitcoinworkerrolebackup", bitcoinWorkerRoleBackup);
         }
+
+		private static void UpdateBlock(Block block)
+		{
+			var blockBlobName = GetBlockBlobName(block.Hash);
+
+			Blob.UploadBlockBlob(blockBlobName, block);
+
+			LastBlock = block;
+		}
 
 		private static Transactions[] GetTransactionsFromBlock(JObject block)
 		{
@@ -228,11 +308,11 @@ namespace BitcoinWorkerRole
         {
 			Trace.WriteLine("Set FirstBlock", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
-            Block block = Blob.DownloadBlockBlob<Block>("headblock");
+            var block = Blob.DownloadBlockBlob<Block>("headblock");
             if (block == null)
             {
                 FirstBlock = ListSinceBlock;
-                Blob.UploadBlockBlob<Block>("headblock", FirstBlock);
+                Blob.UploadBlockBlob("headblock", FirstBlock);
             }
             else
             {
