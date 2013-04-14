@@ -20,6 +20,12 @@ namespace Storage
 			CloudQueue = CloudQueueClient.GetQueueReference(queueName);
 			CloudQueue.CreateIfNotExists();
 		}
+
+		// Pop all messages in the queue.
+		public static void Reset()
+		{
+			// TODO
+		}
 		
 		// Push a message in the queue with a 7 days time span. It could be a good thing to
 		// declare all the (data) models we need in the dedicated folder "Models". All our 

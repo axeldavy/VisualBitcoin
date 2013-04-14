@@ -6,13 +6,15 @@ namespace Storage
 	public static class WindowsAzure
 	{
 		// Storage parameters.
-		private const bool UseDevelopmentStorage = false;
-		private const string ContainerName = "visualbitcoincontainer";
+		private const string DefaultContainerName = "defaultcontainer";
+		private const string BlocksContainerName = "blockscontainer";
 		private const string TableName = "visualbitcointable";
 		private const string QueueName = "visualbitcoinqueue";
+		private const bool ResetBlobBlocksEnable = false;
+		private const bool ResetQueueMessagesEnable = false;
 
 		// Already start flag.
-		private static bool _isAlreadyStarted;
+		private static bool _isNotAlreadyStarted = true;
 
 		// Property.
 		public static CloudStorageAccount StorageAccount { get; private set; }
@@ -22,19 +24,27 @@ namespace Storage
 		// Configure and start the storage, only one call make by application.
 		public static void Start(string connectionString)
 		{
-			if (false == _isAlreadyStarted)
+			if (_isNotAlreadyStarted)
 			{
 				Trace.WriteLine("Start", "VisualBitcoin.Storage.WindowsAzure Information");
 
-				StorageAccount = UseDevelopmentStorage
-									 ? CloudStorageAccount.DevelopmentStorageAccount
-									 : CloudStorageAccount.Parse(connectionString);
+				StorageAccount = CloudStorageAccount.Parse(connectionString);
 
-				Blob.Start(ContainerName);
+				Blob.Start(DefaultContainerName, BlocksContainerName);
 				Table.Start(TableName);
 				Queue.Start(QueueName);
 
-				_isAlreadyStarted = true;
+				if (ResetBlobBlocksEnable)
+				{
+					Blob.Reset();
+				}
+
+				if (ResetQueueMessagesEnable)
+				{
+					Queue.Reset();
+				}
+
+				_isNotAlreadyStarted = false;
 			}
 			else
 			{

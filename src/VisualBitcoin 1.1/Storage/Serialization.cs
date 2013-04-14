@@ -32,7 +32,7 @@ namespace Storage
 
 			var xmlSerializer = new XmlSerializer(typeof (T));
 			var stringWriter = new StringWriter();
-			var xmlTextWriter = new XmlTextWriter(stringWriter);
+			var xmlTextWriter = new XmlTextWriter(stringWriter) {Formatting = Formatting.Indented};
 			xmlSerializer.Serialize(xmlTextWriter, xmlObject);
 			var xmlString = stringWriter.ToString();
 

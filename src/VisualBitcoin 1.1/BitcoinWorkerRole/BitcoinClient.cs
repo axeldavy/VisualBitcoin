@@ -14,11 +14,10 @@ namespace BitcoinWorkerRole
 {
 	public class BitcoinClient
 	{
-		private const int MaximumNumberOfBlocksInTheStorage = 30;
-
-        public static Block ListSinceBlock { get; private set; }
+		public static Block ListSinceBlock { get; private set; }
         public static Block FirstBlock { get; private set; }
 		public static Block LastBlock { get; private set; }
+		public static int MaximumNumberOfBlocksInTheStorage;
 		public static int NumberOfBlocksInTheStorage { get; private set; }
         public static Uri Uri { get; private set; }
         public static ICredentials Credentials { get; private set; }
@@ -54,6 +53,7 @@ namespace BitcoinWorkerRole
 			var lastBlockHash = listSinceBlock["lastblock"];
 			var lastBlock = GetBlockByHash(lastBlockHash);
 
+			MaximumNumberOfBlocksInTheStorage = 30;
 			NumberOfBlocksInTheStorage = 0;
 			FirstBlock = lastBlock;
 			LastBlock = lastBlock;
@@ -61,7 +61,8 @@ namespace BitcoinWorkerRole
 			UploadBlock(lastBlock, 0);
 		}
 
-		public static void Initialisation(int numberOfBlocksInTheStorage, string firstBlockHash, string lastBlockHash)
+		public static void Initialisation(int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
+			string firstBlockHash, string lastBlockHash)
 		{
 			Trace.WriteLine("Initialisation without backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
@@ -73,6 +74,7 @@ namespace BitcoinWorkerRole
 
 			Credentials = new NetworkCredential(user, password);
 			Uri = new Uri(virtualMachineUri);
+			MaximumNumberOfBlocksInTheStorage = maximumNumberOfBlocksInTheStorage;
 			NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;
 			FirstBlock = Blob.DownloadBlockBlob<Block>(firstBlockBlobName);
 			LastBlock = Blob.DownloadBlockBlob<Block>(lastBlockBlobName);
@@ -201,7 +203,7 @@ namespace BitcoinWorkerRole
                 // Keep a max number of blocks in WindowsAzureStorage by deleting older blocks first
                 if (count == max)
                 {
-                    Blob.DeleteBlockBlob(GetBlockBlobName(FirstBlock.Hash));
+                    Blob.DeleteBlockBlob<Block>(GetBlockBlobName(FirstBlock.Hash));
 	                Debug.Assert(FirstBlock != null, "FirstBlock != null");
 	                String nextBlockBlobName = GetBlockBlobName(FirstBlock.NextBlock);
                     FirstBlock = Blob.DownloadBlockBlob<Block>(nextBlockBlobName);
@@ -217,7 +219,7 @@ namespace BitcoinWorkerRole
 
         private static String GetBlockBlobName(String hash)
         {
-            return "block" + hash;
+            return hash;
         }
 
         private static Block UpdateNextBlockHash(Block block)
@@ -242,8 +244,8 @@ namespace BitcoinWorkerRole
 	        NumberOfBlocksInTheStorage = NumberOfBlocksInTheStorage + 1;
 	        LastBlock = block;
 
-	        var bitcoinWorkerRoleBackup = new BitcoinWorkerRoleBackup(NumberOfBlocksInTheStorage, FirstBlock.Hash,
-	                                                                  LastBlock.Hash);
+	        var bitcoinWorkerRoleBackup = new BitcoinWorkerRoleBackup(MaximumNumberOfBlocksInTheStorage,
+				NumberOfBlocksInTheStorage, FirstBlock.Hash, LastBlock.Hash);
 			Blob.UploadBlockBlob("bitcoinworkerrolebackup", bitcoinWorkerRoleBackup);
         }
 

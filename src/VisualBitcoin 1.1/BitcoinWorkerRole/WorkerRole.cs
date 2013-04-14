@@ -46,8 +46,9 @@ namespace BitcoinWorkerRole
 			}
 			else
 			{
-				BitcoinClient.Initialisation(bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage,
-					bitcoinWorkerRoleBackup.FirstBlockHash, bitcoinWorkerRoleBackup.LastBlockHash);
+				BitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
+					bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage, bitcoinWorkerRoleBackup.FirstBlockHash,
+					bitcoinWorkerRoleBackup.LastBlockHash);
 			}
 
 			return base.OnStart();
@@ -60,7 +61,9 @@ namespace BitcoinWorkerRole
 			_isNotOnStop = false;
 
 			// Save backup.
-			var backup = new BitcoinWorkerRoleBackup(BitcoinClient.NumberOfBlocksInTheStorage, BitcoinClient.FirstBlock.Hash, BitcoinClient.LastBlock.Hash);
+			var backup = new BitcoinWorkerRoleBackup(BitcoinClient.MaximumNumberOfBlocksInTheStorage,
+				BitcoinClient.NumberOfBlocksInTheStorage, BitcoinClient.FirstBlock.Hash,
+				BitcoinClient.LastBlock.Hash);
 			Blob.UploadBlockBlob("bitcoinworkerrolebackup", backup);
 		}
 	}
