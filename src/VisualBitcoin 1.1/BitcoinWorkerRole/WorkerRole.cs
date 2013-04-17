@@ -32,7 +32,7 @@ namespace BitcoinWorkerRole
 			Trace.WriteLine("Start", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
 			_isNotOnStop = true;
-			_isBitcoinClientConnexionEnable = false;
+			_isBitcoinClientConnexionEnable = true;
 
 			// Storage configuration and start.
 			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
