@@ -8,6 +8,7 @@ namespace Storage
 		// Storage parameters.
 		private const string DefaultContainerName = "defaultcontainer";
 		private const string BlocksContainerName = "blockscontainer";
+		private const string TransactionsContainerName = "transactionscontainer";
 		private const string TableName = "visualbitcointable";
 		private const string QueueName = "visualbitcoinqueue";
 		private const bool ResetBlobBlocksEnable = false;
@@ -30,7 +31,7 @@ namespace Storage
 
 				StorageAccount = CloudStorageAccount.Parse(connectionString);
 
-				Blob.Start(DefaultContainerName, BlocksContainerName);
+				Blob.Start(DefaultContainerName, BlocksContainerName, TransactionsContainerName);
 				Table.Start(TableName);
 				Queue.Start(QueueName);
 

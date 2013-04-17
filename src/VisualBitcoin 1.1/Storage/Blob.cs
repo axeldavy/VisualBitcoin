@@ -14,10 +14,11 @@ namespace Storage
 		public static CloudBlobClient CloudBlobClient { get; private set; }
 		public static CloudBlobContainer CloudBlobDefaultContainer { get; private set; }
 		public static CloudBlobContainer CloudBlobBlocksContainer { get; private set; }
+		public static CloudBlobContainer CloudBlobTransactionsContainer { get; private set; }
 
 
 		// Configure and start the blob storage, only one call make on application start.
-		public static void Start(string defaultContainerName, string blocksContainerName)
+		public static void Start(string defaultContainerName, string blocksContainerName, string transactionsContainerName)
 		{
 			Trace.WriteLine("Start", "VisualBitcoin.Storage.Blob Information");
 
@@ -26,11 +27,15 @@ namespace Storage
 			CloudBlobDefaultContainer.CreateIfNotExists();
 			CloudBlobBlocksContainer = CloudBlobClient.GetContainerReference(blocksContainerName);
 			CloudBlobBlocksContainer.CreateIfNotExists();
+			CloudBlobTransactionsContainer = CloudBlobClient.GetContainerReference(transactionsContainerName);
+			CloudBlobTransactionsContainer.CreateIfNotExists();
 		}
 
 		// Delete all blocks stored in the blocks container.
 		public static void Reset()
 		{
+			// TODO: finish it.
+
 			Trace.WriteLine("Reset", "VisualBitcoin.Storage.Blob Information");
 
 			var blockList = GetBlockList();
@@ -58,6 +63,10 @@ namespace Storage
 			{
 				blockBlob = CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName);
 			}
+			else if (model is Transactions)
+			{
+				blockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
+			}
 			else
 			{
 				blockBlob = CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
@@ -75,9 +84,20 @@ namespace Storage
 			Trace.WriteLine("Download",
 				"VisualBitcoin.Storage.Blob Information");
 
-			var cloudBlockBlob = typeof (TModel) == typeof (Block)
-				                     ? CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName)
-				                     : CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
+			CloudBlockBlob cloudBlockBlob;
+
+			if (typeof(TModel) == typeof(Block))
+			{
+				cloudBlockBlob = CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName);
+			}
+			else if (typeof(TModel) == typeof(Transactions))
+			{
+				cloudBlockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
+			}
+			else
+			{
+				cloudBlockBlob = CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
+			}
 
 			var stream = new MemoryStream();
 			try
@@ -100,11 +120,13 @@ namespace Storage
 		//Deleting the blob from container
 		public static void DeleteBlockBlob<TModel>(string blockBlobName) where TModel : class
 		{
+			// TODO: manage transaction deleting.
+
 			Trace.WriteLine("Delete", "VisualBitcoin.Storage.Blob Information");
 
-			var cloudBlockBlob = typeof (TModel) == typeof (Block)
-				                     ? CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName)
-				                     : CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
+			var cloudBlockBlob = typeof(TModel) == typeof(Block)
+									 ? CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName)
+									 : CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
 			cloudBlockBlob.Delete();
 		}
 
