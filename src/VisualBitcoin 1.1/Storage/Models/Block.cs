@@ -18,7 +18,7 @@
 		public int Height { get; set; }
 		public int ReceivedTime { get; set; }
 		public string RelayedBy { get; set; }
-		public Transactions[] Transactions { get; set; }
+		public string[] TransactionIds { get; set; }
 
 
 
@@ -40,13 +40,13 @@
 			Height = 0;
 			ReceivedTime = 0;
 			RelayedBy = "";
-			Transactions = new Transactions[0];
+			TransactionIds = new string[0];
 		}
 
 		public Block(string hash, string version, string previousBlock, string nextBlock,
 		             string merkleRoot, int time, int bits, int numberOnce, int numberOfTransactions, int size,
 		             int index, bool isInMainChain, int height, int receivedTime, string relayedBy,
-		             Transactions[] transactions)
+		             string[] transactionIds)
 		{
 			Hash = hash;
 			Version = version;
@@ -63,7 +63,7 @@
 			Height = height;
 			ReceivedTime = receivedTime;
 			RelayedBy = relayedBy;
-			Transactions = transactions;
+			TransactionIds = transactionIds;
 		}
 	}
 }

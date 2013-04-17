@@ -258,7 +258,7 @@ namespace BitcoinWorkerRole
 			LastBlock = block;
 		}
 
-		private static Transactions[] GetTransactionsFromBlock(JObject block)
+		private static Transactions[] GetTransactionsFromJObject(JObject block)
 		{
 			JToken txidList = block["tx"];
 			var transactionsFromBlock = new Transactions[txidList.Count()];
@@ -287,6 +287,19 @@ namespace BitcoinWorkerRole
 			return transactionsFromBlock;
 
 		}
+
+        private static string[] GetTransactionIds(JObject block)
+        {
+            JToken txidList = block["tx"];
+            string[] transactionIds = new string[txidList.Count()];
+            int count = 0;
+            foreach (var txid in txidList) 
+            {
+                transactionIds[count] = (string)txid;
+                count += 1;
+            }
+            return transactionIds;
+        }
 
 		private static JObject DecodeTransaction(JValue txid)
 		{
@@ -347,9 +360,9 @@ namespace BitcoinWorkerRole
 			var merkleRoot = (string)block["merkleroot"];
 			var time = (int)block["time"];
 			var bits = 0; // default
-			const int numberOnce = 0; // default
-			var transactions = new Transactions[0];/* TODO, fix binding error GetTransactionsFromBlock(block);*/
-			var numberOfTransactions = transactions.Count();
+			const int numberOnce = 0; // default 
+            string[] transactionIds = GetTransactionIds(block);
+			var numberOfTransactions = transactionIds.Count();
 			var size = (int)block["size"];
 			const int index = 0; // default
 			const bool isInMainChain = false; // default
@@ -357,7 +370,7 @@ namespace BitcoinWorkerRole
 			var receivedTime = 0; // Parse DateTime.Now
 			const string relayedBy = ""; // default
 			return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, bits, numberOnce,
-				numberOfTransactions, size, index, isInMainChain, height, receivedTime, relayedBy, transactions);
+				numberOfTransactions, size, index, isInMainChain, height, receivedTime, relayedBy, transactionIds);
 		}
 
 	}
