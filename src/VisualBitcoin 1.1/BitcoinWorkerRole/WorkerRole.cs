@@ -11,12 +11,13 @@ namespace BitcoinWorkerRole
 	{
 		// Flag to stop the run loop.
 		private bool _isNotOnStop;
+		private bool _isBitcoinClientConnexionEnable;
 		
 		public override void Run()
 		{
 			Trace.WriteLine("Entry point called", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
-			while (_isNotOnStop)
+			while (_isNotOnStop && _isBitcoinClientConnexionEnable)
 			{
 				Trace.WriteLine("Working", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
@@ -31,6 +32,7 @@ namespace BitcoinWorkerRole
 			Trace.WriteLine("Start", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
 			_isNotOnStop = true;
+			_isBitcoinClientConnexionEnable = false;
 
 			// Storage configuration and start.
 			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
@@ -40,15 +42,19 @@ namespace BitcoinWorkerRole
 			var bitcoinWorkerRoleBackup = Blob.DownloadBlockBlob<BitcoinWorkerRoleBackup>("bitcoinworkerrolebackup");
 
 			// Bitcoin client connexion configuration.
-			if (null == bitcoinWorkerRoleBackup)
+			if (_isBitcoinClientConnexionEnable)
 			{
-				BitcoinClient.Initialisation();
-			}
-			else
-			{
-				BitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
-					bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage, bitcoinWorkerRoleBackup.FirstBlockHash,
-					bitcoinWorkerRoleBackup.LastBlockHash);
+				if (null == bitcoinWorkerRoleBackup)
+				{
+					BitcoinClient.Initialisation();
+				}
+				else
+				{
+					BitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
+					                             bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage,
+					                             bitcoinWorkerRoleBackup.FirstBlockHash,
+					                             bitcoinWorkerRoleBackup.LastBlockHash);
+				}
 			}
 
 			return base.OnStart();
