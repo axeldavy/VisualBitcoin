@@ -36,3 +36,8 @@ Transactions is a subpart for the Block type-class.
 	  WebRole?
 	- How could we organize the storage to enable fast queries from the        
 	  WebRole?
+
+////////////////////////////////////////////////////////////////////////////////
+4. BlockClear
+
+Created to separate Transactions data and Block data. Transaction's array is replaced by array of transactions ID.

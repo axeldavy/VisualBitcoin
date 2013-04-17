@@ -17,7 +17,7 @@ namespace UnitTest
 			const string queueName = "visualbitcoinqueueunittest";
 			const string message = "Message.";
 
-			WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
+			//WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
 			Queue.PushMessage(message);
 			var transmittedMessage = Queue.PopMessage<string>();
 			

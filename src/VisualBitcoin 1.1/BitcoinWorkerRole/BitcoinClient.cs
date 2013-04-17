@@ -261,6 +261,7 @@ namespace BitcoinWorkerRole
 		private static Transactions[] GetTransactionsFromJObject(JObject block)
 		{
 			JToken txidList = block["tx"];
+            string blockHash = (string) block["hash"];
 			var transactionsFromBlock = new Transactions[txidList.Count()];
 
 			int count = 0;
@@ -274,12 +275,21 @@ namespace BitcoinWorkerRole
 						amount = amount + (double)v["value"]; // assert > 0
 					else throw new Exception("type error in BlockandTransactionTransfer");
 				}
+
+                //TODO: add vin and vout
 				transactionsFromBlock[count] = new Transactions
 				{
-					Amount = amount,
-					Txid = (string)txid,
-					Version = (int)transaction["version"],
-					Locktime = (int)transaction["locktime"]
+				
+                    Hash = (string) transaction["hash"],                    
+					Version = (int)transaction["ver"],
+					Locktime = (ulong)transaction["locktime"],
+                    BlockHash = blockHash,
+                    Vin_size = (int) transaction["vin_sz"],
+                    Vout_size = (int) transaction["vout_sz"],
+                    Size = (int) transaction["size"],
+                    Relayed_by = (string)transaction ["relayed_by"],
+                    
+                    Txid = (string)txid,
 				};
 				count += 1;
 			}

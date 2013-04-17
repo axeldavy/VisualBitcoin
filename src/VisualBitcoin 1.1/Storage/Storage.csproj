@@ -47,7 +47,10 @@
     <Compile Include="Models\Block.cs" />
     <Compile Include="Coding.cs" />
     <Compile Include="Models\BlockReference.cs" />
+    <Compile Include="Models\Prev_out.cs" />
     <Compile Include="Models\Transactions.cs" />
+    <Compile Include="Models\VIn.cs" />
+    <Compile Include="Models\VOut.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Queue.cs" />
     <Compile Include="Serialization.cs" />
