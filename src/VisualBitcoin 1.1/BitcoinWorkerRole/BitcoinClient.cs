@@ -269,12 +269,6 @@ namespace BitcoinWorkerRole
 			{
 				JObject transaction = DecodeTransaction(txid);
 				double amount = 0;
-				foreach (JObject v in transaction["vout"])
-				{
-					if (v["value"].Type == JTokenType.Float)
-						amount = amount + (double)v["value"]; // assert > 0
-					else throw new Exception("type error in BlockandTransactionTransfer");
-				}
 
                 //TODO: add vin and vout
 				transactionsFromBlock[count] = new Transactions
@@ -289,9 +283,42 @@ namespace BitcoinWorkerRole
                     Size = (int) transaction["size"],
                     Relayed_by = (string)transaction ["relayed_by"],
                     
-                    Txid = (string)txid,
-				};
-				count += 1;
+                    Txid = (string)txid
+                };
+                int vout_current = 0;
+                foreach (JObject v in transaction["vout"])
+                {
+                    if (v["value"].Type == JTokenType.Float)
+                        amount = amount + (double)v["value"]; // assert > 0
+                    else throw new Exception("type error in BlockandTransactionTransfer");
+                    transactionsFromBlock[count].Outputs[vout_current] = new Vout 
+                    {
+                        Hash = (string)v ["Hash"],
+                        Value = (ulong)v ["value"],
+                        ScriptPubKey = (string)v ["scriptPubKey"]
+                    };
+                    vout_current++;
+                }
+                int vin_current = 0;
+                foreach (JObject v in transaction["vin"])
+                {
+                    JToken prev_out_new = v["prev_out"];
+                    transactionsFromBlock[count].Inputs[vin_current] = new Vin
+                    {
+                        prev_out = new Prev_out
+                        {
+                            Hash = (string) prev_out_new ["hash"],
+                            Value = (ulong) prev_out_new ["value"],
+                            TxId = (string) prev_out_new ["tx_index"],
+                            N = (int) prev_out_new ["n"]
+                        },
+                        ScriptSig = (string)v["scriptSig"]
+                    };
+                    vout_current++;
+                }
+
+
+                count += 1;
 			}
 
 			return transactionsFromBlock;
