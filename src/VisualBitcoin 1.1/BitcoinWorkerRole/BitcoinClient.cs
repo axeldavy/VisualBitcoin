@@ -22,21 +22,6 @@ namespace BitcoinWorkerRole
         public static Uri Uri { get; private set; }
         public static ICredentials Credentials { get; private set; }
 
-		public static void Init()
-		{
-			Trace.WriteLine("Init", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
-
-			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
-			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
-			var uri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
-			
-			Credentials = new NetworkCredential(user, password);
-			Uri = new Uri(uri);
-			
-			SetListSinceBlock();
-            SetFirstBlock();
-        }
-
 		public static void Initialisation()
 		{
 			Trace.WriteLine("Initialisation without backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
@@ -58,7 +43,7 @@ namespace BitcoinWorkerRole
 			FirstBlock = lastBlock;
 			LastBlock = lastBlock;
 
-			UploadBlock(lastBlock, 0);
+			UploadBlock(lastBlock);
 		}
 
 		public static void Initialisation(int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
@@ -174,47 +159,8 @@ namespace BitcoinWorkerRole
 				Trace.WriteLine("\"\" != \"" + block.NextBlock + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
 				block = GetNextBlock(block);
-				UploadBlock(block, 0);
+				UploadBlock(block);
 			}
-		}
-
-		public static void UploadNewBlocks(int max = 1000)
-		{
-			Trace.WriteLine("Upload new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
-
-			// Retrieve information from the BitnetWorkerRole backup.
-			var backup = Blob.DownloadBlockBlob<BitnetBackup>("bitnetbackup");
-            Block block;
-            int count;
-            if (backup == null)
-            {
-                block = ListSinceBlock;
-                count = 1;
-            }
-            else
-            {
-                String backupBlobName = GetBlockBlobName(backup.Hash);
-                block = UpdateNextBlockHash(Blob.DownloadBlockBlob<Block>(backupBlobName));
-                count = backup.Count;
-            }
-
-			while (block.Hash != ListSinceBlock.Hash)
-			{
-                // Keep a max number of blocks in WindowsAzureStorage by deleting older blocks first
-                if (count == max)
-                {
-                    Blob.DeleteBlockBlob<Block>(GetBlockBlobName(FirstBlock.Hash));
-	                Debug.Assert(FirstBlock != null, "FirstBlock != null");
-	                String nextBlockBlobName = GetBlockBlobName(FirstBlock.NextBlock);
-                    FirstBlock = Blob.DownloadBlockBlob<Block>(nextBlockBlobName);
-                    Blob.UploadBlockBlob("headblock", FirstBlock);
-                    count -= 1;
-                }
-                UploadBlock(block, count);
-                count += 1;
-                block = GetNextBlock(block);
-			}
-            UploadBlock(block, count);
 		}
 
         private static String GetBlockBlobName(String hash)
@@ -230,16 +176,13 @@ namespace BitcoinWorkerRole
             return block;
         }
 
-        private static void UploadBlock(Block block, int count)
+        private static void UploadBlock(Block block)
         {
 	        var blockBlobName = GetBlockBlobName(block.Hash);
             var blockReference = new BlockReference(block.Hash);
 
             Blob.UploadBlockBlob(blockBlobName, block);
             Queue.PushMessage(blockReference);
-
-            var bitnetBackup = new BitnetBackup(block.Hash, count);
-            Blob.UploadBlockBlob("bitnetbackup", bitnetBackup);
 
 	        NumberOfBlocksInTheStorage = NumberOfBlocksInTheStorage + 1;
 	        LastBlock = block;
