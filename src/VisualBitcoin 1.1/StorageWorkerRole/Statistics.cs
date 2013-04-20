@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using Storage;
 using Storage.Models;
 
@@ -41,12 +42,14 @@ namespace StorageWorkerRole
 
 		// Retrieve a block from queue and call Review_Statics.
         // Added parsing here
+// ReSharper disable UnusedMember.Local
         static void Main()
         {
             var hash = Queue.PopMessage<string>();
             var block = Blob.GetBlock(hash);
             
             Review_Statistics(block);
+            Sort_blocks(block);
 
             /*
              * Can't add this because I can't test it(((
@@ -61,7 +64,39 @@ namespace StorageWorkerRole
             }*/
         }
 
-		// Update statistics.
+        //TODO : à déplacer et initialiser les Higher_Block_Sort_
+	    private static void Sort_blocks(Block block)
+	    {
+	        int n = 9; // number of blocks - 1
+            var blockinarray = Blob.GetBlockHigh("Higher_Block_Sort_" + n.ToString(CultureInfo.InvariantCulture));
+            var blockhigh = new BlockHigh(block.Hash, block.Time);
+            
+
+            while ((n >= 0) && (block.Time) < (blockinarray.Time))
+            {
+                blockinarray = Blob.GetBlockHigh("Higher_Block_Sort_"+ n.ToString(CultureInfo.InvariantCulture));// Attention sur le Hash
+                n--;
+            }
+	        if (n >= 0)//simplifier
+	        {
+                var previousblockhigh = Blob.GetBlockHigh("Higher_Block_Sort_" + n.ToString(CultureInfo.InvariantCulture));
+// ReSharper disable RedundantAssignment
+                var permuteblockhigh = new BlockHigh();
+// ReSharper restore RedundantAssignment
+                Blob.UploadBlockBlob("Higher_Block_Sort_" + n.ToString(CultureInfo.InvariantCulture), blockhigh);
+	            n--;
+                while (n >= 0)
+                {
+                    permuteblockhigh = Blob.GetBlockHigh("Higher_Block_Sort_" + n.ToString(CultureInfo.InvariantCulture));
+                    Blob.UploadBlockBlob("Higher_Block_Sort_" + n.ToString(CultureInfo.InvariantCulture), previousblockhigh);
+                    previousblockhigh = permuteblockhigh;
+                    n--;
+                }
+	        }
+
+	    }
+
+	    // Update statistics.
         static void Review_Statistics(Block x)
         {
             _numberOfBlocks += 1;

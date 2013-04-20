@@ -15,10 +15,11 @@ namespace Storage
 		public static CloudBlobContainer CloudBlobDefaultContainer { get; private set; }
 		public static CloudBlobContainer CloudBlobBlocksContainer { get; private set; }
 		public static CloudBlobContainer CloudBlobTransactionsContainer { get; private set; }
+        public static CloudBlobContainer CloudBlobHighContainer { get; private set; }
 
 
 		// Configure and start the blob storage, only one call make on application start.
-		public static void Start(string defaultContainerName, string blocksContainerName, string transactionsContainerName)
+		public static void Start(string defaultContainerName, string blocksContainerName, string transactionsContainerName, string highContainerName)
 		{
 			Trace.WriteLine("Start", "VisualBitcoin.Storage.Blob Information");
 
@@ -29,6 +30,8 @@ namespace Storage
 			CloudBlobBlocksContainer.CreateIfNotExists();
 			CloudBlobTransactionsContainer = CloudBlobClient.GetContainerReference(transactionsContainerName);
 			CloudBlobTransactionsContainer.CreateIfNotExists();
+            CloudBlobHighContainer = CloudBlobClient.GetContainerReference(highContainerName);
+            CloudBlobHighContainer.CreateIfNotExists();
 		}
 
 		// Delete all blocks stored in the blocks container.
@@ -66,6 +69,10 @@ namespace Storage
 			{
 				blockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
+            else if (model is BlockHigh)
+            {
+                blockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
+            }
 			else
 			{
 				blockBlob = CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
@@ -93,6 +100,10 @@ namespace Storage
 			{
 				cloudBlockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
+            else if (typeof(TModel) == typeof(BlockHigh))
+            {
+                cloudBlockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
+            }
 			else
 			{
 				cloudBlockBlob = CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
@@ -119,13 +130,29 @@ namespace Storage
 		//Deleting the blob from container
 		public static void DeleteBlockBlob<TModel>(string blockBlobName) where TModel : class
 		{
-			// TODO: manage transaction deleting.
+			// TODO: manage transaction deleting. C'est fait
 
 			Trace.WriteLine("Delete", "VisualBitcoin.Storage.Blob Information");
 
-			var cloudBlockBlob = typeof(TModel) == typeof(Block)
-									 ? CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName)
-									 : CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
+            CloudBlockBlob cloudBlockBlob;
+
+            if (typeof(TModel) == typeof(Block))
+            {
+                cloudBlockBlob = CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName);
+            }
+            else if (typeof(TModel) == typeof(Transactions))
+            {
+                cloudBlockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
+            }
+            else if (typeof(TModel) == typeof(BlockHigh))
+            {
+                cloudBlockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
+            }
+            else
+            {
+                cloudBlockBlob = CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
+            }
+
 			cloudBlockBlob.Delete();
 		}
 
@@ -142,10 +169,18 @@ namespace Storage
 		public static Block GetBlock(string blockName)
 		{
 			Trace.WriteLine("Block download", "VisualBitcoin.Storage.Blob Information");
-
+            
 			var block = DownloadBlockBlob<Block>(blockName);
 			return block;
 		}
+
+        public static BlockHigh GetBlockHigh(string blockName)
+        {
+            Trace.WriteLine("BlockHigh download", "VisualBitcoin.Storage.Blob Information");
+
+            var blockhigh = DownloadBlockBlob<BlockHigh>(blockName);
+            return blockhigh;
+        }
 
 		//Retrieve the list of blocks (where the blocks' name begin by "block" : to be modified !).
 		public static List<string> GetBlockList()
