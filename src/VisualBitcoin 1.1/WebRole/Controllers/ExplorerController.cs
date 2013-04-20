@@ -20,9 +20,8 @@ namespace WebRole.Controllers
 		public static BlockModel BlockModelOfBlock(Block block)
 		{
 			var blockModel = new BlockModel(block.Hash, block.Version, block.PreviousBlock, block.MerkleRoot,
-			                                block.Time, block.Bits, block.NumberOnce, block.NumberOfTransactions,
-											block.Size, block.Index, block.IsInMainChain, block.Height,
-											block.ReceivedTime, block.RelayedBy);
+			                                block.Time, block.NumberOnce, block.NumberOfTransactions,
+											block.Size, block.Height, block.ReceivedTime, "");
 			return blockModel;
 		}
 

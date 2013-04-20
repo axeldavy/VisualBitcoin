@@ -144,8 +144,21 @@ namespace BitcoinWorkerRole
 			throw new Exception("Invoke:" + error);
 		}
 
+        // Use this method for testing changes made to Blocks class
+        private static void UpdateBlocks()
+        {
+            foreach (string blockHash in Blob.GetBlockList())
+            {
+                var blockObject = Invoke("getblock", new object[] { blockHash }) as JObject;
+                var block = GetBlockFromJObject(blockObject);
+                Blob.UploadBlockBlob(block.Hash, block);
+            }
+        }
+
 		public static void UploadNewBlocks()
 		{
+            // For testing purposes use UpdateBlocks() HERE --
+            //UpdateBlocks();
 			if (MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
 				return;
 
@@ -201,16 +214,16 @@ namespace BitcoinWorkerRole
 			LastBlock = block;
 		}
 
-		private static Transactions[] GetTransactionsFromJObject(JObject block)
+		private static Transactions[] GetTransactionsFromBlock(Block block)
 		{
-			JToken txidList = block["tx"];
-            string blockHash = (string) block["hash"];
-			var transactionsFromBlock = new Transactions[txidList.Count()];
+            string[] txidList = block.TransactionIds;
+            string blockHash = block.Hash;
+            Transactions[] transactionsFromBlock = new Transactions[txidList.Count()];
 
-			int count = 0;
-			foreach (JValue txid in txidList)
-			{
-				JObject transaction = DecodeTransaction(txid);
+            int count = 0;
+            foreach (string txid in txidList)
+            {
+                JObject transaction = DecodeTransaction(txid);
 				double amount = 0;
 
                 //TODO: add vin and vout
@@ -268,9 +281,9 @@ namespace BitcoinWorkerRole
 
 		}
 
-        private static string[] GetTransactionIds(JObject block)
+        private static string[] GetTransactionIds(JObject obj)
         {
-            JToken txidList = block["tx"];
+            JToken txidList = obj["tx"];
             string[] transactionIds = new string[txidList.Count()];
             int count = 0;
             foreach (var txid in txidList) 
@@ -281,39 +294,12 @@ namespace BitcoinWorkerRole
             return transactionIds;
         }
 
-		private static JObject DecodeTransaction(JValue txid)
+		private static JObject DecodeTransaction(string txid)
 		{
 			JToken txHash = Invoke("getrawtransaction", new object[] { txid });
 			if (txHash == null) throw new Exception("null transaction hash value");
 			return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
 		}
-
-		public static void SetListSinceBlock()
-		{
-			Trace.WriteLine("Set ListSinceBlock", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
-
-			var lastBlock = Invoke("listsinceblock") as JObject;
-			Debug.Assert(lastBlock != null, "lastBlock != null");
-			JToken lastBlockHash = lastBlock["lastblock"];
-
-			ListSinceBlock = GetBlockByHash(lastBlockHash);
-		}
-
-        public static void SetFirstBlock()
-        {
-			Trace.WriteLine("Set FirstBlock", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
-
-            var block = Blob.DownloadBlockBlob<Block>("headblock");
-            if (block == null)
-            {
-                FirstBlock = ListSinceBlock;
-                Blob.UploadBlockBlob("headblock", FirstBlock);
-            }
-            else
-            {
-                FirstBlock = block;
-            }
-        }
 
 		private static Block GetPrevBlock(Block block)
 		{
@@ -331,26 +317,23 @@ namespace BitcoinWorkerRole
 			return GetBlockFromJObject(block);
 		}
 
-		private static Block GetBlockFromJObject(JObject block)
+		private static Block GetBlockFromJObject(JObject obj)
 		{
-			var hash = (string)block["hash"];
-			var version = (string)block["version"];
-			var previousBlock = (string)block["previousblockhash"]; // TODO, throw error if not exists
-			var nextBlock = (string)block["nextblockhash"]; // TODO, throw error if not exists
-			var merkleRoot = (string)block["merkleroot"];
-			var time = (int)block["time"];
-			var bits = 0; // default
-			const int numberOnce = 0; // default 
-            string[] transactionIds = GetTransactionIds(block);
-			var numberOfTransactions = transactionIds.Count();
-			var size = (int)block["size"];
-			const int index = 0; // default
-			const bool isInMainChain = false; // default
-			var height = (int)block["height"];
-			var receivedTime = 0; // Parse DateTime.Now
-			const string relayedBy = ""; // default
-			return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, bits, numberOnce,
-				numberOfTransactions, size, index, isInMainChain, height, receivedTime, relayedBy, transactionIds);
+			string hash = (string)obj["hash"];
+			string version = (string)obj["version"];
+			string previousBlock = (string)obj["previousblockhash"];
+			string nextBlock = (string)obj["nextblockhash"];
+			string merkleRoot = (string)obj["merkleroot"];
+			int time = (int)obj["time"];
+			long numberOnce = (long)obj["nonce"]; 
+            string[] transactionIds = GetTransactionIds(obj);
+			int numberOfTransactions = transactionIds.Count();
+			int size = (int)obj["size"];
+			int height = (int)obj["height"];
+            int receivedTime = 0; // TODO, make available in block object
+            string relayedBy = (string)obj["relayed_by"]; // TODO find not null object
+			return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, numberOnce,
+				numberOfTransactions, size, height, receivedTime, relayedBy, transactionIds);
 		}
 
 	}
