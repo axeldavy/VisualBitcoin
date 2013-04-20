@@ -44,7 +44,6 @@ namespace Storage
 				DeleteBlockBlob<Block>(blockBlobName);
 			}
 
-			DeleteBlockBlob<BitnetBackup>("bitnetbackup");
 			DeleteBlockBlob<BitcoinWorkerRoleBackup>("bitcoinworkerrolebackup");
 		}
 

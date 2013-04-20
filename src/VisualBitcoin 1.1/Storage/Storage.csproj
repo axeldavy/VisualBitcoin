@@ -43,7 +43,6 @@
   <ItemGroup>
     <Compile Include="Blob.cs" />
     <Compile Include="Models\BitcoinWorkerRole.cs" />
-    <Compile Include="Models\BitnetBackup.cs" />
     <Compile Include="Models\Block.cs" />
     <Compile Include="Coding.cs" />
     <Compile Include="Models\BlockReference.cs" />
