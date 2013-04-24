@@ -54,8 +54,8 @@ namespace BitcoinWorkerRole
 			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
 			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
 			var virtualMachineUri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
-			var firstBlockBlobName = GetBlockBlobName(firstBlockHash);
-			var lastBlockBlobName = GetBlockBlobName(lastBlockHash);
+			var firstBlockBlobName = firstBlockHash;
+			var lastBlockBlobName = lastBlockHash;
 
 			Credentials = new NetworkCredential(user, password);
 			Uri = new Uri(virtualMachineUri);
@@ -172,16 +172,11 @@ namespace BitcoinWorkerRole
 			{
 				Trace.WriteLine("\"\" != \"" + block.NextBlock + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
-				block = GetNextBlock(block);
+				block = GetBlockByHash(block.NextBlock);
 				UploadBlock(block);
                 UploadTransactionsFromBlock(block);
 			}
 		}
-
-        private static String GetBlockBlobName(String hash)
-        {
-            return hash;
-        }
 
         private static Block UpdateNextBlockHash(Block block)
         {
@@ -193,7 +188,7 @@ namespace BitcoinWorkerRole
 
         private static void UploadBlock(Block block)
         {
-	        var blockBlobName = GetBlockBlobName(block.Hash);
+	        var blockBlobName = block.Hash;
             var blockReference = new BlockReference(block.Hash);
 
             Blob.UploadBlockBlob(blockBlobName, block);
@@ -219,10 +214,8 @@ namespace BitcoinWorkerRole
 
 		private static void UpdateBlock(Block block)
 		{
-			var blockBlobName = GetBlockBlobName(block.Hash);
-
+			var blockBlobName = block.Hash;
 			Blob.UploadBlockBlob(blockBlobName, block);
-
 			LastBlock = block;
 		}
 
@@ -288,16 +281,6 @@ namespace BitcoinWorkerRole
 			JToken txHash = Invoke("getrawtransaction", new object[] { txid });
 			if (txHash == null) throw new Exception("null transaction hash value");
 			return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
-		}
-
-		private static Block GetPrevBlock(Block block)
-		{
-			return GetBlockByHash(block.PreviousBlock);
-		}
-
-		private static Block GetNextBlock(Block block)
-		{
-			return GetBlockByHash(block.NextBlock);
 		}
 
 		private static Block GetBlockByHash(JToken hashToken)
