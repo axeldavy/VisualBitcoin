@@ -21,7 +21,7 @@ namespace WebRole.Controllers
 		{
 			var blockModel = new BlockModel(block.Hash, block.Version, block.PreviousBlock, block.MerkleRoot,
 			                                block.Time, block.NumberOnce, block.NumberOfTransactions,
-											block.Size, block.Height, block.ReceivedTime, "");
+											block.Size, block.Height);
 			return blockModel;
 		}
 

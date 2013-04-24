@@ -159,7 +159,7 @@ namespace BitcoinWorkerRole
 		public static void UploadNewBlocks()
 		{
             // For testing purposes use UpdateBlocks() HERE --
-            UpdateBlocks();
+            //UpdateBlocks();
 			if (MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
 				return;
 
@@ -302,10 +302,8 @@ namespace BitcoinWorkerRole
 			int numberOfTransactions = transactionIds.Count();
 			int size = (int)obj["size"];
 			int height = (int)obj["height"];
-            int receivedTime = 0; // TODO, make available in block object
-            string relayedBy = (string)obj["relayed_by"]; // TODO find not null object
 			return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, numberOnce,
-				numberOfTransactions, size, height, receivedTime, relayedBy, transactionIds);
+				numberOfTransactions, size, height, transactionIds);
 		}
 
 	}

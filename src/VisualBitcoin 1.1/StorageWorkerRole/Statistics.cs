@@ -103,7 +103,7 @@ namespace StorageWorkerRole
             _numberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions); 
 
             // Qualite de temps de distribution des blocs.
-            _totalTime = (_totalTime + Convert.ToUInt64(x.ReceivedTime) - InitialTime);
+            _totalTime = (_totalTime + Convert.ToUInt64(x.Time) - InitialTime);
 			// ReSharper disable PossibleLossOfFraction
             _averageTime = _totalTime / _numberOfBlocks;
             _varianceTime = Variance(_totalTime, _averageTime, _numberOfBlocks);
