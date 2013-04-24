@@ -5,18 +5,18 @@
         // Constructors
         public Vin()
         {
-            prev_out = new Prev_out();
-            ScriptSig = "Unavailable";
+            Coinbase = "";
+            Sequence = 0;
         }
 
-        public Vin(Prev_out _prev_out, string scriptSig)
+        public Vin(string coinbase, ulong sequence)
         {
-            prev_out = _prev_out;
-            ScriptSig = scriptSig;
+            Coinbase = coinbase;
+            Sequence = sequence;
         }
 
         // Properties
-        public Prev_out prev_out { set; get; } //From wich vout it came 
-        public string ScriptSig { set; get; }  //Don't know for what 
+        public string Coinbase { set; get; }
+        public ulong Sequence { set; get; }
     }
 }

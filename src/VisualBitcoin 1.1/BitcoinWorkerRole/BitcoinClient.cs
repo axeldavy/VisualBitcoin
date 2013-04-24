@@ -152,13 +152,14 @@ namespace BitcoinWorkerRole
                 var blockObject = Invoke("getblock", new object[] { blockHash }) as JObject;
                 var block = GetBlockFromJObject(blockObject);
                 Blob.UploadBlockBlob(block.Hash, block);
+                UploadTransactionsFromBlock(block);
             }
         }
 
 		public static void UploadNewBlocks()
 		{
             // For testing purposes use UpdateBlocks() HERE --
-            //UpdateBlocks();
+            UpdateBlocks();
 			if (MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
 				return;
 
@@ -173,6 +174,7 @@ namespace BitcoinWorkerRole
 
 				block = GetNextBlock(block);
 				UploadBlock(block);
+                UploadTransactionsFromBlock(block);
 			}
 		}
 
@@ -205,6 +207,16 @@ namespace BitcoinWorkerRole
 			Blob.UploadBlockBlob("bitcoinworkerrolebackup", bitcoinWorkerRoleBackup);
         }
 
+        private static void UploadTransactionsFromBlock(Block block)
+        {
+            Transactions[] trans = GetTransactionsFromBlock(block);
+            foreach (Transactions t in trans)
+            {
+                Blob.UploadBlockBlob(t.Txid, t);
+                Queue.PushMessage(t);
+            }
+        }
+
 		private static void UpdateBlock(Block block)
 		{
 			var blockBlobName = GetBlockBlobName(block.Hash);
@@ -224,61 +236,38 @@ namespace BitcoinWorkerRole
             foreach (string txid in txidList)
             {
                 JObject transaction = DecodeTransaction(txid);
-				double amount = 0;
+                transactionsFromBlock[count] = new Transactions(
+                    (int)transaction["version"],
+                    (int)transaction["vin"].Count(),
+                    (int)transaction["vout"].Count(),
+                    (ulong)transaction["locktime"],
+                    (string)txid,
+                    blockHash);
 
-                //TODO: add vin and vout
-				transactionsFromBlock[count] = new Transactions
-				{
-				
-                    Hash = (string) transaction["hash"],                    
-					Version = (int)transaction["ver"],
-					Locktime = (ulong)transaction["locktime"],
-                    BlockHash = blockHash,
-                    Vin_size = (int) transaction["vin_sz"],
-                    Vout_size = (int) transaction["vout_sz"],
-                    Size = (int) transaction["size"],
-                    Relayed_by = (string)transaction ["relayed_by"],
-                    
-                    Txid = (string)txid
-                };
                 int vout_current = 0;
                 foreach (JObject v in transaction["vout"])
                 {
-                    if (v["value"].Type == JTokenType.Float)
-                        amount = amount + (double)v["value"]; // assert > 0
-                    else throw new Exception("type error in BlockandTransactionTransfer");
-                    transactionsFromBlock[count].Outputs[vout_current] = new Vout 
-                    {
-                        Hash = (string)v ["Hash"],
-                        Value = (ulong)v ["value"],
-                        ScriptPubKey = (string)v ["scriptPubKey"]
-                    };
+                    transactionsFromBlock[count].Outputs[vout_current] = new Vout(
+                        (ulong)v["value"],
+                        (int)v["n"]
+                    );
                     vout_current++;
                 }
+
                 int vin_current = 0;
                 foreach (JObject v in transaction["vin"])
                 {
                     JToken prev_out_new = v["prev_out"];
-                    transactionsFromBlock[count].Inputs[vin_current] = new Vin
-                    {
-                        prev_out = new Prev_out
-                        {
-                            Hash = (string) prev_out_new ["hash"],
-                            Value = (ulong) prev_out_new ["value"],
-                            TxId = (string) prev_out_new ["tx_index"],
-                            N = (int) prev_out_new ["n"]
-                        },
-                        ScriptSig = (string)v["scriptSig"]
-                    };
-                    vout_current++;
+                    transactionsFromBlock[count].Inputs[vin_current] = new Vin(
+                        (string)v["coinbase"],
+                        (ulong)v["sequence"]
+                    );
+                    vin_current++;
                 }
-
-
                 count += 1;
 			}
 
 			return transactionsFromBlock;
-
 		}
 
         private static string[] GetTransactionIds(JObject obj)

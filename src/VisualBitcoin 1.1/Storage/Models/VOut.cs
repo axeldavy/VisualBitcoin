@@ -5,21 +5,18 @@
         // Constructors
         public Vout()
         {
-            Hash = "";
             Value = 0;
-            ScriptPubKey = "Unavailable";
+            N = 0;
         }
 
-        public Vout(string hash, ulong value, string scriptPubKey)
+        public Vout(ulong value, int n)
         {
-            Hash = hash;
-            Value = value;
-            ScriptPubKey = scriptPubKey;
+            Value = value; 
+            N = n;
         }
 
         // Properties
-        public string Hash { set; get; }    //
-        public ulong Value { get; set; }    //
-        public string ScriptPubKey { set; get; } //
+        public ulong Value { get; set; }   
+        public int N { set; get; }    
     }
 }
