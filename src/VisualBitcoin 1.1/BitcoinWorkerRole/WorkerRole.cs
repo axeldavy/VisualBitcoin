@@ -4,6 +4,7 @@ using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Storage;
 using Storage.Models;
+using System;
 
 namespace BitcoinWorkerRole
 {
@@ -17,14 +18,31 @@ namespace BitcoinWorkerRole
 		{
 			Trace.WriteLine("Entry point called", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
-			while (_isNotOnStop && _isBitcoinClientConnexionEnable)
-			{
-				Trace.WriteLine("Working", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
+		    try
+		    {
 
-				Thread.Sleep(5000);
+		        while (_isNotOnStop && _isBitcoinClientConnexionEnable)
+		        {
+		            Trace.WriteLine("Working", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
-                BitcoinClient.UploadNewBlocks();
-			}
+		            Thread.Sleep(5000);
+
+		            BitcoinClient.UploadNewBlocks();
+		        }
+
+		    }
+
+		    catch (Exception ex)
+		    {
+		        string err = ex.Message;
+		        err = "Run (BitcoinWorkerRole) Error: " + err;
+		        if (ex.InnerException != null)
+		        {
+		            err = err + " Inner Exception: " + ex.InnerException.Message;
+		        }
+		        Trace.TraceError(err);
+		        Thread.Sleep(60000);// wait 60 seconds to prevent the workerRole to try again too soon
+		    }
 		}
 
 		public override bool OnStart()
@@ -34,30 +52,46 @@ namespace BitcoinWorkerRole
 			_isNotOnStop = true;
 			_isBitcoinClientConnexionEnable = true;
 
-			// Storage configuration and start.
-			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-			WindowsAzure.Start(connectionString);
+		    try
+		    {
 
-			// Retrieve backup.
-			var bitcoinWorkerRoleBackup = Blob.DownloadBlockBlob<BitcoinWorkerRoleBackup>("bitcoinworkerrolebackup");
+		        // Storage configuration and start.
+		        var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
+		        WindowsAzure.Start(connectionString);
 
-			// Bitcoin client connexion configuration.
-			if (_isBitcoinClientConnexionEnable)
-			{
-				if (null == bitcoinWorkerRoleBackup)
-				{
-					BitcoinClient.Initialisation();
-				}
-				else
-				{
-					BitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
-					                             bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage,
-					                             bitcoinWorkerRoleBackup.FirstBlockHash,
-					                             bitcoinWorkerRoleBackup.LastBlockHash);
-				}
-			}
+		        // Retrieve backup.
+		        var bitcoinWorkerRoleBackup = Blob.DownloadBlockBlob<BitcoinWorkerRoleBackup>("bitcoinworkerrolebackup");
 
-			return base.OnStart();
+		        // Bitcoin client connexion configuration.
+		        if (_isBitcoinClientConnexionEnable)
+		        {
+		            if (null == bitcoinWorkerRoleBackup)
+		            {
+		                BitcoinClient.Initialisation();
+		            }
+		            else
+		            {
+		                BitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
+		                                             bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage,
+		                                             bitcoinWorkerRoleBackup.FirstBlockHash,
+		                                             bitcoinWorkerRoleBackup.LastBlockHash);
+		            }
+		        }
+
+		        return base.OnStart();
+		    }
+            catch (Exception ex)
+            {
+                string err = ex.Message;
+                err = "OnStart (BitcoinWorkerRole) Error: " + err;
+                if (ex.InnerException != null)
+                {
+                    err = err + " Inner Exception: " + ex.InnerException.Message;
+                }
+                Trace.TraceError(err);
+                Thread.Sleep(60000);// wait 60 seconds to prevent the workerRole to try again too soon
+                throw; // to prevent run to be called after the failure of OnStart
+            }
 		}
 
 		public override void OnStop()

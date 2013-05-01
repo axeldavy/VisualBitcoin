@@ -21,6 +21,7 @@ namespace BitcoinWorkerRole
 		public static int NumberOfBlocksInTheStorage { get; private set; }
         public static Uri Uri { get; private set; }
         public static ICredentials Credentials { get; private set; }
+	    private static bool Blocklimit ;
 
 		public static void Initialisation()
 		{
@@ -40,16 +41,17 @@ namespace BitcoinWorkerRole
 
 			MaximumNumberOfBlocksInTheStorage = 30;
 			NumberOfBlocksInTheStorage = 0;
+		    Blocklimit = true;
 			FirstBlock = lastBlock;
 			LastBlock = lastBlock;
 
-			UploadBlock(lastBlock);
+			UploadNewLastBlock(lastBlock);
 		}
 
 		public static void Initialisation(int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
 			string firstBlockHash, string lastBlockHash)
 		{
-			Trace.WriteLine("Initialisation without backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+			Trace.WriteLine("Initialisation with backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
 			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
 			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
@@ -61,6 +63,7 @@ namespace BitcoinWorkerRole
 			Uri = new Uri(virtualMachineUri);
 			MaximumNumberOfBlocksInTheStorage = maximumNumberOfBlocksInTheStorage;
 			NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;
+            Blocklimit = (maximumNumberOfBlocksInTheStorage != 0);
 			FirstBlock = Blob.DownloadBlockBlob<Block>(firstBlockBlobName);
 			LastBlock = Blob.DownloadBlockBlob<Block>(lastBlockBlobName);
 		}
@@ -125,7 +128,7 @@ namespace BitcoinWorkerRole
 						Debug.Assert(str != null, "str != null");
 						using (var sr = new StreamReader(str))
 						{
-                            Console.WriteLine(sr.ReadToEnd());
+                            //Console.WriteLine(sr.ReadToEnd()); Useless since WebException => Invoke will get a non null error field
 							return JsonConvert.DeserializeObject<JObject>(sr.ReadToEnd());
 						}
 					}
@@ -160,7 +163,7 @@ namespace BitcoinWorkerRole
 		{
             // For testing purposes use UpdateBlocks() HERE --
             //UpdateBlocks();
-			if (MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
+			if (Blocklimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
 				return;
 
 			Trace.WriteLine("Upload new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
@@ -173,8 +176,9 @@ namespace BitcoinWorkerRole
 				Trace.WriteLine("\"\" != \"" + block.NextBlock + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
 				block = GetBlockByHash(block.NextBlock);
-				UploadBlock(block);
-                UploadTransactionsFromBlock(block);
+                UploadTransactionsFromBlock(block); // Upload Transactions first because the message in the queue must be send after everything is done.
+                UploadNewLastBlock(block);
+                
 			}
 		}
 
@@ -182,11 +186,11 @@ namespace BitcoinWorkerRole
         {
             var blockJObject = Invoke("getblock", new object[] { block.Hash }) as JObject;
 	        Debug.Assert(blockJObject != null, "blockJObject != null");
-	        block.NextBlock = (string) blockJObject["nextblockhash"];
+	        block.NextBlock = (string) blockJObject["nextblockhash"]; // Can be null (no next block)
             return block;
         }
 
-        private static void UploadBlock(Block block)
+        private static void UploadNewLastBlock(Block block)
         {
 	        var blockBlobName = block.Hash;
             var blockReference = new BlockReference(block.Hash);
@@ -194,12 +198,15 @@ namespace BitcoinWorkerRole
             Blob.UploadBlockBlob(blockBlobName, block);
             Queue.PushMessage(blockReference);
 
-	        NumberOfBlocksInTheStorage = NumberOfBlocksInTheStorage + 1;
-	        LastBlock = block;
+            
+            NumberOfBlocksInTheStorage = NumberOfBlocksInTheStorage + 1;
+            LastBlock = block;
 
-	        var bitcoinWorkerRoleBackup = new BitcoinWorkerRoleBackup(MaximumNumberOfBlocksInTheStorage,
-				NumberOfBlocksInTheStorage, FirstBlock.Hash, LastBlock.Hash);
-			Blob.UploadBlockBlob("bitcoinworkerrolebackup", bitcoinWorkerRoleBackup);
+            var bitcoinWorkerRoleBackup = new BitcoinWorkerRoleBackup(MaximumNumberOfBlocksInTheStorage,
+                                                                          NumberOfBlocksInTheStorage, FirstBlock.Hash,
+                                                                          LastBlock.Hash);
+            Blob.UploadBlockBlob("bitcoinworkerrolebackup", bitcoinWorkerRoleBackup);
+            
         }
 
         private static void UploadTransactionsFromBlock(Block block)
@@ -208,7 +215,6 @@ namespace BitcoinWorkerRole
             foreach (Transactions t in trans)
             {
                 Blob.UploadBlockBlob(t.Txid, t);
-                Queue.PushMessage(t);
             }
         }
 
