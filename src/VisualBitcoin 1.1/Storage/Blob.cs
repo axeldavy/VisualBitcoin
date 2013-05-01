@@ -69,7 +69,7 @@ namespace Storage
 			{
 				blockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
-            else if (model is BlockHigh)
+            else if (model is List<Block>)
             {
                 blockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
             }
@@ -100,7 +100,7 @@ namespace Storage
 			{
 				cloudBlockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
-            else if (typeof(TModel) == typeof(BlockHigh))
+            else if (typeof(TModel) == typeof(List<Block>))
             {
                 cloudBlockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
             }
@@ -144,7 +144,7 @@ namespace Storage
             {
                 cloudBlockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
             }
-            else if (typeof(TModel) == typeof(BlockHigh))
+            else if (typeof(TModel) == typeof(List<Block>))
             {
                 cloudBlockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
             }
@@ -174,13 +174,6 @@ namespace Storage
 			return block;
 		}
 
-        public static BlockHigh GetBlockHigh(string blockName)
-        {
-            Trace.WriteLine("BlockHigh download", "VisualBitcoin.Storage.Blob Information");
-
-            var blockhigh = DownloadBlockBlob<BlockHigh>(blockName);
-            return blockhigh;
-        }
 
 		//Retrieve the list of blocks (where the blocks' name begin by "block" : to be modified !).
 		public static List<string> GetBlockList()

@@ -64,8 +64,38 @@ namespace StorageWorkerRole
             }*/
         }
 
+        //List<Block> Lastblocks = new List<Block>();
+
+        private static int Compare_block(Block x,Block y)
+        {
+            if (x == null)
+            {
+                return -1;
+            }
+            else
+            {
+                if (y == null)
+                {
+                    return 1;
+                }
+                else
+                {
+                    return (x.Time >= y.Time);
+                }
+            }
+        }
+        //TODO: initialiser à 10 null
+        private static void Sort_blocks(Block block)
+        {
+            var blocklist = DownloadBlockBlob<(List<Block>)>("Last_Blocks");
+            blocklist.Add(block);
+            blocklist.Sort(Compare_block);
+            blocklist.RemoveAt(0);
+            UploadBlockBlob("Last_Blocks", (List<Block>) blocklist);
+        }
+
         //TODO : à déplacer et initialiser les Higher_Block_Sort_
-	    private static void Sort_blocks(Block block)
+	    /*private static void Sort_high_blocks(Block block)
 	    {
 	        int n = 9; // number of blocks - 1
             var blockinarray = Blob.GetBlockHigh("Higher_Block_Sort_" + n.ToString(CultureInfo.InvariantCulture));
@@ -94,7 +124,7 @@ namespace StorageWorkerRole
                 }
 	        }
 
-	    }
+	    }*/
 
 	    // Update statistics.
         static void Review_Statistics(Block x)
