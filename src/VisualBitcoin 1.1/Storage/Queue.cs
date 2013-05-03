@@ -24,7 +24,9 @@ namespace Storage
 		// Pop all messages in the queue.
 		public static void Reset()
 		{
-			// TODO
+			Trace.WriteLine("Reset", "VisualBitcoin.Storage.Queue Information");
+
+			CloudQueue.Clear();
 		}
 		
 		// Push a message in the queue with a 7 days time span. It could be a good thing to

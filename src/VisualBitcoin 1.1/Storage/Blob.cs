@@ -92,8 +92,7 @@ namespace Storage
 		// Download a blockBlob.
 		public static TModel DownloadBlockBlob<TModel>(string blockBlobName) where TModel : class
 		{
-			Trace.WriteLine("Download",
-				"VisualBitcoin.Storage.Blob Information");
+			Trace.WriteLine("Download", "VisualBitcoin.Storage.Blob Information");
 
 			CloudBlockBlob cloudBlockBlob;
 
@@ -181,7 +180,7 @@ namespace Storage
 		//Retrieve the list of block blobs in a container.
 		public static List<string> GetBlobBlocksList(CloudBlobContainer cloudBlobContainer)
 		{
-			Trace.WriteLine("Block list download", "VisualBitcoin.Storage.Blob Information");
+			Trace.WriteLine("Blob block list download", "VisualBitcoin.Storage.Blob Information");
 
 			var blockList = cloudBlobContainer.ListBlobs();
 
@@ -190,6 +189,7 @@ namespace Storage
 
 		public static List<string> GetBlockList()
 		{
+			Trace.WriteLine("Block list download", "VisualBitcoin.Storage.Blob Information");
 			var blobBlocksList = GetBlobBlocksList(BlocksContainer);
 
 			return blobBlocksList;
