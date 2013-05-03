@@ -12,8 +12,10 @@ You will found below where is used each of this type-classes.
 ////////////////////////////////////////////////////////////////////////////////
 1. Block
 
-Block is the main data structure. The BitnetWorkerRole produces the instances of
-this class which are directly stored in the primary storage.
+Block is the main data structure. The BitcoinWorkerRole produces the instances
+of this class which are directly stored in the primary storage. These
+representation of the blockchain's blocks can be different of the original
+information associate with blocks.
 The Block type-class uses the Transactions type-class.
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -26,7 +28,6 @@ news (which new blocks have been send) to the StatWorkerRole.
 3. Transactions
 
 Transactions is a subpart for the Block type-class.
-
 
 	TODO
 	- Is "split the storage between a primary storage and a structured storage" 
