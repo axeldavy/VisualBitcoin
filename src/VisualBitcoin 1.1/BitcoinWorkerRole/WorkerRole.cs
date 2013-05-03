@@ -57,7 +57,9 @@ namespace BitcoinWorkerRole
 
 		        // Storage configuration and start.
 		        var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-		        WindowsAzure.Start(connectionString);
+			    var resetBlobBlocksEnable = CloudConfigurationManager.GetSetting("ResetBlobBlocksEnable");
+				var resetQueueMessagesEnable = CloudConfigurationManager.GetSetting("ResetBlobBlocksEnable");
+		        WindowsAzure.Start(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
 
 		        // Retrieve backup.
 		        var bitcoinWorkerRoleBackup = Blob.DownloadBlockBlob<BitcoinWorkerRoleBackup>("bitcoinworkerrolebackup");
@@ -67,7 +69,8 @@ namespace BitcoinWorkerRole
 		        {
 		            if (null == bitcoinWorkerRoleBackup)
 		            {
-		                BitcoinClient.Initialisation();
+			            var firstBlockHash = CloudConfigurationManager.GetSetting("FirstBlockHash");
+		                BitcoinClient.Initialisation(firstBlockHash);
 		            }
 		            else
 		            {

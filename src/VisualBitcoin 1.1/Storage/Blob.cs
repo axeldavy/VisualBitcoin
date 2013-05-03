@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using Microsoft.WindowsAzure.Storage.Blob;
 using Storage.Models;
@@ -12,10 +13,10 @@ namespace Storage
 	{
 		// Properties.
 		public static CloudBlobClient CloudBlobClient { get; private set; }
-		public static CloudBlobContainer CloudBlobDefaultContainer { get; private set; }
-		public static CloudBlobContainer CloudBlobBlocksContainer { get; private set; }
-		public static CloudBlobContainer CloudBlobTransactionsContainer { get; private set; }
-        public static CloudBlobContainer CloudBlobHighContainer { get; private set; }
+		public static CloudBlobContainer DefaultContainer { get; private set; }
+		public static CloudBlobContainer BlocksContainer { get; private set; }
+		public static CloudBlobContainer TransactionsContainer { get; private set; }
+		public static CloudBlobContainer HighContainer { get; private set; }
 
 
 		// Configure and start the blob storage, only one call make on application start.
@@ -24,28 +25,32 @@ namespace Storage
 			Trace.WriteLine("Start", "VisualBitcoin.Storage.Blob Information");
 
 			CloudBlobClient = WindowsAzure.StorageAccount.CreateCloudBlobClient();
-			CloudBlobDefaultContainer = CloudBlobClient.GetContainerReference(defaultContainerName);
-			CloudBlobDefaultContainer.CreateIfNotExists();
-			CloudBlobBlocksContainer = CloudBlobClient.GetContainerReference(blocksContainerName);
-			CloudBlobBlocksContainer.CreateIfNotExists();
-			CloudBlobTransactionsContainer = CloudBlobClient.GetContainerReference(transactionsContainerName);
-			CloudBlobTransactionsContainer.CreateIfNotExists();
-            CloudBlobHighContainer = CloudBlobClient.GetContainerReference(highContainerName);
-            CloudBlobHighContainer.CreateIfNotExists();
+			DefaultContainer = CloudBlobClient.GetContainerReference(defaultContainerName);
+			DefaultContainer.CreateIfNotExists();
+			BlocksContainer = CloudBlobClient.GetContainerReference(blocksContainerName);
+			BlocksContainer.CreateIfNotExists();
+			TransactionsContainer = CloudBlobClient.GetContainerReference(transactionsContainerName);
+			TransactionsContainer.CreateIfNotExists();
+			HighContainer = CloudBlobClient.GetContainerReference(highContainerName);
+			HighContainer.CreateIfNotExists();
 		}
 
 		// Delete all blocks stored in the blocks container.
 		public static void Reset()
 		{
-			// TODO: finish it.
-
 			Trace.WriteLine("Reset", "VisualBitcoin.Storage.Blob Information");
 
-			var blockList = GetBlockList();
-			foreach (var blockBlobName in blockList)
-			{
-				DeleteBlockBlob<Block>(blockBlobName);
-			}
+			var blockList = GetBlobBlocksList(BlocksContainer);
+			foreach (var blockName in blockList)
+				DeleteBlockBlob<Block>(blockName);
+
+			var transactionList = GetBlobBlocksList(TransactionsContainer);
+			foreach (var transactionName in transactionList)
+				DeleteBlockBlob<Transactions>(transactionName);
+
+			var highList = GetBlobBlocksList(HighContainer);
+			foreach (var highName in highList)
+				DeleteBlockBlob<Block>(highName);
 
 			DeleteBlockBlob<BitcoinWorkerRoleBackup>("bitcoinworkerrolebackup");
 		}
@@ -63,19 +68,19 @@ namespace Storage
 			CloudBlockBlob blockBlob;
 			if (model is Block)
 			{
-				blockBlob = CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName);
+				blockBlob = BlocksContainer.GetBlockBlobReference(blockBlobName);
 			}
 			else if (model is Transactions)
 			{
-				blockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
+				blockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
-            else if (model is List<Block>)
-            {
-                blockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
-            }
+			else if (model is List<Block>)
+			{
+				blockBlob = HighContainer.GetBlockBlobReference(blockBlobName);
+			}
 			else
 			{
-				blockBlob = CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
+				blockBlob = DefaultContainer.GetBlockBlobReference(blockBlobName);
 			}
 
 			var buffer = Encoding.UTF8.GetBytes(content);
@@ -94,19 +99,19 @@ namespace Storage
 
 			if (typeof(TModel) == typeof(Block))
 			{
-				cloudBlockBlob = CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName);
+				cloudBlockBlob = BlocksContainer.GetBlockBlobReference(blockBlobName);
 			}
 			else if (typeof(TModel) == typeof(Transactions))
 			{
-				cloudBlockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
+				cloudBlockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
-            else if (typeof(TModel) == typeof(List<Block>))
-            {
-                cloudBlockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
-            }
+			else if (typeof(TModel) == typeof(List<Block>))
+			{
+				cloudBlockBlob = HighContainer.GetBlockBlobReference(blockBlobName);
+			}
 			else
 			{
-				cloudBlockBlob = CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
+				cloudBlockBlob = DefaultContainer.GetBlockBlobReference(blockBlobName);
 			}
 
 			var stream = new MemoryStream();
@@ -130,28 +135,26 @@ namespace Storage
 		//Deleting the blob from container
 		public static void DeleteBlockBlob<TModel>(string blockBlobName) where TModel : class
 		{
-			// TODO: manage transaction deleting. C'est fait
-
 			Trace.WriteLine("Delete", "VisualBitcoin.Storage.Blob Information");
 
-            CloudBlockBlob cloudBlockBlob;
+			CloudBlockBlob cloudBlockBlob;
 
-            if (typeof(TModel) == typeof(Block))
-            {
-                cloudBlockBlob = CloudBlobBlocksContainer.GetBlockBlobReference(blockBlobName);
-            }
-            else if (typeof(TModel) == typeof(Transactions))
-            {
-                cloudBlockBlob = CloudBlobTransactionsContainer.GetBlockBlobReference(blockBlobName);
-            }
-            else if (typeof(TModel) == typeof(List<Block>))
-            {
-                cloudBlockBlob = CloudBlobHighContainer.GetBlockBlobReference(blockBlobName);
-            }
-            else
-            {
-                cloudBlockBlob = CloudBlobDefaultContainer.GetBlockBlobReference(blockBlobName);
-            }
+			if (typeof(TModel) == typeof(Block))
+			{
+				cloudBlockBlob = BlocksContainer.GetBlockBlobReference(blockBlobName);
+			}
+			else if (typeof(TModel) == typeof(Transactions))
+			{
+				cloudBlockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
+			}
+			else if (typeof(TModel) == typeof(List<Block>))
+			{
+				cloudBlockBlob = HighContainer.GetBlockBlobReference(blockBlobName);
+			}
+			else
+			{
+				cloudBlockBlob = DefaultContainer.GetBlockBlobReference(blockBlobName);
+			}
 
 			cloudBlockBlob.Delete();
 		}
@@ -169,25 +172,27 @@ namespace Storage
 		public static Block GetBlock(string blockName)
 		{
 			Trace.WriteLine("Block download", "VisualBitcoin.Storage.Blob Information");
-            
+
 			var block = DownloadBlockBlob<Block>(blockName);
 			return block;
 		}
 
 
-		//Retrieve the list of blocks (where the blocks' name begin by "block" : to be modified !).
-		public static List<string> GetBlockList()
+		//Retrieve the list of block blobs in a container.
+		public static List<string> GetBlobBlocksList(CloudBlobContainer cloudBlobContainer)
 		{
 			Trace.WriteLine("Block list download", "VisualBitcoin.Storage.Blob Information");
 
-			var blockList = CloudBlobBlocksContainer.ListBlobs();
-			var nameList = new List<string>();
-			foreach (IListBlobItem blob in blockList)
-			{
-				nameList.Add(Path.GetFileNameWithoutExtension(blob.Uri.ToString()));
-			}
+			var blockList = cloudBlobContainer.ListBlobs();
 
-			return nameList;
+			return blockList.Select(blob => blob.Uri.ToString()).ToList();
+		}
+
+		public static List<string> GetBlockList()
+		{
+			var blobBlocksList = GetBlobBlocksList(BlocksContainer);
+
+			return blobBlocksList;
 		}
 	}
 }

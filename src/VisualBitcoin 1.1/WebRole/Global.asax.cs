@@ -25,7 +25,9 @@ namespace WebRole
 
 			// Storage configuration and start.
 			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-			WindowsAzure.Start(connectionString);
+			var resetBlobBlocksEnable = CloudConfigurationManager.GetSetting("ResetBlobBlocksEnable");
+			var resetQueueMessagesEnable = CloudConfigurationManager.GetSetting("ResetBlobBlocksEnable");
+			WindowsAzure.Start(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
 		}
 	}
 }

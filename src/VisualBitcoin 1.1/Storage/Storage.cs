@@ -51,7 +51,7 @@ namespace Storage
 		public String DownloadBlobToString(string blobName)
 		{
 			// Retrieve reference to a blob.
-			CloudBlockBlob blockBlob = Blob.CloudBlobDefaultContainer.GetBlockBlobReference(blobName);
+			CloudBlockBlob blockBlob = Blob.DefaultContainer.GetBlockBlobReference(blobName);
 
 			string text;
 			using (var memoryStream = new MemoryStream())

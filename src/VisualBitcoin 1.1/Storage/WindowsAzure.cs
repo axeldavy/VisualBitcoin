@@ -9,11 +9,10 @@ namespace Storage
 		private const string DefaultContainerName = "defaultcontainer";
 		private const string BlocksContainerName = "blockscontainer";
 		private const string TransactionsContainerName = "transactionscontainer";
-        private const string HighContainerName = "highcontainer";
+		private const string HighContainerName = "highcontainer";
 		private const string TableName = "visualbitcointable";
 		private const string QueueName = "visualbitcoinqueue";
-		private const bool ResetBlobBlocksEnable = false;
-		private const bool ResetQueueMessagesEnable = false;
+
 
 		// Already start flag.
 		private static bool _isNotAlreadyStarted = true;
@@ -24,7 +23,7 @@ namespace Storage
 
 
 		// Configure and start the storage, only one call make by application.
-		public static void Start(string connectionString)
+		public static void Start(string connectionString, string resetBlobBlocksEnable, string resetQueueMessagesEnable)
 		{
 			if (_isNotAlreadyStarted)
 			{
@@ -32,19 +31,15 @@ namespace Storage
 
 				StorageAccount = CloudStorageAccount.Parse(connectionString);
 
-				Blob.Start(DefaultContainerName, BlocksContainerName, TransactionsContainerName,HighContainerName);
+				Blob.Start(DefaultContainerName, BlocksContainerName, TransactionsContainerName, HighContainerName);
 				Table.Start(TableName);
 				Queue.Start(QueueName);
 
-				if (ResetBlobBlocksEnable)
-				{
+				if (bool.Parse(resetBlobBlocksEnable))
 					Blob.Reset();
-				}
 
-				if (ResetQueueMessagesEnable)
-				{
+				if (bool.Parse(resetQueueMessagesEnable))
 					Queue.Reset();
-				}
 
 				_isNotAlreadyStarted = false;
 			}
