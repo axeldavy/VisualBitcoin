@@ -39,7 +39,7 @@ namespace Storage
 					Blob.Reset();
 
 				if (bool.Parse(resetQueueMessagesEnable))
-					Queue.Reset();
+					Queue.Reset(bool.Parse(resetBlobBlocksEnable), bool.Parse(resetQueueMessagesEnable));
 
 				_isNotAlreadyStarted = false;
 			}

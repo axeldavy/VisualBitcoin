@@ -22,13 +22,27 @@ namespace Storage
 		}
 
 		// Pop all messages in the queue.
-		public static void Reset()
+		public static void Reset(bool resetBlobBlocksEnable, bool resetQueueMessagesEnable)
 		{
 			Trace.WriteLine("Reset", "VisualBitcoin.Storage.Queue Information");
 
-			CloudQueue.Clear();
+			if (resetQueueMessagesEnable)
+			{
+				CloudQueue.Clear();
+
+				if (resetBlobBlocksEnable)
+					return;
+
+				var blockList = Blob.GetBlockList();
+				foreach (var blockName in blockList)
+				{
+					var block = Blob.GetBlock(blockName);
+					var blockReference = new Models.BlockReference(block.Hash);
+					PushMessage(blockReference);
+				}
+			}
 		}
-		
+
 		// Push a message in the queue with a 7 days time span. It could be a good thing to
 		// declare all the (data) models we need in the dedicated folder "Models". All our 
 		// models in one place.
