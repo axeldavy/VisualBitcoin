@@ -23,7 +23,7 @@ namespace Storage
 
 
 		// Configure and start the storage, only one call make by application.
-		public static void Start(string connectionString, string resetBlobBlocksEnable, string resetQueueMessagesEnable)
+		public static void Start(string connectionString, bool resetBlobBlocksEnable, bool resetQueueMessagesEnable)
 		{
 			if (_isNotAlreadyStarted)
 			{
@@ -35,11 +35,11 @@ namespace Storage
 				Table.Start(TableName);
 				Queue.Start(QueueName);
 
-				if (bool.Parse(resetBlobBlocksEnable))
+				if (resetBlobBlocksEnable)
 					Blob.Reset();
 
-				if (bool.Parse(resetQueueMessagesEnable))
-					Queue.Reset(bool.Parse(resetBlobBlocksEnable), bool.Parse(resetQueueMessagesEnable));
+				if (resetQueueMessagesEnable)
+					Queue.Reset(resetBlobBlocksEnable);
 
 				_isNotAlreadyStarted = false;
 			}

@@ -22,24 +22,21 @@ namespace Storage
 		}
 
 		// Pop all messages in the queue.
-		public static void Reset(bool resetBlobBlocksEnable, bool resetQueueMessagesEnable)
+		public static void Reset(bool resetBlobBlocksEnable)
 		{
 			Trace.WriteLine("Reset", "VisualBitcoin.Storage.Queue Information");
 
-			if (resetQueueMessagesEnable)
+			CloudQueue.Clear();
+
+			if (resetBlobBlocksEnable)
+				return;
+
+			var blockList = Blob.GetBlockList();
+			foreach (var blockName in blockList)
 			{
-				CloudQueue.Clear();
-
-				if (resetBlobBlocksEnable)
-					return;
-
-				var blockList = Blob.GetBlockList();
-				foreach (var blockName in blockList)
-				{
-					var block = Blob.GetBlock(blockName);
-					var blockReference = new Models.BlockReference(block.Hash);
-					PushMessage(blockReference);
-				}
+				var block = Blob.GetBlock(blockName);
+				var blockReference = new Models.BlockReference(block.Hash);
+				PushMessage(blockReference);
 			}
 		}
 

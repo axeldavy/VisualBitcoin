@@ -18,9 +18,11 @@
 			FirstBlockHash = "";
 			LastBlockHash = "";
 		}
-		
+
 		public BitcoinWorkerRoleBackup(int maximumNumberOfBlocksInTheStorage,
-			int numberOfBlocksInTheStorage, string firstBlockHash, string lastBlockHash)
+									   int numberOfBlocksInTheStorage,
+									   string firstBlockHash,
+									   string lastBlockHash)
 		{
 			MaximumNumberOfBlocksInTheStorage = maximumNumberOfBlocksInTheStorage;
 			NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;

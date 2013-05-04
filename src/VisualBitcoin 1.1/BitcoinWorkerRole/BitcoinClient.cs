@@ -21,7 +21,7 @@ namespace BitcoinWorkerRole
 		public static int NumberOfBlocksInTheStorage { get; private set; }
 		public static Uri Uri { get; private set; }
 		public static ICredentials Credentials { get; private set; }
-		private static bool _blocklimit;
+		public static bool BlockLimit { get; private set; }
 
 		public static void Initialisation(string firstBlockHash)
 		{
@@ -47,9 +47,9 @@ namespace BitcoinWorkerRole
 				block = GetBlockByHash(firstBlockHash);
 			}
 
-			MaximumNumberOfBlocksInTheStorage = 30;
+			MaximumNumberOfBlocksInTheStorage = 10;
 			NumberOfBlocksInTheStorage = 0;
-			_blocklimit = true;
+			BlockLimit = true;
 			FirstBlock = block;
 			LastBlock = block;
 
@@ -71,7 +71,7 @@ namespace BitcoinWorkerRole
 			Uri = new Uri(virtualMachineUri);
 			MaximumNumberOfBlocksInTheStorage = maximumNumberOfBlocksInTheStorage;
 			NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;
-			_blocklimit = (maximumNumberOfBlocksInTheStorage != 0);
+			BlockLimit = (maximumNumberOfBlocksInTheStorage != 0);
 			FirstBlock = Blob.DownloadBlockBlob<Block>(firstBlockBlobName);
 			LastBlock = Blob.DownloadBlockBlob<Block>(lastBlockBlobName);
 		}
@@ -171,7 +171,7 @@ namespace BitcoinWorkerRole
 		{
 			// For testing purposes use UpdateBlocks() HERE --
 			//UpdateBlocks();
-			if (_blocklimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
+			if (BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
 				return;
 
 			Trace.WriteLine("Upload new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
@@ -179,7 +179,7 @@ namespace BitcoinWorkerRole
 			var block = UpdateNextBlockHash(LastBlock);
 			UpdateBlock(block);
 
-			while (!string.IsNullOrEmpty(LastBlock.NextBlock))
+			while (!string.IsNullOrEmpty(LastBlock.NextBlock) && !(BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage))
 			{
 				Trace.WriteLine("\"\" != \"" + block.NextBlock + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 

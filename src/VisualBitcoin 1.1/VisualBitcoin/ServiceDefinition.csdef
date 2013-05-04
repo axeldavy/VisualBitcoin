@@ -30,6 +30,7 @@
       <Setting name="ResetBlobBlocksEnable" />
       <Setting name="ResetQueueMessagesEnable" />
       <Setting name="FirstBlockHash" />
+      <Setting name="IsBitcoinClientConnexionEnable" />
     </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="StorageWorkerRole" vmsize="Small">
