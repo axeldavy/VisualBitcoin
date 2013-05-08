@@ -174,7 +174,7 @@ namespace BitcoinWorkerRole
 			if (BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
 				return;
 
-			Trace.WriteLine("Upload new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+			Trace.WriteLine("Looking at new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
 			var block = UpdateNextBlockHash(LastBlock);
 			UpdateBlock(block);

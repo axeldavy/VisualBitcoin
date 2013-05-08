@@ -155,7 +155,7 @@ namespace Storage
 				cloudBlockBlob = DefaultContainer.GetBlockBlobReference(blockBlobName);
 			}
 
-			cloudBlockBlob.Delete();
+			cloudBlockBlob.DeleteIfExists();
 		}
 
 		// Retrieve the example block instance.
