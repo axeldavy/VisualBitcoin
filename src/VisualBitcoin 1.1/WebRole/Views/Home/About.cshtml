@@ -13,10 +13,64 @@
     Bitcoin is a digital currency which is based on the cryptography. You can read more
     on <a href="http://bitcoin.org/about.html">Bitcoin</a>.
     <br />
+    This project consists of <a href="#Client">Bitcoin client</a>, <a href="#Worker Role" >Bitcoin worker role</a>, <a href="#Storage Implementation">Storage implementation</a>, 
+    <a href="#Storage Worker Role">Storage worker role</a> and <a href="#Web Role">Web role</a> . This project is created for Windows Azure virtual machine. It uses Windows Azure Storage and other cloud technologies of Windows Corporation. 
+    <br />
 </p>
+
+<a id="Client"></a>
+<details> <summary style="font: bold">Bitcoin client</summary>
+            For our application we use standard bitcoin client <span style="color:red">HERE NAME OF THE CLIENT</span>. It is launched on the Windows Azure Virtual Machine (VM). We are taking new transactions and information about blocks from it.
+</details>
+
+<a id="Worker Role"></a>
+<details> <summary style="font: bold"> Bitcoin Worker Role</summary>
+This part takes data from the Bitcoin Client. It also converts received data to the XML format and extracts transactions from the blocks. It uses Storage implementation for uploading data to the Azure Storage. Blocks are saved to the BocksContainer and Transactions are saved to the Transactions container. Also this part adds messages to the queue about which block should be processed next.
+</details>
+
+<a id="Storage Implementation"></a>
+<details> <summary style="font: bold"> Storage implementation </summary>
+<br/>This is a service part of the project for communicating with Windows Azure Storage. It contains with:
+<ul>
+    <li>Serilization – saving different data models to the storage in  XML formatl; </li>
+    <li>Models – in this folder different structures of data are described. All these models are serialized; </li>
+	<li>Coding /not implemented/ – zipping and unzipping data to minimize data exchange; </li>
+	<li>anaging Windows Azure Storage – staring and connecting to different containers.</li>
+</ul>
+<br/>We use three containers and a queue of Windows Azure Storage. 
+<br/>In the BlockContainer we save information of the blocks like a XML file. We use block’s hash to name each file. In these files all information about bitcoin blocks are saved. To minimize file’s size we removed transactions and added just their hashes. 
+<br/>In the TransactionsContainer we saved transactions XML by their hashes. Also we added hash of the block which is owned this transaction to the XML structure. 
+<br/>In the HigherContainer we save transactions’ hashes by time to accelerate data processing and access to the data from the UI.
+</details>
+
+<a id="Storage Worker Role"></a>
+<details> <summary style="font: bold"> Storage Worker Role </summary>
+In this project we have made data processing, adding references to the higher container, collecting statistical information and saving it to the storage.
+</details>
+
+<a id="Web Role"></a>
+<details> <summary style="font: bold">Web Role</summary>
+A web site with a user interface (UI). 
+<ul>
+    <li>Has a controller, which is used for taking data from the blob storage;</li>
+    <li>View – for creating and grouping data which was demanded. (Adding data to the table, creating data for graphic construction)</li>
+</ul>
+</details>
+
+
 
 <h2>License</h2>
 <p>
     Open source.
 </p>
 
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+  <script src="~/Scripts/jquery.details.js"></script>
+  <script>
+    $(function() {
+      $('html').addClass($.fn.details.support ? 'details' : 'no-details');
+      $('details').details();
+    });
+  </script>

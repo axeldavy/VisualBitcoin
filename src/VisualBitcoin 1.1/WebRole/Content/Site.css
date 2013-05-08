@@ -278,6 +278,54 @@ aside
     font-weight: 700;
 }
 
+
+/*Spoiler*/
+#wrapper {
+      width: 500px;
+      margin: 150px auto 0;
+    }
+    summary { cursor: pointer; }
+    .no-details details > * { display: none; }
+    .no-details details > summary:before { float: left; width: 20px; content: '► '; }
+    .no-details details.open > summary:before { content: '▼ '; }
+    .no-details details summary { display: block; }
+/*
+.spoiler >  input + .box > blockquote{
+    display: none;
+}
+.spoiler >  input:checked + .box > blockquote {
+    display: block;
+}
+.spoiler >  input[type="checkbox"] {
+    cursor: pointer;
+    border-color:transparent!important;
+    border-style:none!important;
+    background:transparent none!important;
+    position:relative;z-index:1;
+    margin:-10px 0 -30px -230px;
+}
+.spoiler >  input[type="checkbox"]:focus {
+    outline:none;
+}
+.spoiler span.close,
+.spoiler span.open{
+    color: #00f!important;
+    text-decoration: underline;
+}
+.spoiler >  input +  .box > span.close {
+    display: none;
+}
+.spoiler >  input +  .box >  span.open {
+    display: inline;
+}
+
+.spoiler {
+    overflow-x:hidden;
+}
+.spoiler blockquote {
+   min-height: 23px;
+}
+    */
 /* info and errors */
 .message-info
 {
