@@ -61,9 +61,16 @@ namespace StorageWorkerRole
 
 		private static int CompareBlock(Block x, Block y)
 		{
-            if (x == null || x.Time <= y.Time)
+            if (x == null)
                 return -1;
-            return 1;
+
+            if (y == null)   // to verify: can x and y be null at the same time?
+                return 1;    // if no then we could put the null test for x with the next test
+                             // as in the proposed clean up.
+            if (x.Time <= y.Time) // won't crash if x or y is null (proposed clean up could have crashed if y == null)
+                return -1;
+
+            return 1; 
 		}
 
 		//TODO: initialiser à 10 null
