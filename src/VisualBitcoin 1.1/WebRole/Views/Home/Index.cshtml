@@ -6,14 +6,29 @@
 
 <p>Welcome to VisualBitcoin website.</p>
 
-<h2>Warning</h2>
-<p>
-    <em>
-        If you are in development mode don't try to use the Explorer link if you have not
-        launch the Windows Azure Storage Emulator and the Windows Azure Compute Emulator
-        before. If you have problems try to launch these Emulators before you launch Visual
-        Studio. You have also to copy the visualbitcoincontainer of the VisualBitcoin
-        Storage on your Developement Storage (Storage Emulator).
-    </em>
-</p>
+<script>
+    $(function () {
+        $("#accordion").accordion({ collapsible: true });
+    });
+</script>
+
+@model List<Storage.Models.Transactions>
+
+<div id="accordion">
+@{foreach (Storage.Models.Transactions modelItem in Model)
+    {
+        <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Locktime)</a></h3>
+        <div>
+            <table>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Txid)
+                    </th>
+                </tr>
+            </table>
+    </div>
+    }
+}
+</div>
+
 

@@ -176,6 +176,14 @@ namespace Storage
 			return block;
 		}
 
+        public static Transactions GetTransaction(string tranName)
+        {
+            Trace.WriteLine("Transaction download", "VisualBitcoin.Storage.Blob Information");
+
+            var transaction = DownloadBlockBlob<Transactions>(tranName);
+            return transaction;
+        }
+
 
 		//Retrieve the list of block blobs in a container.
 		public static List<string> GetBlobBlocksList(CloudBlobContainer cloudBlobContainer)
@@ -186,6 +194,14 @@ namespace Storage
 
 			return blockList.Select(blob => blob.Uri.ToString()).ToList();
 		}
+
+        public static List<string> GetTransactionList()
+        {
+            Trace.WriteLine("Transaction list download", "VisualBitcoin.Storage.Blob Information");
+
+            var blobTransactionList = GetBlobBlocksList(TransactionsContainer);
+            return blobTransactionList;
+        }
 
 		public static List<string> GetBlockList()
 		{

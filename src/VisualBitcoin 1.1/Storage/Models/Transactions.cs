@@ -1,4 +1,6 @@
-﻿namespace Storage.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Storage.Models
 {
     public class Transactions // vin and vout not included
     {
@@ -45,7 +47,9 @@
         public int Version { get; set; }
         public int Vin_size { get; set; }
         public int Vout_size { get; set; }
+        [Display(Name = "Time")]
         public ulong Locktime { get; set; } // 0 if Unavailable
+        [Display(Name = "Transaction ID")]
         public string Txid { set; get; }
         public Vin[] Inputs { get; set; }
         public Vout[] Outputs { get; set; }
