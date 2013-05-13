@@ -65,8 +65,8 @@ namespace StorageWorkerRole
                 return -1;
 
             if (y == null)   // to verify: can x and y be null at the same time?
-                return 1;    // if no then we could put the null test for x with the next test
-                             // as in the proposed clean up.
+                return 1;    // x and y can be null at the same time (Christophe)
+                            
             if (x.Time <= y.Time) // won't crash if x or y is null (proposed clean up could have crashed if y == null)
                 return -1;
 
@@ -85,7 +85,12 @@ namespace StorageWorkerRole
 
 		static void UpdateStatitistics(Block x)
 		{
-			numberOfBlocks += 1;
+            /* Ne pas toucher (debut)
+                numberOfBlocks = Blob.DownloadBlockBlob<>("Number_of_blocks");
+                numberOfTransactions = Blob.DownloadBlockBlob<>("Number_of_transactions");
+                totalTime = Blob.DownloadBlockBlob<>("Total_time");
+            */
+            numberOfBlocks += 1;
 			numberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions);
 
 			totalTime = (totalTime + Convert.ToUInt64(x.Time) - InitialTime);
@@ -105,7 +110,19 @@ namespace StorageWorkerRole
 			averageTrans = numberOfTransactions / numberOfBlocks;
 			varianceTrans = Variance(numberOfTransactions, averageTrans, numberOfBlocks);
 			standardDevTrans = Math.Sqrt(varianceTrans);
-		}
+
+            /* Ne pas toucher (fin)
+                Blob.UploadBlockBlob("Number_of_blocks",numberOfBlocks);
+                Blob.UploadBlockBlob("Number_of_transactions",numberOfTransactions);
+               
+                //Time
+                Blob.UploadBlockBlob("Total_time",totalTime);
+                Blob.UploadBlockBlob("Average_time",averageTime);
+                Blob.UploadBlockBlob("Variance_time",varianceTime);
+                Blob.UploadBlockBlob("Standard_deviation_time",standardDeviationTime);
+                
+            */
+        }
 
 		static double Variance(ulong sum, double average, ulong nb)
 		{
