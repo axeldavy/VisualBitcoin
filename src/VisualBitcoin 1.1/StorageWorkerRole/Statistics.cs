@@ -60,6 +60,12 @@ namespace StorageWorkerRole
 		static void UpdateStatitistics(Block x)
 		{
             var stat = Blob.DownloadBlockBlob<Statistic>("General_Statistics");
+            //Charts
+            var chartsNbTrans = Blob.DownloadBlockBlob<List<int>>("Charts_Number_Of_Transactions");
+            var chartsSizeBlock = Blob.DownloadBlockBlob<List<int>>("Charts_Size_Block");
+            var chartsHeighBlock = Blob.DownloadBlockBlob<List<int>>("Charts_Height_Block");
+            //abscisse
+            var chartsTime = Blob.DownloadBlockBlob<List<int>>("Charts_Time");
 
             stat.NumberOfBlocks += 1;
             stat.NumberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions);
@@ -82,6 +88,15 @@ namespace StorageWorkerRole
             stat.AverageTrans = stat.NumberOfTransactions / stat.NumberOfBlocks;
             stat.VarianceTrans = Variance(stat.NumberOfTransactions, stat.AverageTrans, stat.NumberOfBlocks);
             stat.StandardDevTrans = Math.Sqrt(stat.VarianceTrans);
+
+            chartsNbTrans.Add(x.NumberOfTransactions);
+            chartsSizeBlock.Add(x.Size);
+            chartsHeighBlock.Add(x.Height);
+            chartsTime.Add(x.Time);
+            Blob.UploadBlockBlob("Charts_Number_Of_Transactions", (List<int>) chartsSizeBlock);
+            Blob.UploadBlockBlob("Charts_Size_Block", (List<int>)chartsSizeBlock);
+            Blob.UploadBlockBlob("Charts_Height_Block", (List<int>)chartsHeighBlock);
+            Blob.UploadBlockBlob("Charts_Time", (List<int>)chartsTime);//abscisse
 
             Blob.UploadBlockBlob("General_Statistics", (Statistic) stat);
         }
