@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using Storage;
 using Storage.Models;
+
 
 namespace StorageWorkerRole
 {
@@ -64,8 +66,7 @@ namespace StorageWorkerRole
             var chartsNbTrans = Blob.DownloadBlockBlob<List<int>>("Charts_Number_Of_Transactions");
             var chartsSizeBlock = Blob.DownloadBlockBlob<List<int>>("Charts_Size_Block");
             var chartsHeighBlock = Blob.DownloadBlockBlob<List<int>>("Charts_Height_Block");
-            //abscisse
-            var chartsTime = Blob.DownloadBlockBlob<List<int>>("Charts_Time");
+            var chartsTime = Blob.DownloadBlockBlob<List<int>>("Charts_Time"); //abscisse
 
             stat.NumberOfBlocks += 1;
             stat.NumberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions);
@@ -106,5 +107,22 @@ namespace StorageWorkerRole
 			return sum * (sum - 2 * average) / nb + average * average;
 		}
 
+        public void OnStart()
+        {
+            Trace.WriteLine("On start","VisualBitcoin.StorageWorkerRole.Statistics Information");
+
+            if (Blob.DownloadBlockBlob<List<Block>>("Last_Blocks") == null)
+            {
+                Block[] liste = { null, null, null, null, null, null, null, null, null, null };
+                List<Block> listeini = new List<Block>(liste);
+                Blob.UploadBlockBlob("Last_Blocks", (List<Block>) listeini);
+            }
+            if (Blob.DownloadBlockBlob<Statistic>("General_Statistics") == null)
+            {
+                Statistic statini = new Statistic();
+                Blob.UploadBlockBlob("General_Statistics", statini);
+            }
+            
+        }
 	}
 }
