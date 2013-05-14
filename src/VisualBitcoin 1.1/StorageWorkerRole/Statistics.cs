@@ -7,34 +7,8 @@ namespace StorageWorkerRole
 {
 	class Statistics
 	{
-		// Statistics Variable :
-		static ulong numberOfBlocks;
-
-		// Time.
-		static ulong totalTime;
-		static double averageTime;
-		static double varianceTime;
-		static double standardDeviationTime;
-		// Number of seconds between 3 January 2009 (first BTC ?) and 1 January 1970.
-		private const ulong InitialTime = 1230940800;
-
-		// Statistics blocks BTC.
-		private static ulong sumBtc;
-		static double averageBtc;
-		static double standardDeviationBtc;
-		static double varianceBtc;
-
-		// Statistics blocks transactions.
-		static ulong numberOfTransactions;
-		static double averageTrans;
-		static double varianceTrans;
-		static double standardDevTrans;
-
-		// Statistics transactions.
-		/* // Number_of_transactions
-		static ulong Number_of_Transactions;
-		static double Standard_deviation_T;
-		static double Variance_T;*/
+        // Number of seconds between 3 January 2009 (first BTC ?) and 1 January 1970.
+        private const ulong InitialTime = 1230940800;
 
 		static void Main()
 		{
@@ -80,48 +54,36 @@ namespace StorageWorkerRole
 			blocklist.Add(block);
 			blocklist.Sort(CompareBlock);
 			blocklist.RemoveAt(0);
-			Blob.UploadBlockBlob("Last_Blocks", (List<Block>)blocklist);
+			Blob.UploadBlockBlob("Last_Blocks", (List<Block>) blocklist);
 		}
 
 		static void UpdateStatitistics(Block x)
 		{
-            /* Ne pas toucher (debut)
-                numberOfBlocks = Blob.DownloadBlockBlob<>("Number_of_blocks");
-                numberOfTransactions = Blob.DownloadBlockBlob<>("Number_of_transactions");
-                totalTime = Blob.DownloadBlockBlob<>("Total_time");
-            */
-            numberOfBlocks += 1;
-			numberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions);
+            var stat = Blob.DownloadBlockBlob<Statistic>("General_Statistics");
 
-			totalTime = (totalTime + Convert.ToUInt64(x.Time) - InitialTime);
-			averageTime = totalTime / numberOfBlocks;
-			varianceTime = Variance(totalTime, averageTime, numberOfBlocks);
-			standardDeviationTime = Math.Sqrt(varianceTime);
+            stat.NumberOfBlocks += 1;
+            stat.NumberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions);
+
+            //Time
+            stat.TotalTime = (stat.TotalTime + Convert.ToUInt64(x.Time) - InitialTime);
+            stat.AverageTime = stat.TotalTime / stat.NumberOfBlocks;
+            stat.VarianceTime = Variance(stat.TotalTime, stat.AverageTime, stat.NumberOfBlocks);
+            stat.StandardDeviationTime = Math.Sqrt(stat.VarianceTime);
 
             // Statistics blocks (BTC)
-			// Change with BTC
-			sumBtc += Convert.ToUInt64(x.Size);
-			averageBtc = sumBtc / numberOfBlocks;
-			varianceBtc = Variance(sumBtc, averageBtc, numberOfBlocks);
-			standardDeviationBtc = Math.Sqrt(varianceBtc);
+            // Change with BTC
+            stat.SumBtc += Convert.ToUInt64(x.Size);
+            stat.AverageBtc = stat.SumBtc / stat.NumberOfBlocks;
+            stat.VarianceBtc = Variance(stat.SumBtc, stat.AverageBtc, stat.NumberOfBlocks);
+            stat.StandardDeviationBtc = Math.Sqrt(stat.VarianceBtc);
 
-			// Statistics blocks (Transactions).
-			numberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions);
-			averageTrans = numberOfTransactions / numberOfBlocks;
-			varianceTrans = Variance(numberOfTransactions, averageTrans, numberOfBlocks);
-			standardDevTrans = Math.Sqrt(varianceTrans);
+            // Statistics blocks (Transactions).
+            stat.NumberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions);
+            stat.AverageTrans = stat.NumberOfTransactions / stat.NumberOfBlocks;
+            stat.VarianceTrans = Variance(stat.NumberOfTransactions, stat.AverageTrans, stat.NumberOfBlocks);
+            stat.StandardDevTrans = Math.Sqrt(stat.VarianceTrans);
 
-            /* Ne pas toucher (fin)
-                Blob.UploadBlockBlob("Number_of_blocks",numberOfBlocks);
-                Blob.UploadBlockBlob("Number_of_transactions",numberOfTransactions);
-               
-                //Time
-                Blob.UploadBlockBlob("Total_time",totalTime);
-                Blob.UploadBlockBlob("Average_time",averageTime);
-                Blob.UploadBlockBlob("Variance_time",varianceTime);
-                Blob.UploadBlockBlob("Standard_deviation_time",standardDeviationTime);
-                
-            */
+            Blob.UploadBlockBlob("General_Statistics", (Statistic) stat);
         }
 
 		static double Variance(ulong sum, double average, ulong nb)

@@ -74,7 +74,7 @@ namespace Storage
 			{
 				blockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
-			else if (model is List<Block>)
+			else if ((model is List<Block>) || (model is Statistic))
 			{
 				blockBlob = HighContainer.GetBlockBlobReference(blockBlobName);
 			}
@@ -104,7 +104,7 @@ namespace Storage
 			{
 				cloudBlockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
-			else if (typeof(TModel) == typeof(List<Block>))
+            else if ((typeof(TModel) == typeof(List<Block>)) || (typeof(TModel) == typeof(Statistic)))
 			{
 				cloudBlockBlob = HighContainer.GetBlockBlobReference(blockBlobName);
 			}
