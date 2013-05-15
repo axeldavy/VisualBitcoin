@@ -1,4 +1,6 @@
-﻿namespace Storage.Models
+﻿using System.Collections.Generic;
+
+namespace Storage.Models
 {
 	public class Block
 	{
@@ -6,7 +8,7 @@
 		public string Hash { get; set; }
 		public string Version { get; set; }
 		public string PreviousBlock { get; set; }
-		public string NextBlock { get; set; }
+		public List<string> NextBlock { get; set; }
 		public string MerkleRoot { get; set; }
 		public int Time { get; set; }
 		public long NumberOnce { get; set; }

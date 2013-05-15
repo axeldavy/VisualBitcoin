@@ -174,30 +174,41 @@ namespace BitcoinWorkerRole
 		{
 			// For testing purposes use UpdateBlocks() HERE --
 			//UpdateBlocks();
-			if (BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
+		    
+            if (BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
 				return;
 
 			Trace.WriteLine("Looking at new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
-			var block = UpdateNextBlockHash(LastBlock);
-			UpdateBlock(block);
+            int lastHeight = (int)Invoke("getblockcount");
+            while (lastHeight > LastBlock.Height&& !(BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage))
+            {
+                var nextBlock = GetBlockFromJObject(Invoke("listsinceblock", new object[] { LastBlock.Hash, lastHeight - LastBlock.Height }) as JObject);
+                LastBlock = UpdateNextBlockHash(LastBlock);               
+                Trace.WriteLine("\"\" != \"" + nextBlock.Hash + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+                UploadTransactionsFromBlock(nextBlock); // Upload Transactions first because the message in the queue must be send after everything is done.
+				UploadNewBlock(nextBlock);
+                LastBlock = nextBlock;
+                if (LastBlock.NextBlock == null)
+                    // need to retrieve blocks in the main chain. LastBlock is an orphan.
+                {
+                    UploadSplitBlocks(nextBlock.Hash);
 
-			while (!string.IsNullOrEmpty(LastBlock.NextBlock) && !(BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage))
-			{
-				Trace.WriteLine("\"\" != \"" + block.NextBlock + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+                }
+            }
 
-				block = GetBlockByHash(block.NextBlock);
-				UploadTransactionsFromBlock(block); // Upload Transactions first because the message in the queue must be send after everything is done.
-				UploadNewBlock(block);
-                LastBlock = block;
-			}
 		}
 
 		private static Block UpdateNextBlockHash(Block block)
 		{
 			var blockJObject = Invoke("getblock", new object[] { block.Hash }) as JObject;
 			Debug.Assert(blockJObject != null, "blockJObject != null");
-			block.NextBlock = (string)blockJObject["nextblockhash"]; // Can be null (no next block)
+		    block.NextBlock = new List<string> ();
+            foreach (var hash in blockJObject["nextblockhash"])
+            {
+                block.NextBlock.Add((string)hash);
+
+            }
 			return block;
 		}
 
@@ -331,6 +342,7 @@ namespace BitcoinWorkerRole
 			return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, numberOnce,
 				numberOfTransactions, size, height, transactionIds);
 		}
+
 
 	}
 }
