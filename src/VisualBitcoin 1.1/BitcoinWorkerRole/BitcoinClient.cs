@@ -22,6 +22,7 @@ namespace BitcoinWorkerRole
 		public static Uri Uri { get; private set; }
 		public static ICredentials Credentials { get; private set; }
 		public static bool BlockLimit { get; private set; }
+        public static int MinimalHeight { get; private set; }
 
 		public static void Initialisation(string firstBlockHash)
 		{
@@ -49,15 +50,16 @@ namespace BitcoinWorkerRole
 
 			MaximumNumberOfBlocksInTheStorage = 10;
 			NumberOfBlocksInTheStorage = 0;
+            MinimalHeight = block.Height;
 			BlockLimit = true;
 			FirstBlock = block;
 			LastBlock = block;
 
-			UploadNewLastBlock(block);
+			UploadNewBlock(block);
 		}
 
 		public static void Initialisation(int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
-			string firstBlockHash, string lastBlockHash)
+			string firstBlockHash, string lastBlockHash, int minimalHeight)
 		{
 			Trace.WriteLine("Initialisation with backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
@@ -71,6 +73,7 @@ namespace BitcoinWorkerRole
 			Uri = new Uri(virtualMachineUri);
 			MaximumNumberOfBlocksInTheStorage = maximumNumberOfBlocksInTheStorage;
 			NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;
+            MinimalHeight = minimalHeight;
 			BlockLimit = (maximumNumberOfBlocksInTheStorage != 0);
 			FirstBlock = Blob.DownloadBlockBlob<Block>(firstBlockBlobName);
 			LastBlock = Blob.DownloadBlockBlob<Block>(lastBlockBlobName);
@@ -185,8 +188,8 @@ namespace BitcoinWorkerRole
 
 				block = GetBlockByHash(block.NextBlock);
 				UploadTransactionsFromBlock(block); // Upload Transactions first because the message in the queue must be send after everything is done.
-				UploadNewLastBlock(block);
-
+				UploadNewBlock(block);
+                LastBlock = block;
 			}
 		}
 
@@ -198,7 +201,7 @@ namespace BitcoinWorkerRole
 			return block;
 		}
 
-		private static void UploadNewLastBlock(Block block)
+		private static void UploadNewBlock(Block block)
 		{
 			var blockBlobName = block.Hash;
 			var blockReference = new BlockReference(block.Hash);
@@ -208,11 +211,10 @@ namespace BitcoinWorkerRole
 
 
 			NumberOfBlocksInTheStorage = NumberOfBlocksInTheStorage + 1;
-			LastBlock = block;
 
 			var bitcoinWorkerRoleBackup = new BitcoinWorkerRoleBackup(MaximumNumberOfBlocksInTheStorage,
 																		  NumberOfBlocksInTheStorage, FirstBlock.Hash,
-																		  LastBlock.Hash);
+																		  LastBlock.Hash, FirstBlock.Height);
 			Blob.UploadBlockBlob("bitcoinworkerrolebackup", bitcoinWorkerRoleBackup);
 
 		}
@@ -232,6 +234,17 @@ namespace BitcoinWorkerRole
 			Blob.UploadBlockBlob(blockBlobName, block);
 			LastBlock = block;
 		}
+
+        private static void UploadSplitBlocks(string blockHash) 
+        {
+            Block block = GetBlockByHash(blockHash);
+            while (Blob.GetBlock(blockHash) == null && block.Height != MinimalHeight)
+            {
+                UploadNewBlock(block);
+                blockHash = block.PreviousBlock;
+                block = GetBlockByHash(blockHash);
+            }
+        }
 
 		private static IEnumerable<Transactions> GetTransactionsFromBlock(Block block)
 		{

@@ -71,7 +71,8 @@ namespace BitcoinWorkerRole
 					BitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
 												 bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage,
 												 bitcoinWorkerRoleBackup.FirstBlockHash,
-												 bitcoinWorkerRoleBackup.LastBlockHash);
+												 bitcoinWorkerRoleBackup.LastBlockHash,
+                                                 bitcoinWorkerRoleBackup.MinimalHeight);
 
 				return base.OnStart();
 			}
@@ -96,7 +97,8 @@ namespace BitcoinWorkerRole
 			var backup = new BitcoinWorkerRoleBackup(BitcoinClient.MaximumNumberOfBlocksInTheStorage,
 													 BitcoinClient.NumberOfBlocksInTheStorage,
 													 BitcoinClient.FirstBlock.Hash,
-													 BitcoinClient.LastBlock.Hash);
+													 BitcoinClient.LastBlock.Hash,
+                                                     BitcoinClient.FirstBlock.Height);
 			Blob.UploadBlockBlob("bitcoinworkerrolebackup", backup);
 		}
 	}
