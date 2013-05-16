@@ -181,22 +181,20 @@ namespace BitcoinWorkerRole
 			Trace.WriteLine("Looking at new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
             int lastHeight = (int)Invoke("getblockcount");
-            while (lastHeight > LastBlock.Height&& !(BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage))
+            while (lastHeight > LastBlock.Height && !(BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage))
             {
-                var nextBlock = GetBlockFromJObject(Invoke("listsinceblock", new object[] { LastBlock.Hash, lastHeight - LastBlock.Height }) as JObject);
+                JObject nextBlockJObject = Invoke("listsinceblock", new object[] { LastBlock.Hash, lastHeight - LastBlock.Height }) as JObject;
+                Block nextBlock = GetBlockByHash((string) nextBlockJObject["lastblock"]);
                 LastBlock = UpdateNextBlockHash(LastBlock);               
                 Trace.WriteLine("\"\" != \"" + nextBlock.Hash + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
                 UploadTransactionsFromBlock(nextBlock); // Upload Transactions first because the message in the queue must be send after everything is done.
 				UploadNewBlock(nextBlock);
                 LastBlock = nextBlock;
-                if (LastBlock.NextBlock == null)
-                    // need to retrieve blocks in the main chain. LastBlock is an orphan.
+                if (LastBlock.NextBlock == null)// need to retrieve blocks in the main chain. LastBlock is an orphan.
                 {
-                    UploadSplitBlocks(nextBlock.Hash);
-
+                    UploadOrphanBlocks(nextBlock.Hash);
                 }
             }
-
 		}
 
 		private static Block UpdateNextBlockHash(Block block)
@@ -246,7 +244,7 @@ namespace BitcoinWorkerRole
 			LastBlock = block;
 		}
 
-        private static void UploadSplitBlocks(string blockHash) 
+        private static void UploadOrphanBlocks(string blockHash) 
         {
             Block block = GetBlockByHash(blockHash);
             while (Blob.GetBlock(blockHash) == null && block.Height != MinimalHeight)
