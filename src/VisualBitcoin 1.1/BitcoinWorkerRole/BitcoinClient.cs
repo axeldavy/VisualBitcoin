@@ -331,7 +331,12 @@ namespace BitcoinWorkerRole
 			var hash = (string)obj["hash"];
 			var version = (string)obj["version"];
 			var previousBlock = (string)obj["previousblockhash"];
-			var nextBlock = (string)obj["nextblockhash"];
+            var nextBlock = new List<string>();
+            foreach (var hash_i in obj["nextblockhash"])
+            {
+                nextBlock.Add((string)hash_i);
+
+            }
 			var merkleRoot = (string)obj["merkleroot"];
 			var time = (int)obj["time"];
 			var numberOnce = (long)obj["nonce"];

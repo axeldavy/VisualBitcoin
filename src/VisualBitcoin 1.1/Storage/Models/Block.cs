@@ -25,7 +25,7 @@ namespace Storage.Models
 			Hash = "default";
 			Version = "default";
 			PreviousBlock = "default";
-            NextBlock = "default";
+            NextBlock = new List<string>();
 			MerkleRoot = "default";
 			Time = 0;
 			NumberOnce = 0;
@@ -35,7 +35,7 @@ namespace Storage.Models
 			TransactionIds = new string[0];
 		}
 
-		public Block(string hash, string version, string previousBlock, string nextBlock,
+		public Block(string hash, string version, string previousBlock, List<string> nextBlock,
 		             string merkleRoot, int time, long numberOnce, int numberOfTransactions, int size,
 		             int height, string[] transactionIds)
 		{
