@@ -18,6 +18,14 @@
     <br />
 </p>
 
+<a id="Main Schema"></a>
+<details>
+    <summary style="font: bold">Main Schema</summary> 
+    <img alt="Main Schema couldn't be loaded." src="~/Content/Schemas/Main schema.png" style="text-align:center;vertical-align:middle"/>
+
+</details>
+
+
 <a id="Client"></a>
 <details> <summary style="font: bold">Bitcoin client</summary>
             For our application we use standard bitcoin client <span style="color:red">HERE NAME OF THE CLIENT</span>. It is launched on the Windows Azure Virtual Machine (VM). We are taking new transactions and information about blocks from it.
@@ -25,7 +33,11 @@
 
 <a id="Worker Role"></a>
 <details> <summary style="font: bold"> Bitcoin Worker Role</summary>
-This part takes data from the Bitcoin Client. It also converts received data to the XML format and extracts transactions from the blocks. It uses Storage implementation for uploading data to the Azure Storage. Blocks are saved to the BocksContainer and Transactions are saved to the Transactions container. Also this part adds messages to the queue about which block should be processed next.
+Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry point class which connects to the bitcoin client on the VM. BitcoinClient class takes data from the Bitcoin Client. It also converts received data to the XML format and extracts transactions from the blocks. It uses Storage implementation for uploading data to the Azure Storage. Blocks are saved to the BocksContainer and Transactions are saved to the Transactions container. Also this part adds messages to the queue about which block should be processed next.
+    <details>
+        <summary style="font: bold">Schema</summary> 
+        <img alt="Schema couldn't be loaded." src="~/Content/Schemas/WorkerRole.png"/>
+    </details>
 </details>
 
 <a id="Storage Implementation"></a>
@@ -35,26 +47,43 @@ This part takes data from the Bitcoin Client. It also converts received data to 
     <li>Serilization – saving different data models to the storage in  XML formatl; </li>
     <li>Models – in this folder different structures of data are described. All these models are serialized; </li>
 	<li>Coding /not implemented/ – zipping and unzipping data to minimize data exchange; </li>
-	<li>anaging Windows Azure Storage – staring and connecting to different containers.</li>
+	<li>Managing Windows Azure Storage – staring and connecting to different containers.</li>
 </ul>
 <br/>We use three containers and a queue of Windows Azure Storage. 
 <br/>In the BlockContainer we save information of the blocks like a XML file. We use block’s hash to name each file. In these files all information about bitcoin blocks are saved. To minimize file’s size we removed transactions and added just their hashes. 
 <br/>In the TransactionsContainer we saved transactions XML by their hashes. Also we added hash of the block which is owned this transaction to the XML structure. 
 <br/>In the HigherContainer we save transactions’ hashes by time to accelerate data processing and access to the data from the UI.
+    <details> <summary>Models</summary> 
+    <ul>
+        <li><span style="font:bold">Bitcoin worker role.</span> Saves all necessary data for Worker Role Client for back-up.</li>
+        <li><span style="font:bold">Block.</span> Representes block which is used in Bitcoin network, but an array of transactions is changed to the array of theirs IDs. </li>
+	    <li><span style="font:bold">Block reference.</span> Reference to the block. Reference name is realized like a hash. </li>
+	    <li><span style="font:bold">Transactions.</span> Represents transaction of the bitcoin network. Also models <span style="font:italic">VIn, VOut</span> and <span style="font:italic">Prev_Out</span>
+             are used for representing different fields of the transactions.</li>
+        <li><span style="font:bold">Statistic.</span> Saves different type of the statistics on Time, Blocks, Transactions.</li>
+    </ul>
+
+    </details>
 </details>
 
 <a id="Storage Worker Role"></a>
 <details> <summary style="font: bold"> Storage Worker Role </summary>
 In this project we have made data processing, adding references to the higher container, collecting statistical information and saving it to the storage.
+    <details>
+        <summary style="font: bold">Schema</summary> 
+        <img alt="Schema couldn't be loaded." src="~/Content/Schemas/StorageWorkerRole.png"/>
+    </details>
+
 </details>
 
 <a id="Web Role"></a>
 <details> <summary style="font: bold">Web Role</summary>
-A web site with a user interface (UI). 
-<ul>
-    <li>Has a controller, which is used for taking data from the blob storage;</li>
-    <li>View – for creating and grouping data which was demanded. (Adding data to the table, creating data for graphic construction)</li>
-</ul>
+A web site with a user interface (UI). Connect to the blob storage and represents requested data. Allows to constructing charts, navigating in blocks and transactions. From each block you can see and discover information on transactions which belongs to it.
+    <details>
+        <summary style="font: bold">Schema</summary> 
+        <img alt="Schema couldn't be loaded." src="~/Content/Schemas/WebRole.png"/>
+    </details>
+
 </details>
 
 
