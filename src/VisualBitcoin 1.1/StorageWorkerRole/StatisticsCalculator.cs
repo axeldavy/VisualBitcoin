@@ -12,7 +12,7 @@ namespace StorageWorkerRole
         // Number of seconds between 3 January 2009 (first BTC ?) and 1 January 1970.
         private const ulong InitialTime = 1230940800;
 
-		static void Main()
+		public static void Main()
 		{
 			var hash = Queue.PopMessage<string>();
 			var block = Blob.GetBlock(hash);
@@ -107,22 +107,20 @@ namespace StorageWorkerRole
 			return sum * (sum - 2 * average) / nb + average * average;
 		}
 
-        public void OnStart()
+        public static void initialise()
         {
-            Trace.WriteLine("On start","VisualBitcoin.StorageWorkerRole.Statistics Information");
-
             if (Blob.DownloadBlockBlob<List<Block>>("Last_Blocks") == null)
             {
                 Block[] liste = { null, null, null, null, null, null, null, null, null, null };
                 List<Block> listeini = new List<Block>(liste);
-                Blob.UploadBlockBlob("Last_Blocks", (List<Block>) listeini);
+                Blob.UploadBlockBlob("Last_Blocks", (List<Block>)listeini);
             }
             if (Blob.DownloadBlockBlob<Statistics>("General_Statistics") == null)
             {
                 Statistics statini = new Statistics();
                 Blob.UploadBlockBlob("General_Statistics", statini);
             }
-            
         }
+
 	}
 }
