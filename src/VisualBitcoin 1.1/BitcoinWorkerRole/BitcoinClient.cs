@@ -48,10 +48,10 @@ namespace BitcoinWorkerRole
 				block = GetBlockByHash(firstBlockHash);
 			}
 
-			MaximumNumberOfBlocksInTheStorage = 10;
+			MaximumNumberOfBlocksInTheStorage = 0;
 			NumberOfBlocksInTheStorage = 0;
             MinimalHeight = block.Height;
-			BlockLimit = true;
+			BlockLimit = false;
 			FirstBlock = block;
 			LastBlock = block;
 
