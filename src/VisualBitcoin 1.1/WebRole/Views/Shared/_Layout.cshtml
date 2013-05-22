@@ -1,47 +1,56 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="utf-8" />
-    <title>@ViewBag.Title - VisualBitcoin</title>
-    <link href="~/favicon.ico" rel="shortcut icon" type="image/x-icon" />
-    <meta name="viewport" content="width=device-width" />
-    @Styles.Render("~/Content/Site.css")
-    @Scripts.Render("~/bundles/modernizr")
-    @Scripts.Render("~/bundles/jquery")
-    @Scripts.Render("~/bundles/jqueryui")
-</head>
-<body>
-    <header>
-        <div class="content-wrapper">
-            <div class="float-left">
-                <p class="site-title">@Html.ActionLink("VisualBitcoin", "Index", "Home")</p>
-            </div>
-            <div class="float-right">
-                <nav>
-                    <ul id="menu">
-                        <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                        <li>@Html.ActionLink("Explorer", "Index", "Explorer")</li>
-                        <li>@Html.ActionLink("About", "About", "Home")</li>
-                        <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    </header>
-    <div id="body">
-        @RenderSection("featured", required: false)
-        <section class="content-wrapper main-content clear-fix">
-            @RenderBody()
-        </section>
-    </div>
-    <footer>
-        <div class="content-wrapper">
-            <div class="float-left">
-                <p><a href="http://www.di.ens.fr/">&Eacute;cole normale supérieure</a> - VisualBitcoin 1.1</p>
-            </div>
-        </div>
-    </footer>
+    <head>
+        <meta charset="utf-8" />
+        <title>@ViewBag.Title - VisualBitcoin</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="description" content="A cloud-hosted information website tracking Bitcoin transactions in real time" />
+        @Styles.Render("~/bundles/css")
+        @Scripts.Render("~/bundles/js")
+    </head>
 
-    @RenderSection("scripts", required: false)
-</body>
+    <body data-spy="scroll" data-target=".bs-docs-sidebar">
+        <div class="container">
+            <div class="navbar navbar-inverse navbar-fixed-top">
+                <div class="navbar-inner">
+                    <div class="container">
+                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </a>
+                        <div class="nav-collapse collapse">
+                            <ul class="nav">
+                                <li>@Html.ActionLink("Home", "Index", "Home")</li>
+                                <li>@Html.ActionLink("Explorer", "Index", "Explorer")</li>
+                                <li>@Html.ActionLink("About", "About", "Home")</li>
+                                <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <header class="header">
+            <div class="container">
+                <h1>VisualBitcoin</h1>
+                <p class="lead">A cloud-hosted information website tracking Bitcoin transactions in real time</p>
+            </div>
+        </header>
+        <div class="body">
+            <div class="container">
+                @RenderSection("featured", required: false)
+                @RenderBody()
+            </div>
+        </div>
+        
+        <footer class="footer">
+            <p>Designed with <a href="http://twitter.github.io/bootstrap/">Bootstrap</a> and <a href="http://www.microsoft.com/visualstudio/eng/office-dev-tools-for-visual-studio">Visual Studio</a> at the <a href="http://www.di.ens.fr/">&Eacute;cole normale supérieure</a> Paris France</p>
+            <p>Copyright 2013 - All rights reserved</p>
+        </footer>
+
+        
+        @RenderSection("scripts", required: false)
+    </body>
 </html>

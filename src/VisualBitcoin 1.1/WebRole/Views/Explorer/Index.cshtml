@@ -4,15 +4,8 @@
 
 @model List<WebRole.Models.BlockModel>
 
-<h1>@ViewBag.Title</h1>
+<h2>@ViewBag.Title</h2>
 
-<script>
-    $(function () {
-        $("#accordion").accordion({ collapsible: true });
-    });
-</script>
-
-<div id="accordion">
 @{foreach(WebRole.Models.BlockModel modelItem in Model)
     {
         <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Hash)</a></h3>
@@ -86,5 +79,3 @@
     </div>
     }
 }
-    </div>
-

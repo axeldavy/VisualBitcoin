@@ -2,19 +2,12 @@
     ViewBag.Title = "Home";
 }
 
-<h1>@ViewBag.Title</h1>
+<h2>@ViewBag.Title</h2>
 
 <p>Welcome to VisualBitcoin website.</p>
 
-<script>
-    $(function () {
-        $("#accordion").accordion({ collapsible: true });
-    });
-</script>
-
 @model List<Storage.Models.Transactions>
 
-<div id="accordion">
 @{foreach (Storage.Models.Transactions modelItem in Model)
     {
         <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Locktime)</a></h3>
@@ -29,6 +22,4 @@
     </div>
     }
 }
-</div>
-
 
