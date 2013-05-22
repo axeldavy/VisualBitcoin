@@ -17,7 +17,7 @@ namespace WebRole.Controllers
 		public ActionResult Index()
 		{
             var transactionList = Blob.GetTransactionList();
-            var tranModelList = new List<Transactions>();
+            var tranModelList = new List<Transaction>();
             foreach (string trans in transactionList)
             {
                 var t = Blob.GetTransaction(trans);

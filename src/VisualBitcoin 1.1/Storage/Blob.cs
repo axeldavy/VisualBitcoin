@@ -46,7 +46,7 @@ namespace Storage
 
 			var transactionList = GetBlobBlocksList(TransactionsContainer);
 			foreach (var transactionName in transactionList)
-				DeleteBlockBlob<Transactions>(transactionName);
+				DeleteBlockBlob<Transaction>(transactionName);
 
 			var highList = GetBlobBlocksList(StatContainer);
 			foreach (var highName in highList)
@@ -70,7 +70,7 @@ namespace Storage
 			{
 				blockBlob = BlocksContainer.GetBlockBlobReference(blockBlobName);
 			}
-			else if (model is Transactions)
+			else if (model is Transaction)
 			{
 				blockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
@@ -100,7 +100,7 @@ namespace Storage
 			{
 				cloudBlockBlob = BlocksContainer.GetBlockBlobReference(blockBlobName);
 			}
-			else if (typeof(TModel) == typeof(Transactions))
+			else if (typeof(TModel) == typeof(Transaction))
 			{
 				cloudBlockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
@@ -142,7 +142,7 @@ namespace Storage
 			{
 				cloudBlockBlob = BlocksContainer.GetBlockBlobReference(blockBlobName);
 			}
-			else if (typeof(TModel) == typeof(Transactions))
+			else if (typeof(TModel) == typeof(Transaction))
 			{
 				cloudBlockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
@@ -176,11 +176,11 @@ namespace Storage
 			return block;
 		}
 
-        public static Transactions GetTransaction(string tranName)
+        public static Transaction GetTransaction(string tranName)
         {
             Trace.WriteLine("Transaction download", "VisualBitcoin.Storage.Blob Information");
 
-            var transaction = DownloadBlockBlob<Transactions>(tranName);
+            var transaction = DownloadBlockBlob<Transaction>(tranName);
             return transaction;
         }
 
