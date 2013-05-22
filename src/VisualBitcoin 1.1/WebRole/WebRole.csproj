@@ -138,7 +138,6 @@
     <Compile Include="WebRole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap.css" />
     <Content Include="Content\Schemas\Main schema.png" />
     <Content Include="Content\Schemas\StorageWorkerRole.png" />
     <Content Include="Content\Schemas\WebRole.png" />
