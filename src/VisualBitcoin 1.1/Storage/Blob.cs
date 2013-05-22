@@ -16,7 +16,7 @@ namespace Storage
 		public static CloudBlobContainer DefaultContainer { get; private set; }
 		public static CloudBlobContainer BlocksContainer { get; private set; }
 		public static CloudBlobContainer TransactionsContainer { get; private set; }
-		public static CloudBlobContainer HighContainer { get; private set; }
+		public static CloudBlobContainer StatContainer { get; private set; }
 
 
 		// Configure and start the blob storage, only one call make on application start.
@@ -31,8 +31,8 @@ namespace Storage
 			BlocksContainer.CreateIfNotExists();
 			TransactionsContainer = CloudBlobClient.GetContainerReference(transactionsContainerName);
 			TransactionsContainer.CreateIfNotExists();
-			HighContainer = CloudBlobClient.GetContainerReference(highContainerName);
-			HighContainer.CreateIfNotExists();
+			StatContainer = CloudBlobClient.GetContainerReference(highContainerName);
+			StatContainer.CreateIfNotExists();
 		}
 
 		// Delete all blocks stored in the blocks container.
@@ -48,7 +48,7 @@ namespace Storage
 			foreach (var transactionName in transactionList)
 				DeleteBlockBlob<Transactions>(transactionName);
 
-			var highList = GetBlobBlocksList(HighContainer);
+			var highList = GetBlobBlocksList(StatContainer);
 			foreach (var highName in highList)
 				DeleteBlockBlob<Block>(highName);
 
@@ -74,9 +74,9 @@ namespace Storage
 			{
 				blockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
-            else if ((model is List<Block>) || (model is Statistic) || (model is List<int>))
+            else if ((model is List<Block>) || (model is Statistics) || (model is List<int>))
 			{
-				blockBlob = HighContainer.GetBlockBlobReference(blockBlobName);
+				blockBlob = StatContainer.GetBlockBlobReference(blockBlobName);
 			}
 			else
 			{
@@ -104,9 +104,9 @@ namespace Storage
 			{
 				cloudBlockBlob = TransactionsContainer.GetBlockBlobReference(blockBlobName);
 			}
-            else if ((typeof(TModel) == typeof(List<Block>)) || (typeof(TModel) == typeof(Statistic)) || (typeof(TModel) == typeof(List<int>)))
+            else if ((typeof(TModel) == typeof(List<Block>)) || (typeof(TModel) == typeof(Statistics)) || (typeof(TModel) == typeof(List<int>)))
 			{
-				cloudBlockBlob = HighContainer.GetBlockBlobReference(blockBlobName);
+				cloudBlockBlob = StatContainer.GetBlockBlobReference(blockBlobName);
 			}
 			else
 			{
@@ -148,7 +148,7 @@ namespace Storage
 			}
 			else if (typeof(TModel) == typeof(List<Block>))
 			{
-				cloudBlockBlob = HighContainer.GetBlockBlobReference(blockBlobName);
+				cloudBlockBlob = StatContainer.GetBlockBlobReference(blockBlobName);
 			}
 			else
 			{
