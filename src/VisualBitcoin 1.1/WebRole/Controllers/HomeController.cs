@@ -35,5 +35,9 @@ namespace WebRole.Controllers
 		{
 			return View();
 		}
+        public ActionResult Transactions()
+        {
+            return View();
+        }
 	}
 }
