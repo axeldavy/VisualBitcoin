@@ -15,25 +15,27 @@ namespace BitcoinWorkerRole
 {
 	public class BitcoinClient
 	{
-		public static Block FirstBlock { get; private set; }
-		public static Block LastBlock { get; private set; }
-		public static int MaximumNumberOfBlocksInTheStorage;
-		public static int NumberOfBlocksInTheStorage { get; private set; }
-		public static Uri Uri { get; private set; }
-		public static ICredentials Credentials { get; private set; }
-		public static bool BlockLimit { get; private set; }
-        public static int MinimalHeight { get; private set; }
+        private Block firstBlock;
+        private Block lastBlock;
+		private int maximumNumberOfBlocks;
+        private int numberOfBlocks;
 
-		public static void Initialisation(string firstBlockHash)
+        // Give public access to the following Bitcoin client data
+        public Block FirstBlock { get { return firstBlock; } }
+        public Block LastBlock { get { return lastBlock; } }
+        public int MaximumNumberOfBlocks { get { return maximumNumberOfBlocks; } }
+        public int NumberOfBlocks { get { return numberOfBlocks; } }
+
+        private Uri uri;
+        private ICredentials credentials;
+        private bool blockLimit;
+        private int minimalHeight;
+
+		public void Initialisation(string firstBlockHash)
 		{
 			Trace.WriteLine("Initialisation without backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
-			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
-			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
-			var virtualMachineUri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
-
-			Credentials = new NetworkCredential(user, password);
-			Uri = new Uri(virtualMachineUri);
+            InitializeConfigurations();
 
 			Block block;
 			if (String.IsNullOrEmpty(firstBlockHash))
@@ -48,43 +50,47 @@ namespace BitcoinWorkerRole
 				block = GetBlockByHash(firstBlockHash);
 			}
 
-			MaximumNumberOfBlocksInTheStorage = 0;
-			NumberOfBlocksInTheStorage = 0;
-            MinimalHeight = block.Height;
-			BlockLimit = false;
-			FirstBlock = block;
-			LastBlock = block;
+			maximumNumberOfBlocks = 0;
+			numberOfBlocks = 0;
+            minimalHeight = block.Height;
+			blockLimit = false;
+			firstBlock = block;
+			lastBlock = block;
 
 			UploadNewBlock(block);
 		}
 
-		public static void Initialisation(int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
+		public void Initialisation(int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
 			string firstBlockHash, string lastBlockHash, int minimalHeight)
 		{
 			Trace.WriteLine("Initialisation with backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
-			var user = CloudConfigurationManager.GetSetting("BitcoinUser");
-			var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
-			var virtualMachineUri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
-			var firstBlockBlobName = firstBlockHash;
-			var lastBlockBlobName = lastBlockHash;
+            InitializeConfigurations();
 
-			Credentials = new NetworkCredential(user, password);
-			Uri = new Uri(virtualMachineUri);
-			MaximumNumberOfBlocksInTheStorage = maximumNumberOfBlocksInTheStorage;
-			NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;
-            MinimalHeight = minimalHeight;
-			BlockLimit = (maximumNumberOfBlocksInTheStorage != 0);
-			FirstBlock = Blob.DownloadBlockBlob<Block>(firstBlockBlobName);
-			LastBlock = Blob.DownloadBlockBlob<Block>(lastBlockBlobName);
+			this.maximumNumberOfBlocks = maximumNumberOfBlocksInTheStorage;
+			this.numberOfBlocks = numberOfBlocksInTheStorage;
+            this.minimalHeight = minimalHeight;
+			blockLimit = (maximumNumberOfBlocksInTheStorage != 0);
+			firstBlock = Blob.DownloadBlockBlob<Block>(firstBlockHash);
+			lastBlock = Blob.DownloadBlockBlob<Block>(lastBlockHash);
 		}
+
+        public void InitializeConfigurations()
+        {
+            var user = CloudConfigurationManager.GetSetting("BitcoinUser");
+            var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
+            var virtualMachineUri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
+
+            credentials = new NetworkCredential(user, password);
+            uri = new Uri(virtualMachineUri);
+        }
 
 		// The following method was adapted from bitnet on 04/2013
 		// bitnet: COPYRIGHT 2011 Konstantin Ineshin, Irkutsk, Russia.
-		private static JObject InvokeMethod(string aSMethod, params object[] aParams)
+		private JObject InvokeMethod(string aSMethod, params object[] aParams)
 		{
-			var webRequest = (HttpWebRequest)WebRequest.Create(Uri);
-			webRequest.Credentials = Credentials;
+			var webRequest = (HttpWebRequest)WebRequest.Create(uri);
+			webRequest.Credentials = credentials;
 
 			webRequest.ContentType = "application/json-rpc";
 			webRequest.Method = "POST";
@@ -148,7 +154,7 @@ namespace BitcoinWorkerRole
 			}
 		}
 
-		private static JToken Invoke(string asMethod, params object[] aParams)
+		private JToken Invoke(string asMethod, params object[] aParams)
 		{
 			JObject received = InvokeMethod(asMethod, aParams);
 			JToken result = received["result"];
@@ -158,46 +164,33 @@ namespace BitcoinWorkerRole
 			throw new Exception("Invoke:" + error);
 		}
 
-		// Use this method for testing changes made to Blocks class
-		private static void UpdateBlocks()
-		{
-			foreach (string blockHash in Blob.GetBlockList())
-			{
-				var blockObject = Invoke("getblock", new object[] { blockHash }) as JObject;
-				var block = GetBlockFromJObject(blockObject);
-				Blob.UploadBlockBlob(block.Hash, block);
-				UploadTransactionsFromBlock(block);
-			}
-		}
-
-		public static void UploadNewBlocks()
-		{
-			// For testing purposes use UpdateBlocks() HERE --
-			//UpdateBlocks();
-		    
-            if (BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage)
+		public void UploadNewBlocks()
+		{   
+            if (blockLimit && maximumNumberOfBlocks <= numberOfBlocks)
 				return;
 
-			Trace.WriteLine("Looking at new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+			Trace.WriteLine("Upload new blocks", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
             int lastHeight = (int)Invoke("getblockcount");
-            while (lastHeight > LastBlock.Height && !(BlockLimit && MaximumNumberOfBlocksInTheStorage <= NumberOfBlocksInTheStorage))
+            while (lastHeight > lastBlock.Height && !(blockLimit && maximumNumberOfBlocks <= numberOfBlocks))
             {
-                JObject nextBlockJObject = Invoke("listsinceblock", new object[] { LastBlock.Hash, lastHeight - LastBlock.Height }) as JObject;
+                JObject nextBlockJObject = Invoke("listsinceblock", new object[] { lastBlock.Hash, lastHeight - lastBlock.Height }) as JObject;
                 Block nextBlock = GetBlockByHash((string) nextBlockJObject["lastblock"]);
-                LastBlock = UpdateNextBlockHash(LastBlock);               
+                lastBlock = UpdateNextBlockHash(lastBlock);               
+                
                 Trace.WriteLine("\"\" != \"" + nextBlock.Hash + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
-                UploadTransactionsFromBlock(nextBlock); // Upload Transactions first because the message in the queue must be send after everything is done.
+                
+                UploadTransactionsFromBlock(nextBlock); // Upload Transactions first because the message in the queue must be sent after everything is done.
 				UploadNewBlock(nextBlock);
-                LastBlock = nextBlock;
-                if (LastBlock.NextBlock == null)// need to retrieve blocks in the main chain. LastBlock is an orphan.
+                lastBlock = nextBlock;
+                if (lastBlock.NextBlock == null) // Need to retrieve blocks in the main chain if LastBlock is an orphan.
                 {
                     UploadOrphanBlocks(nextBlock.Hash);
                 }
             }
 		}
 
-		private static Block UpdateNextBlockHash(Block block)
+		private Block UpdateNextBlockHash(Block block)
 		{
 			var blockJObject = Invoke("getblock", new object[] { block.Hash }) as JObject;
 			Debug.Assert(blockJObject != null, "blockJObject != null");
@@ -205,30 +198,25 @@ namespace BitcoinWorkerRole
             foreach (var hash in blockJObject["nextblockhash"])
             {
                 block.NextBlock.Add((string)hash);
-
             }
 			return block;
 		}
 
-		private static void UploadNewBlock(Block block)
+		private void UploadNewBlock(Block block)
 		{
-			var blockBlobName = block.Hash;
-			var blockReference = new BlockReference(block.Hash);
+			Blob.UploadBlockBlob(block.Hash, block);
+			Queue.PushMessage(new BlockReference(block.Hash));
 
-			Blob.UploadBlockBlob(blockBlobName, block);
-			Queue.PushMessage(blockReference);
+			numberOfBlocks += 1;
 
-
-			NumberOfBlocksInTheStorage = NumberOfBlocksInTheStorage + 1;
-
-			var bitcoinWorkerRoleBackup = new BitcoinWorkerRoleBackup(MaximumNumberOfBlocksInTheStorage,
-																		  NumberOfBlocksInTheStorage, FirstBlock.Hash,
-																		  LastBlock.Hash, FirstBlock.Height);
+			var bitcoinWorkerRoleBackup = 
+                new BitcoinWorkerRoleBackup(maximumNumberOfBlocks, numberOfBlocks, 
+                    firstBlock.Hash, lastBlock.Hash, firstBlock.Height);
 			Blob.UploadBlockBlob("bitcoinworkerrolebackup", bitcoinWorkerRoleBackup);
 
 		}
 
-		private static void UploadTransactionsFromBlock(Block block)
+		private void UploadTransactionsFromBlock(Block block)
 		{
 			IEnumerable<Transaction> trans = GetTransactionsFromBlock(block);
 			foreach (Transaction t in trans)
@@ -237,17 +225,10 @@ namespace BitcoinWorkerRole
 			}
 		}
 
-		private static void UpdateBlock(Block block)
-		{
-			var blockBlobName = block.Hash;
-			Blob.UploadBlockBlob(blockBlobName, block);
-			LastBlock = block;
-		}
-
-        private static void UploadOrphanBlocks(string blockHash) 
+        private void UploadOrphanBlocks(string blockHash) 
         {
             Block block = GetBlockByHash(blockHash);
-            while (Blob.GetBlock(blockHash) == null && block.Height != MinimalHeight)
+            while (Blob.GetBlock(blockHash) == null && block.Height != minimalHeight)
             {
                 UploadNewBlock(block);
                 blockHash = block.PreviousBlock;
@@ -255,7 +236,7 @@ namespace BitcoinWorkerRole
             }
         }
 
-		private static IEnumerable<Transaction> GetTransactionsFromBlock(Block block)
+		private IEnumerable<Transaction> GetTransactionsFromBlock(Block block)
 		{
 			string[] idList = block.TransactionIds;
 			Transaction[] transactionsFromBlock = new Transaction[idList.Count()];
@@ -281,42 +262,44 @@ namespace BitcoinWorkerRole
 			return transactionsFromBlock;
 		}
 
-		private static string[] GetTransactionIds(JObject obj)
+		private string[] GetTransactionIds(JObject obj)
 		{
-			JToken txidList = obj["tx"];
-			var transactionIds = new string[txidList.Count()];
+			JToken idList = obj["tx"];
+			var transactionIds = new string[idList.Count()];
 			int count = 0;
-			foreach (var txid in txidList)
+			foreach (var id in idList)
 			{
-				transactionIds[count] = (string)txid;
+				transactionIds[count] = (string)id;
 				count += 1;
 			}
 			return transactionIds;
 		}
 
-		private static JObject DecodeTransaction(string txid)
+		private JObject DecodeTransaction(string txid)
 		{
 			JToken txHash = Invoke("getrawtransaction", new object[] { txid });
-			if (txHash == null) throw new Exception("null transaction hash value");
+            if (txHash == null)
+            {
+                throw new Exception("Null transaction hash value");
+            }
 			return Invoke("decoderawtransaction", new object[] { txHash }) as JObject;
 		}
 
-		private static Block GetBlockByHash(JToken hashToken)
+		private Block GetBlockByHash(JToken hashToken)
 		{
 			var block = Invoke("getblock", new object[] { hashToken }) as JObject;
 			return GetBlockFromJObject(block);
 		}
 
-		private static Block GetBlockFromJObject(JObject obj)
+		private Block GetBlockFromJObject(JObject obj)
 		{
 			var hash = (string)obj["hash"];
 			var version = (string)obj["version"];
 			var previousBlock = (string)obj["previousblockhash"];
-            var nextBlock = new List<string>();
-            foreach (var hash_i in obj["nextblockhash"])
+            var hashList = new List<string>();
+            foreach (var h in obj["nextblockhash"])
             {
-                nextBlock.Add((string)hash_i);
-
+                hashList.Add((string)h);
             }
 			var merkleRoot = (string)obj["merkleroot"];
 			var time = (int)obj["time"];
@@ -325,7 +308,7 @@ namespace BitcoinWorkerRole
 			var numberOfTransactions = transactionIds.Count();
 			var size = (int)obj["size"];
 			var height = (int)obj["height"];
-			return new Block(hash, version, previousBlock, nextBlock, merkleRoot, time, numberOnce,
+			return new Block(hash, version, previousBlock, hashList, merkleRoot, time, numberOnce,
 				numberOfTransactions, size, height, transactionIds);
 		}
 

@@ -13,6 +13,7 @@ namespace BitcoinWorkerRole
 		// Flag to stop the run loop.
 		private bool _isStopRequested;
 		private bool _isBitcoinClientConnexionEnable;
+        private BitcoinClient bitcoinClient;
 
 		public override void Run()
 		{
@@ -26,7 +27,7 @@ namespace BitcoinWorkerRole
 
 					Thread.Sleep(5000);
 
-					BitcoinClient.UploadNewBlocks();
+					bitcoinClient.UploadNewBlocks();
 				}
 			}
 			catch (Exception exception)
@@ -42,6 +43,8 @@ namespace BitcoinWorkerRole
 		public override bool OnStart()
 		{
 			Trace.WriteLine("Start", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
+            
+            bitcoinClient = new BitcoinClient();
 
 			try
 			{
@@ -66,10 +69,10 @@ namespace BitcoinWorkerRole
 				if (null == bitcoinWorkerRoleBackup)
 				{
 					var firstBlockHash = CloudConfigurationManager.GetSetting("FirstBlockHash");
-					BitcoinClient.Initialisation(firstBlockHash);
+					bitcoinClient.Initialisation(firstBlockHash);
 				}
 				else
-					BitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
+					bitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
 												 bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage,
 												 bitcoinWorkerRoleBackup.FirstBlockHash,
 												 bitcoinWorkerRoleBackup.LastBlockHash,
@@ -95,11 +98,11 @@ namespace BitcoinWorkerRole
 			_isStopRequested = false;
 
 			// Save backup.
-			var backup = new BitcoinWorkerRoleBackup(BitcoinClient.MaximumNumberOfBlocksInTheStorage,
-													 BitcoinClient.NumberOfBlocksInTheStorage,
-													 BitcoinClient.FirstBlock.Hash,
-													 BitcoinClient.LastBlock.Hash,
-                                                     BitcoinClient.FirstBlock.Height);
+			var backup = new BitcoinWorkerRoleBackup(bitcoinClient.MaximumNumberOfBlocks,
+													 bitcoinClient.NumberOfBlocks,
+													 bitcoinClient.FirstBlock.Hash,
+													 bitcoinClient.LastBlock.Hash,
+                                                     bitcoinClient.FirstBlock.Height);
 			Blob.UploadBlockBlob("bitcoinworkerrolebackup", backup);
 		}
 	}
