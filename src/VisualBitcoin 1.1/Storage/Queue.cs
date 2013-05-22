@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.WindowsAzure.Storage.Queue;
+using Microsoft.WindowsAzure;
+using System.Threading;
 
 namespace Storage
 {
@@ -63,13 +65,21 @@ namespace Storage
 		public static TModel PopMessage<TModel>() where TModel : class
 		{
 			Trace.WriteLine("Message popped", "VisualBitcoin.Storage.Queue Information");
+            try
+            {
+                var cloudQueueMessage = CloudQueue.GetMessage();
+                var content = cloudQueueMessage.AsString;
+                var message = Coding.Decode(content);
+                var model = Serialization.FromXml<TModel>(message);
 
-			var cloudQueueMessage = CloudQueue.GetMessage();
-			var content = cloudQueueMessage.AsString;
-			var message = Coding.Decode(content);
-			var model = Serialization.FromXml<TModel>(message);
-
-			return model;
+                return model;
+            }
+            catch
+            {
+                Thread.Sleep(500);
+                return PopMessage<TModel>();
+            }
+			
 		}
 	}
 }
