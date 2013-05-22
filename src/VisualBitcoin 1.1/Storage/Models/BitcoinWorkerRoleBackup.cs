@@ -1,27 +1,27 @@
 ﻿namespace Storage.Models
 {
-	public class BitcoinWorkerRoleBackup
-	{
-		// Backup type-class for the BitnetWorkerRole.
+    public class BitcoinWorkerRoleBackup
+    {
+        // Backup type-class for the BitnetWorkerRole.
 
-		// Properties
-		public int NumberOfBlocksInTheStorage { get; set; }
-		public string FirstBlockHash { get; set; }
-		public string LastBlockHash { get; set; }
+        public BitcoinWorkerRoleBackup(int maximumNumberOfBlocksInTheStorage,
+                                       int numberOfBlocksInTheStorage,
+                                       string firstBlockHash,
+                                       string lastBlockHash,
+                                       int minimalHeight)
+        {
+            MaximumNumberOfBlocksInTheStorage = maximumNumberOfBlocksInTheStorage;
+            NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;
+            FirstBlockHash = firstBlockHash;
+            LastBlockHash = lastBlockHash;
+            MinimalHeight = minimalHeight;
+        }
 
-		// Constructors
-		public BitcoinWorkerRoleBackup()
-		{
-			NumberOfBlocksInTheStorage = 0;
-			FirstBlockHash = "";
-			LastBlockHash = "";
-		}
-
-		public BitcoinWorkerRoleBackup(int numberOfBlocksInTheStorage, string firstBlockHash, string lastBlockHash)
-		{
-			NumberOfBlocksInTheStorage = numberOfBlocksInTheStorage;
-			FirstBlockHash = firstBlockHash;
-			LastBlockHash = lastBlockHash;
-		}
-	}
+        // Properties
+        public int MaximumNumberOfBlocksInTheStorage;
+        public int NumberOfBlocksInTheStorage;
+        public string FirstBlockHash;
+        public string LastBlockHash;
+        public int MinimalHeight;
+    }
 }
