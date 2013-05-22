@@ -4,6 +4,8 @@ namespace Storage.Models
 {
     public class Transaction 
     {
+        public Transaction() { } 
+
         public Transaction(int version, ulong locktime, string transactionId, double amount)
         {
             Version = version;
