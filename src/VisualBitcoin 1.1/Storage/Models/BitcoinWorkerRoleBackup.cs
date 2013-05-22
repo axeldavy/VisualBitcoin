@@ -4,6 +4,8 @@
     {
         // Backup type-class for the BitnetWorkerRole.
 
+        public BitcoinWorkerRoleBackup() { }
+
         public BitcoinWorkerRoleBackup(int maximumNumberOfBlocksInTheStorage,
                                        int numberOfBlocksInTheStorage,
                                        string firstBlockHash,
