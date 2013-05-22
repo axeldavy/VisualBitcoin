@@ -9,7 +9,7 @@ namespace Storage
 		private const string DefaultContainerName = "defaultcontainer";
 		private const string BlocksContainerName = "blockscontainer";
 		private const string TransactionsContainerName = "transactionscontainer";
-		private const string HighContainerName = "highcontainer";
+		private const string StatContainerName = "statcontainer";
 		private const string TableName = "visualbitcointable";
 		private const string QueueName = "visualbitcoinqueue";
 
@@ -31,7 +31,7 @@ namespace Storage
 
 				StorageAccount = CloudStorageAccount.Parse(connectionString);
 
-				Blob.Start(DefaultContainerName, BlocksContainerName, TransactionsContainerName, HighContainerName);
+				Blob.Start(DefaultContainerName, BlocksContainerName, TransactionsContainerName, StatContainerName);
 				Table.Start(TableName);
 				Queue.Start(QueueName);
 

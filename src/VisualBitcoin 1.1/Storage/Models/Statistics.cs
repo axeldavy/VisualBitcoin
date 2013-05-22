@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Storage.Models
 {
-    public class Statistic
+    public class Statistics
     {
         public ulong NumberOfBlocks{ get; set; }
         // Time.
@@ -27,7 +27,7 @@ namespace Storage.Models
         public double VarianceTrans{ get; set; }
         public double StandardDevTrans{ get; set; }
 
-        public Statistic()
+        public Statistics()
 		{
             NumberOfBlocks = 0;
             NumberOfTransactions = 0;
@@ -50,29 +50,5 @@ namespace Storage.Models
             StandardDevTrans = 0;
 		}
 
-        public Statistic(ulong numberOfBlocks,ulong totalTime,double averageTime,double varianceTime,
-		  double standardDeviationTime,ulong sumBtc,double averageBtc,double standardDeviationBtc,double varianceBtc,
-		  ulong numberOfTransactions, double averageTrans, double varianceTrans, double standardDevTrans)
-        {
-            NumberOfBlocks = numberOfBlocks;
-            NumberOfTransactions = numberOfTransactions;
-               
-            //Btc
-            SumBtc = sumBtc;
-            AverageBtc = averageBtc;
-            VarianceBtc = varianceBtc;
-            StandardDeviationBtc = standardDeviationBtc;
-                          
-            //Time
-            TotalTime = totalTime;
-            AverageTime = averageTime;
-            VarianceTime = varianceTime;
-            StandardDeviationTime = standardDeviationTime;
-
-            //Transactions
-            AverageTrans = averageTrans;
-            VarianceTrans = varianceTrans;
-            StandardDevTrans = standardDevTrans;
-        }
     }
 }

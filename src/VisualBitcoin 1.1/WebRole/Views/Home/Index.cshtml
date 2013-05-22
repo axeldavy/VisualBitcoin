@@ -5,21 +5,3 @@
 <h2>@ViewBag.Title</h2>
 
 <p>Welcome to VisualBitcoin website.</p>
-
-@model List<Storage.Models.Transactions>
-
-@{foreach (Storage.Models.Transactions modelItem in Model)
-    {
-        <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Locktime)</a></h3>
-        <div>
-            <table>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => modelItem.Txid)
-                    </th>
-                </tr>
-            </table>
-    </div>
-    }
-}
-

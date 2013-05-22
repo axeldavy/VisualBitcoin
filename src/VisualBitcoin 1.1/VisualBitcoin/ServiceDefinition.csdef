@@ -11,8 +11,6 @@
     <Endpoints>
       <InputEndpoint name="Endpoint" protocol="http" port="80" />
     </Endpoints>
-    <Imports>
-    </Imports>
     <ConfigurationSettings>
       <Setting name="StorageConnectionString" />
       <Setting name="ResetBlobBlocksEnable" />
@@ -20,8 +18,6 @@
     </ConfigurationSettings>
   </WebRole>
   <WorkerRole name="BitcoinWorkerRole" vmsize="Small">
-    <Imports>
-    </Imports>
     <ConfigurationSettings>
       <Setting name="BitcoinUser" />
       <Setting name="BitcoinPassword" />
@@ -34,8 +30,6 @@
     </ConfigurationSettings>
   </WorkerRole>
   <WorkerRole name="StorageWorkerRole" vmsize="Small">
-    <Imports>
-    </Imports>
     <ConfigurationSettings>
       <Setting name="StorageConnectionString" />
       <Setting name="ResetBlobBlocksEnable" />

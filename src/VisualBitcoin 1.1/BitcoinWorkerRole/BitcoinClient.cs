@@ -48,10 +48,10 @@ namespace BitcoinWorkerRole
 				block = GetBlockByHash(firstBlockHash);
 			}
 
-			MaximumNumberOfBlocksInTheStorage = 10;
+			MaximumNumberOfBlocksInTheStorage = 0;
 			NumberOfBlocksInTheStorage = 0;
             MinimalHeight = block.Height;
-			BlockLimit = true;
+			BlockLimit = false;
 			FirstBlock = block;
 			LastBlock = block;
 
@@ -230,10 +230,10 @@ namespace BitcoinWorkerRole
 
 		private static void UploadTransactionsFromBlock(Block block)
 		{
-			IEnumerable<Transactions> trans = GetTransactionsFromBlock(block);
-			foreach (Transactions t in trans)
+			IEnumerable<Transaction> trans = GetTransactionsFromBlock(block);
+			foreach (Transaction t in trans)
 			{
-				Blob.UploadBlockBlob(t.Txid, t);
+				Blob.UploadBlockBlob(t.TransactionId, t);
 			}
 		}
 
@@ -255,44 +255,27 @@ namespace BitcoinWorkerRole
             }
         }
 
-		private static IEnumerable<Transactions> GetTransactionsFromBlock(Block block)
+		private static IEnumerable<Transaction> GetTransactionsFromBlock(Block block)
 		{
-			string[] txidList = block.TransactionIds;
-			string blockHash = block.Hash;
-			var transactionsFromBlock = new Transactions[txidList.Count()];
+			string[] idList = block.TransactionIds;
+			Transaction[] transactionsFromBlock = new Transaction[idList.Count()];
 
 			int count = 0;
-			foreach (string txid in txidList)
+			foreach (string id in idList)
 			{
-				JObject transaction = DecodeTransaction(txid);
-				transactionsFromBlock[count] = new Transactions(
-					(int)transaction["version"],
-					transaction["vin"].Count(),
-					transaction["vout"].Count(),
-					(ulong)transaction["locktime"],
-					txid,
-					blockHash);
+				JObject transaction = DecodeTransaction(id);
+                double amount = 0;
+                foreach (JObject v in transaction["vout"])
+                {
+                    if (v["value"].Type == JTokenType.Float)
+                        amount = amount + (double)v["value"]; // assert > 0
+                    else throw new Exception("type error in BlockandTransactionTransfer");
+                }
 
-				int voutCurrent = 0;
-				foreach (JObject v in transaction["vout"])
-				{
-					transactionsFromBlock[count].Outputs[voutCurrent] = new Vout(
-						(ulong)v["value"],
-						(int)v["n"]
-					);
-					voutCurrent++;
-				}
+                transactionsFromBlock[count] = 
+                    new Transaction((int)transaction["version"], (ulong)transaction["locktime"], id, amount);
 
-				int vinCurrent = 0;
-				foreach (JObject v in transaction["vin"])
-				{
-					transactionsFromBlock[count].Inputs[vinCurrent] = new Vin(
-						(string)v["coinbase"],
-						(ulong)v["sequence"]
-					);
-					vinCurrent++;
-				}
-				count += 1;
+                count += 1;
 			}
 
 			return transactionsFromBlock;

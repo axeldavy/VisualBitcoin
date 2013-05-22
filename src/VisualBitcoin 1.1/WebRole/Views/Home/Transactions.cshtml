@@ -1,0 +1,34 @@
+﻿@{
+    ViewBag.Title = "Transactions";
+}
+
+@model List<Storage.Models.Transactions>
+
+<h1>@ViewBag.Title</h1>
+
+<script>
+    $(function () {
+        $("#accordion").accordion({ collapsible: true });
+    });
+</script>
+
+
+<div id="accordion">
+@{foreach (Storage.Models.Transactions modelItem in Model)
+    {
+        <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Locktime)</a></h3>
+        <div>
+            <table>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Txid)
+                    </th>
+                </tr>
+            </table>
+    </div>
+    }
+}
+</div>
+
+
+

@@ -6,6 +6,7 @@ using System.Configuration;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Storage;
+using Storage.Models;
 
 namespace StorageWorkerRole
 {
@@ -19,8 +20,8 @@ namespace StorageWorkerRole
             while (true)
 			{
 				// TODO: check queue and process data.
-
-				Thread.Sleep(10000);
+                StatisticsCalculator.Main();
+				Thread.Sleep(500);
 				Trace.WriteLine("Working",
 					"VisualBitcoin.StorageWorkerRole.WorkerRole Information");
 			}
@@ -40,7 +41,9 @@ namespace StorageWorkerRole
 			WindowsAzure.Start(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
 
             // TODO: needed three BlobContainers: for brute blocks, for clear blocks, for transactions
-
+            Trace.WriteLine("On start", "VisualBitcoin.StorageWorkerRole.Statistics Information");
+            StatisticsCalculator.initialise();
+            
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;
 			
