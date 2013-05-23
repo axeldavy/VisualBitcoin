@@ -180,7 +180,6 @@ namespace BitcoinWorkerRole
                 
                 Trace.WriteLine("\"\" != \"" + nextBlock.Hash + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
                 
-                UploadTransactionsFromBlock(nextBlock); // Upload Transactions first because the message in the queue must be sent after everything is done.
 				UploadNewBlock(nextBlock);
                 lastBlock = nextBlock;
                 if (lastBlock.NextBlock == null) // Need to retrieve blocks in the main chain if LastBlock is an orphan.
@@ -204,7 +203,8 @@ namespace BitcoinWorkerRole
 
 		private void UploadNewBlock(Block block)
 		{
-			Blob.UploadBlockBlob(block.Hash, block);
+            block.Amount = UploadTransactionsFromBlock(block); // Upload Transactions first because the message in the queue must be sent after everything is done.
+            Blob.UploadBlockBlob(block.Hash, block);
 			Queue.PushMessage(new BlockReference(block.Hash));
 
 			numberOfBlocks += 1;
@@ -216,13 +216,17 @@ namespace BitcoinWorkerRole
 
 		}
 
-		private void UploadTransactionsFromBlock(Block block)
+        // Returns the amount of bit coins transferred in that block
+		private double UploadTransactionsFromBlock(Block block)
 		{
 			IEnumerable<Transaction> trans = GetTransactionsFromBlock(block);
+            double amount = 0;
 			foreach (Transaction t in trans)
 			{
+                amount += t.Amount;
 				Blob.UploadBlockBlob(t.TransactionId, t);
 			}
+            return amount;
 		}
 
         private void UploadOrphanBlocks(string blockHash) 
@@ -309,7 +313,7 @@ namespace BitcoinWorkerRole
 			var size = (int)obj["size"];
 			var height = (int)obj["height"];
 			return new Block(hash, version, previousBlock, hashList, merkleRoot, time, numberOnce,
-				numberOfTransactions, size, height, transactionIds);
+				numberOfTransactions, size, height, transactionIds, 0);
 		}
 
 
