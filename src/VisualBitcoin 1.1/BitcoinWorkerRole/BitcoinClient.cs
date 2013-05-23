@@ -8,6 +8,7 @@ using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.WindowsAzure;
+using Microsoft.WindowsAzure.Storage;
 using Storage;
 using Storage.Models;
 
@@ -30,12 +31,15 @@ namespace BitcoinWorkerRole
         private ICredentials credentials;
         private bool blockLimit;
         private int minimalHeight;
+        
+        private Blob blob;
+        private Queue queue;
 
-		public void Initialisation(string firstBlockHash)
+		public BitcoinClient(Blob blob, Queue queue, string firstBlockHash)
 		{
 			Trace.WriteLine("Initialisation without backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
-            InitializeConfigurations();
+            InitializeConfigurations(blob, queue);
 
 			Block block;
 			if (String.IsNullOrEmpty(firstBlockHash))
@@ -60,23 +64,25 @@ namespace BitcoinWorkerRole
 			UploadNewBlock(block);
 		}
 
-		public void Initialisation(int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
+		public BitcoinClient(Blob blob, Queue queue, int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
 			string firstBlockHash, string lastBlockHash, int minimalHeight)
 		{
 			Trace.WriteLine("Initialisation with backup", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
 
-            InitializeConfigurations();
+            InitializeConfigurations(blob, queue);
 
 			this.maximumNumberOfBlocks = maximumNumberOfBlocksInTheStorage;
 			this.numberOfBlocks = numberOfBlocksInTheStorage;
             this.minimalHeight = minimalHeight;
 			blockLimit = (maximumNumberOfBlocksInTheStorage != 0);
-			firstBlock = Blob.DownloadBlockBlob<Block>(firstBlockHash);
-			lastBlock = Blob.DownloadBlockBlob<Block>(lastBlockHash);
+			firstBlock = blob.GetBlock(firstBlockHash);
+			lastBlock = blob.GetBlock(lastBlockHash);
 		}
 
-        public void InitializeConfigurations()
+        public void InitializeConfigurations(Blob blob, Queue queue)
         {
+            this.blob = blob;
+            this.queue = queue; 
             var user = CloudConfigurationManager.GetSetting("BitcoinUser");
             var password = CloudConfigurationManager.GetSetting("BitcoinPassword");
             var virtualMachineUri = CloudConfigurationManager.GetSetting("BitcoinVirtualMachineUri");
@@ -204,15 +210,14 @@ namespace BitcoinWorkerRole
 
 		private void UploadNewBlock(Block block)
 		{
-			Blob.UploadBlockBlob(block.Hash, block);
-			Queue.PushMessage(new BlockReference(block.Hash));
+			blob.UploadBlock(block.Hash, block);
+			queue.PushMessage(new BlockReference(block.Hash));
 
 			numberOfBlocks += 1;
 
 			var bitcoinWorkerRoleBackup = 
-                new BitcoinWorkerRoleBackup(maximumNumberOfBlocks, numberOfBlocks, 
-                    firstBlock.Hash, lastBlock.Hash, firstBlock.Height);
-			Blob.UploadBlockBlob("bitcoinworkerrolebackup", bitcoinWorkerRoleBackup);
+                new BitcoinWorkerRoleBackup(maximumNumberOfBlocks, numberOfBlocks, firstBlock.Hash, lastBlock.Hash, firstBlock.Height);
+			blob.UploadBackup(bitcoinWorkerRoleBackup);
 
 		}
 
@@ -221,14 +226,14 @@ namespace BitcoinWorkerRole
 			IEnumerable<Transaction> trans = GetTransactionsFromBlock(block);
 			foreach (Transaction t in trans)
 			{
-				Blob.UploadBlockBlob(t.TransactionId, t);
+				blob.UploadTransaction(t.TransactionId, t);
 			}
 		}
 
         private void UploadOrphanBlocks(string blockHash) 
         {
             Block block = GetBlockByHash(blockHash);
-            while (Blob.GetBlock(blockHash) == null && block.Height != minimalHeight)
+            while (blob.GetBlock(blockHash) == null && block.Height != minimalHeight)
             {
                 UploadNewBlock(block);
                 blockHash = block.PreviousBlock;

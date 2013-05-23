@@ -2,6 +2,7 @@ using System.Diagnostics;
 using System.Threading;
 using Microsoft.WindowsAzure;
 using Microsoft.WindowsAzure.ServiceRuntime;
+using Microsoft.WindowsAzure.Storage;
 using Storage;
 using Storage.Models;
 using System;
@@ -10,17 +11,18 @@ namespace BitcoinWorkerRole
 {
 	public class WorkerRole : RoleEntryPoint
 	{
-		// Flag to stop the run loop.
 		private bool _isStopRequested;
 		private bool _isBitcoinClientConnexionEnable;
         private BitcoinClient bitcoinClient;
-        private WindowsAzure windowsAzureStorage;
+        
+        private Blob blob;
+        private Queue queue;
 
 		public override void Run()
 		{
 			Trace.WriteLine("Entry point called", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
 
-			try
+            try
 			{
 				while (_isStopRequested && _isBitcoinClientConnexionEnable)
 				{
@@ -44,8 +46,6 @@ namespace BitcoinWorkerRole
 		public override bool OnStart()
 		{
 			Trace.WriteLine("Start", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
-            
-            bitcoinClient = new BitcoinClient();
 
 			try
 			{
@@ -57,27 +57,29 @@ namespace BitcoinWorkerRole
 
 				var resetBlobBlocksEnable = bool.Parse(resetBlobBlocksEnableString);
 				var resetQueueMessagesEnable = bool.Parse(resetQueueMessagesEnableString);
-				windowsAzureStorage = new WindowsAzure(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
+                CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+                blob = new Blob(storageAccount);
+                queue = new Queue(storageAccount.CreateCloudQueueClient()); 
 
 				_isStopRequested = true;
 				_isBitcoinClientConnexionEnable = bool.Parse(isBitcoinClientConnexionEnableString);
 
 				// Retrieve backup.
-				var bitcoinWorkerRoleBackup = 
-                    Blob.DownloadBlockBlob<BitcoinWorkerRoleBackup>("bitcoinworkerrolebackup");
+				var bitcoinWorkerRoleBackup = blob.GetBackup();
 
 				// Bitcoin client connexion configuration.
 				if (null == bitcoinWorkerRoleBackup)
 				{
 					var firstBlockHash = CloudConfigurationManager.GetSetting("FirstBlockHash");
-					bitcoinClient.Initialisation(firstBlockHash);
+					bitcoinClient = new BitcoinClient(blob, queue, firstBlockHash);
 				}
 				else
-					bitcoinClient.Initialisation(bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
-												 bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage,
-												 bitcoinWorkerRoleBackup.FirstBlockHash,
-												 bitcoinWorkerRoleBackup.LastBlockHash,
-                                                 bitcoinWorkerRoleBackup.MinimalHeight);
+					bitcoinClient = new BitcoinClient(blob, queue,
+                                                      bitcoinWorkerRoleBackup.MaximumNumberOfBlocksInTheStorage,
+												      bitcoinWorkerRoleBackup.NumberOfBlocksInTheStorage,
+												      bitcoinWorkerRoleBackup.FirstBlockHash,
+												      bitcoinWorkerRoleBackup.LastBlockHash,
+                                                      bitcoinWorkerRoleBackup.MinimalHeight);
 
 				return base.OnStart();
 			}
@@ -104,7 +106,7 @@ namespace BitcoinWorkerRole
 													 bitcoinClient.FirstBlock.Hash,
 													 bitcoinClient.LastBlock.Hash,
                                                      bitcoinClient.FirstBlock.Height);
-			Blob.UploadBlockBlob("bitcoinworkerrolebackup", backup);
+			blob.UploadBackup(backup);
 		}
 	}
 }

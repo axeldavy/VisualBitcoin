@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading;
 using System.Configuration;
 using Microsoft.WindowsAzure;
+using Microsoft.WindowsAzure.Storage;
 using Microsoft.WindowsAzure.ServiceRuntime;
 using Storage;
 using Storage.Models;
@@ -12,6 +13,10 @@ namespace StorageWorkerRole
 {
 	public class WorkerRole : RoleEntryPoint
 	{
+        private StatisticsCalculator statCalculator;
+        private Blob blob;
+        private Queue queue;
+
 		public override void Run()
 		{
 			Trace.WriteLine("Entry point called",
@@ -19,8 +24,7 @@ namespace StorageWorkerRole
 
             while (true)
 			{
-				// TODO: check queue and process data.
-                StatisticsCalculator.Main();
+                statCalculator.PerformBlockStatistics();
 				Thread.Sleep(500);
 				Trace.WriteLine("Working",
 					"VisualBitcoin.StorageWorkerRole.WorkerRole Information");
@@ -34,15 +38,13 @@ namespace StorageWorkerRole
 
 			// Storage configuration and start.
 			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-			var resetBlobBlocksEnableString = CloudConfigurationManager.GetSetting("ResetBlobBlocksEnable");
-			var resetQueueMessagesEnableString = CloudConfigurationManager.GetSetting("ResetQueueMessagesEnable");
-			var resetBlobBlocksEnable = bool.Parse(resetBlobBlocksEnableString);
-			var resetQueueMessagesEnable = bool.Parse(resetQueueMessagesEnableString);
-			WindowsAzure.Start(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+            blob = new Blob(storageAccount);
+            queue = new Queue(storageAccount.CreateCloudQueueClient());
 
             // TODO: needed three BlobContainers: for brute blocks, for clear blocks, for transactions
             Trace.WriteLine("On start", "VisualBitcoin.StorageWorkerRole.Statistics Information");
-            StatisticsCalculator.initialise();
+            statCalculator = new StatisticsCalculator(queue, blob);
             
 			// Set the maximum number of concurrent connections 
 			ServicePointManager.DefaultConnectionLimit = 12;

@@ -22,14 +22,6 @@ namespace WebRole
 			FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
 			RouteConfig.RegisterRoutes(RouteTable.Routes);
 			BundleConfig.RegisterBundles(BundleTable.Bundles);
-
-			// Storage configuration and start.
-			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-			var resetBlobBlocksEnableString = CloudConfigurationManager.GetSetting("ResetBlobBlocksEnable");
-			var resetQueueMessagesEnableString = CloudConfigurationManager.GetSetting("ResetQueueMessagesEnable");
-			var resetBlobBlocksEnable = bool.Parse(resetBlobBlocksEnableString);
-			var resetQueueMessagesEnable = bool.Parse(resetQueueMessagesEnableString);
-			WindowsAzure.Start(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
 		}
 	}
 }

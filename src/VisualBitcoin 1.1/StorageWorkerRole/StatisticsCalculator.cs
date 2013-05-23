@@ -11,29 +11,41 @@ namespace StorageWorkerRole
 	{
         // Number of seconds between 3 January 2009 (first BTC ?) and 1 January 1970.
         private const ulong InitialTime = 1230940800;
+        private Blob blob;
+        private Queue queue;
+        private List<Block> blocklist; 
 
-		public static void Main()
-		{
-			var hash = Queue.PopMessage<string>();
-			var block = Blob.GetBlock(hash);
+        public StatisticsCalculator(Queue queue, Blob blob)
+        {
+            this.queue = queue;
+            this.blob = blob;
 
-			UpdateStatitistics(block);
-			SortBlocks(block);
+            if (blob.GetBlock("Last_Blocks") == null)
+            {
+                Block[] list = { null, null, null, null, null, null, null, null, null, null };
+                List<Block> blocklist = new List<Block>(list);
+                blob.UploadBlock("Last_Blocks", (List<Block>)blocklist);
+                this.blocklist = blocklist;
+            }
+            else
+            {
+                this.blocklist = blob.GetLastBlocks(); 
+            }
+            if (blob.GetStatistics<Statistics>("General_Statistics") == null)
+            {
+                Statistics statini = new Statistics();
+                blob.UploadStatistics("General_Statistics", statini);
+            }
+        }
 
-			/*
-			 * Can't add this because I can't test it(((
-			//Blob.DeleteBlockBlob(hash);
-            
-			//Sending clear block to the Blob storage
-			Blob.UploadBlockBlob<BlockClear>(clearBlock.Hash, clearBlock);
-			//Sending transactions to the Blob storage
-			foreach (Transactions singleTransaction in parsed.Item2)
-			{
-				Blob.UploadBlockBlob<Transactions>(singleTransaction.Txid, singleTransaction);
-			}*/
-		}
+        public void PerformBlockStatistics()
+        {
+            var hash = queue.PopMessage<string>();
+            var block = blob.GetBlock(hash);
 
-		//List<Block> Lastblocks = new List<Block>();
+            UpdateStatitistics(block);
+            SortBlocks(block);
+        }
 
 		private static int CompareBlock(Block x, Block y)
 		{
@@ -50,23 +62,22 @@ namespace StorageWorkerRole
 		}
 
 		//TODO: initialiser à 10 null
-		private static void SortBlocks(Block block)
+		private void SortBlocks(Block block)
 		{
-			var blocklist = Blob.DownloadBlockBlob<List<Block>>("Last_Blocks");
 			blocklist.Add(block);
 			blocklist.Sort(CompareBlock);
 			blocklist.RemoveAt(0);
-			Blob.UploadBlockBlob("Last_Blocks", (List<Block>) blocklist);
+			blob.UploadBlock("Last_Blocks", (List<Block>) blocklist);
 		}
 
-		static void UpdateStatitistics(Block x)
+		void UpdateStatitistics(Block x)
 		{
-            var stat = Blob.DownloadBlockBlob<Statistics>("General_Statistics");
+            Statistics stat = blob.GetStatistics<Statistics>("General_Statistics");
             //Charts
-            var chartsNbTrans = Blob.DownloadBlockBlob<List<int>>("Charts_Number_Of_Transactions");
-            var chartsSizeBlock = Blob.DownloadBlockBlob<List<int>>("Charts_Size_Block");
-            var chartsHeighBlock = Blob.DownloadBlockBlob<List<int>>("Charts_Height_Block");
-            var chartsTime = Blob.DownloadBlockBlob<List<int>>("Charts_Time"); //abscisse
+            List<int> chartsNbTrans = blob.GetStatistics<List<int>>("Charts_Number_Of_Transactions");
+            List<int> chartsSizeBlock = blob.GetStatistics<List<int>>("Charts_Size_Block");
+            List<int> chartsHeighBlock = blob.GetStatistics<List<int>>("Charts_Height_Block");
+            List<int> chartsTime = blob.GetStatistics<List<int>>("Charts_Time"); //abscisse
 
             stat.NumberOfBlocks += 1;
             stat.NumberOfTransactions += Convert.ToUInt64(x.NumberOfTransactions);
@@ -94,33 +105,18 @@ namespace StorageWorkerRole
             chartsSizeBlock.Add(x.Size);
             chartsHeighBlock.Add(x.Height);
             chartsTime.Add(x.Time);
-            Blob.UploadBlockBlob("Charts_Number_Of_Transactions", (List<int>) chartsSizeBlock);
-            Blob.UploadBlockBlob("Charts_Size_Block", (List<int>)chartsSizeBlock);
-            Blob.UploadBlockBlob("Charts_Height_Block", (List<int>)chartsHeighBlock);
-            Blob.UploadBlockBlob("Charts_Time", (List<int>)chartsTime);//abscisse
+            blob.UploadStatistics("Charts_Number_Of_Transactions", chartsSizeBlock);
+            blob.UploadStatistics("Charts_Size_Block", chartsSizeBlock);
+            blob.UploadStatistics("Charts_Height_Block", chartsHeighBlock);
+            blob.UploadStatistics("Charts_Time", chartsTime);//abscisse
 
-            Blob.UploadBlockBlob("General_Statistics", (Statistics) stat);
+            blob.UploadStatistics("General_Statistics", stat);
         }
 
 		static double Variance(ulong sum, double average, ulong nb)
 		{
 			return sum * (sum - 2 * average) / nb + average * average;
 		}
-
-        public static void initialise()
-        {
-            if (Blob.DownloadBlockBlob<List<Block>>("Last_Blocks") == null)
-            {
-                Block[] liste = { null, null, null, null, null, null, null, null, null, null };
-                List<Block> listeini = new List<Block>(liste);
-                Blob.UploadBlockBlob("Last_Blocks", (List<Block>)listeini);
-            }
-            if (Blob.DownloadBlockBlob<Statistics>("General_Statistics") == null)
-            {
-                Statistics statini = new Statistics();
-                Blob.UploadBlockBlob("General_Statistics", statini);
-            }
-        }
 
 	}
 }

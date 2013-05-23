@@ -26,14 +26,6 @@ namespace WebRole
 			Trace.WriteLine("On start",
 				"VisualBitcoin.WebRole.WebRole Information");
 
-			// Storage configuration and start.
-			var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
-			var resetBlobBlocksEnableString = CloudConfigurationManager.GetSetting("ResetBlobBlocksEnable");
-			var resetQueueMessagesEnableString = CloudConfigurationManager.GetSetting("ResetQueueMessagesEnable");
-			var resetBlobBlocksEnable = bool.Parse(resetBlobBlocksEnableString);
-			var resetQueueMessagesEnable = bool.Parse(resetQueueMessagesEnableString);
-			WindowsAzure.Start(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
-
 			return base.OnStart();
 		}
     }

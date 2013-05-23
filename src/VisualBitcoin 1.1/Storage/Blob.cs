@@ -19,7 +19,14 @@ namespace Storage
         private CloudBlobContainer TransactionContainer;
         private CloudBlobContainer StatContainer;
 
-		public Blob(CloudStorageAccount storageAccount, string defaultContainerName, string blockContainerName, string transactionContainerName, string highContainerName)
+        // Storage parameters.
+        private const string defaultContainerName = "defaultcontainer";
+        private const string blockContainerName = "blockscontainer";
+        private const string transactionContainerName = "transactionscontainer";
+        private const string statContainerName = "statcontainer";
+        private const string tableName = "visualbitcointable";
+
+		public Blob(CloudStorageAccount storageAccount)
 		{
 			Trace.WriteLine("Start", "VisualBitcoin.Storage.Blob Information");
 
@@ -30,7 +37,7 @@ namespace Storage
 			BlockContainer.CreateIfNotExists();
 			TransactionContainer = CloudBlobClient.GetContainerReference(transactionContainerName);
 			TransactionContainer.CreateIfNotExists();
-			StatContainer = CloudBlobClient.GetContainerReference(highContainerName);
+			StatContainer = CloudBlobClient.GetContainerReference(statContainerName);
 			StatContainer.CreateIfNotExists();
 		}
 
@@ -69,6 +76,12 @@ namespace Storage
         public void UploadTransaction<TModel>(string name, TModel model)
         {
             CloudBlockBlob blockBlob = TransactionContainer.GetBlockBlobReference(name);
+            UploadFromBlockBlob(blockBlob, model);
+        }
+
+        public void UploadBackup<TModel>(TModel model)
+        { 
+            CloudBlockBlob blockBlob = DefaultContainer.GetBlockBlobReference("bitcoinworkerrolebackup");
             UploadFromBlockBlob(blockBlob, model);
         }
 
@@ -111,10 +124,22 @@ namespace Storage
             return DownloadFromBlockBlob<Transaction>(blockBlob);
         }
         
-        public Statistics GetStatistics(string name)
+        public TModel GetStatistics<TModel>(string name) where TModel : class
         {
             CloudBlockBlob blockBlob = StatContainer.GetBlockBlobReference(name);
-            return DownloadFromBlockBlob<Statistics>(blockBlob);
+            return DownloadFromBlockBlob<TModel>(blockBlob);
+        }
+
+        public BitcoinWorkerRoleBackup GetBackup()
+        {
+            CloudBlockBlob blockBlob = DefaultContainer.GetBlockBlobReference("bitcoinworkerrolebackup");
+            return DownloadFromBlockBlob<BitcoinWorkerRoleBackup>(blockBlob);
+        }
+
+        public void DeleteBackup()
+        {
+            CloudBlockBlob blockBlob = DefaultContainer.GetBlockBlobReference("bitcoinworkerrolebackup");
+            blockBlob.DeleteIfExists();
         }
 
         public void DeleteTransaction(string name) 
@@ -142,20 +167,37 @@ namespace Storage
 			return blockList.Select(blob => blob.Uri.ToString()).ToList();
 		}
 
-        public List<string> GetTransactionList()
+        public List<Transaction> GetTransactionList()
         {
             Trace.WriteLine("Transaction list download", "VisualBitcoin.Storage.Blob Information");
 
-            var blobTransactionList = GetListFromContainer(TransactionContainer);
-            return blobTransactionList;
+            List<string> blobTransactionList = GetListFromContainer(TransactionContainer);
+            List<Transaction> translist = new List<Transaction>();
+
+            foreach (string s in blobTransactionList)
+            {
+                translist.Add(GetTransaction(s));
+            }
+            return translist;
         }
 
-		public List<string> GetBlockList()
+        public List<Block> GetLastBlocks()
+        {
+            CloudBlockBlob blockBlob = BlockContainer.GetBlockBlobReference("Last_Blocks");
+            return DownloadFromBlockBlob<List<Block>>(blockBlob);
+        }
+
+		public List<Block> GetBlockList()
 		{
 			Trace.WriteLine("Block list download", "VisualBitcoin.Storage.Blob Information");
-			var blobBlocksList = GetListFromContainer(BlockContainer);
+			List<string> blobBlocksList = GetListFromContainer(BlockContainer);
+            List<Block> blocklist = new List<Block>();
 
-			return blobBlocksList;
+            foreach (string s in blobBlocksList)
+            {
+                blocklist.Add(GetBlock(s));
+            }
+			return blocklist;
 		}
 	}
 }

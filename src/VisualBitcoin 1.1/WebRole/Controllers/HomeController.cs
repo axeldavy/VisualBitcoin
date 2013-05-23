@@ -16,14 +16,8 @@ namespace WebRole.Controllers
 
 		public ActionResult Index()
 		{
-            var transactionList = Blob.GetTransactionList();
-            var tranModelList = new List<Transaction>();
-            foreach (string trans in transactionList)
-            {
-                var t = Blob.GetTransaction(trans);
-                tranModelList.Add(t);
-            }
-			return View(tranModelList);
+            /* TODO: Show transactions on home page? */
+			return View();
 		}
 
 		public ActionResult About()
