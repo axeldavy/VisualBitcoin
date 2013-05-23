@@ -12,9 +12,10 @@ namespace Storage
         private CloudQueueClient cloudQueueClient;
         private CloudQueue cloudQueue;
 
+        private const string queueName = "visualbitcoinqueue";
 
 		// Configure and start the queue storage, only one call make on application start.
-		public Queue(CloudQueueClient cloudQueueClient, string queueName)
+		public Queue(CloudQueueClient cloudQueueClient)
 		{
 			Trace.WriteLine("Start", "VisualBitcoin.Storage.Queue Information");
 

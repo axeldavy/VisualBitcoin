@@ -11,16 +11,12 @@ namespace UnitTest
 		[TestMethod]
 		public void MessageThroughQueue()
 		{
-			const bool useDevelopmentStorage = true;
 			const string connectionString = "";
-			const string containerName = "visualbitcoincontainerunittest";
-			const string tableName = "visualbitcointableunittest";
-			const string queueName = "visualbitcoinqueueunittest";
 			const string message = "Message.";
 
 			//WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
-            Queue queue = new Queue(storageAccount.CreateCloudQueueClient(), queueName);
+            Queue queue = new Queue(storageAccount.CreateCloudQueueClient());
             queue.PushMessage(message);
 			var transmittedMessage = queue.PopMessage<string>();
 			
