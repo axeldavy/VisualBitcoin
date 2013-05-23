@@ -1,4 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.WindowsAzure.Storage;
 using Storage;
 
 namespace UnitTest
@@ -18,8 +19,10 @@ namespace UnitTest
 			const string message = "Message.";
 
 			//WindowsAzure.Start(useDevelopmentStorage, connectionString, containerName, tableName, queueName);
-			Queue.PushMessage(message);
-			var transmittedMessage = Queue.PopMessage<string>();
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+            Queue queue = new Queue(storageAccount.CreateCloudQueueClient(), queueName);
+            queue.PushMessage(message);
+			var transmittedMessage = queue.PopMessage<string>();
 			
 			Assert.AreEqual(message, transmittedMessage);
 		}

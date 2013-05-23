@@ -54,7 +54,6 @@
     <Compile Include="Queue.cs" />
     <Compile Include="Serialization.cs" />
     <Compile Include="Storage.cs" />
-    <Compile Include="Table.cs" />
     <Compile Include="WindowsAzure.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -14,6 +14,7 @@ namespace BitcoinWorkerRole
 		private bool _isStopRequested;
 		private bool _isBitcoinClientConnexionEnable;
         private BitcoinClient bitcoinClient;
+        private WindowsAzure windowsAzureStorage;
 
 		public override void Run()
 		{
@@ -56,7 +57,7 @@ namespace BitcoinWorkerRole
 
 				var resetBlobBlocksEnable = bool.Parse(resetBlobBlocksEnableString);
 				var resetQueueMessagesEnable = bool.Parse(resetQueueMessagesEnableString);
-				WindowsAzure.Start(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
+				windowsAzureStorage = new WindowsAzure(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
 
 				_isStopRequested = true;
 				_isBitcoinClientConnexionEnable = bool.Parse(isBitcoinClientConnexionEnableString);

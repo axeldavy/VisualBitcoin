@@ -3,7 +3,7 @@ using Microsoft.WindowsAzure.Storage;
 
 namespace Storage
 {
-	public static class WindowsAzure
+	public class WindowsAzure
 	{
 		// Storage parameters.
 		private const string DefaultContainerName = "defaultcontainer";
@@ -13,35 +13,30 @@ namespace Storage
 		private const string TableName = "visualbitcointable";
 		private const string QueueName = "visualbitcoinqueue";
 
+		private bool _isStopped = true;
 
-		// Already start flag.
-		private static bool _isNotAlreadyStarted = true;
-
-		// Property.
-		public static CloudStorageAccount StorageAccount { get; private set; }
-
-
+        private CloudStorageAccount storageAccount;
+        private Blob blob;
+        private Queue queue;
 
 		// Configure and start the storage, only one call make by application.
-		public static void Start(string connectionString, bool resetBlobBlocksEnable, bool resetQueueMessagesEnable)
+		public WindowsAzure(string connectionString, bool resetBlobBlocksEnable, bool resetQueueMessagesEnable)
 		{
-			if (_isNotAlreadyStarted)
+			if (_isStopped)
 			{
 				Trace.WriteLine("Start", "VisualBitcoin.Storage.WindowsAzure Information");
+                storageAccount = CloudStorageAccount.Parse(connectionString);
 
-				StorageAccount = CloudStorageAccount.Parse(connectionString);
-
-				Blob.Start(DefaultContainerName, BlocksContainerName, TransactionsContainerName, StatContainerName);
-				Table.Start(TableName);
-				Queue.Start(QueueName);
+                blob = new Blob(storageAccount, DefaultContainerName, BlocksContainerName, TransactionsContainerName, StatContainerName);
+                queue = new Queue(storageAccount.CreateCloudQueueClient(), QueueName); 
 
 				if (resetBlobBlocksEnable)
-					Blob.Reset();
+					// blob.Reset(); TODO: Find alternative way to handle this situation
 
 				if (resetQueueMessagesEnable)
-					Queue.Reset(resetBlobBlocksEnable);
+					//Queue.Reset(resetBlobBlocksEnable);
 
-				_isNotAlreadyStarted = false;
+				_isStopped = false;
 			}
 			else
 			{

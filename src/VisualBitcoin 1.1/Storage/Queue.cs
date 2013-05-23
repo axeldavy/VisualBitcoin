@@ -9,22 +9,23 @@ namespace Storage
 	public class Queue
 	{
 		// Properties.
-		public static CloudQueueClient CloudQueueClient { get; private set; }
-		public static CloudQueue CloudQueue { get; private set; }
+        private CloudQueueClient cloudQueueClient;
+        private CloudQueue cloudQueue;
 
 
 		// Configure and start the queue storage, only one call make on application start.
-		public static void Start(string queueName)
+		public Queue(CloudQueueClient cloudQueueClient, string queueName)
 		{
 			Trace.WriteLine("Start", "VisualBitcoin.Storage.Queue Information");
 
-			CloudQueueClient = WindowsAzure.StorageAccount.CreateCloudQueueClient();
-			CloudQueue = CloudQueueClient.GetQueueReference(queueName);
-			CloudQueue.CreateIfNotExists();
+            this.cloudQueueClient = cloudQueueClient;
+			cloudQueue = cloudQueueClient.GetQueueReference(queueName);
+			cloudQueue.CreateIfNotExists();
 		}
 
-		// Pop all messages in the queue.
-		public static void Reset(bool resetBlobBlocksEnable)
+		// TODO: Figure out the point of this method 
+        // Pop all messages in the queue.
+		/*public static void Reset(bool resetBlobBlocksEnable)
 		{
 			Trace.WriteLine("Reset", "VisualBitcoin.Storage.Queue Information");
 
@@ -40,12 +41,12 @@ namespace Storage
 				var blockReference = new Models.BlockReference(block.Hash);
 				PushMessage(blockReference);
 			}
-		}
+		}*/
 
 		// Push a message in the queue with a 7 days time span. It could be a good thing to
 		// declare all the (data) models we need in the dedicated folder "Models". All our 
 		// models in one place.
-		public static void PushMessage<TModel>(TModel model)
+		public void PushMessage<TModel>(TModel model)
 		{
 			Trace.WriteLine("Message pushed", "VisualBitcoin.Storage.Queue Information");
 
@@ -58,16 +59,16 @@ namespace Storage
 			const int seconds = 0;
 			var timeSpan = new TimeSpan(days, hours, minutes, seconds);
 
-			CloudQueue.AddMessage(cloudQueueMessage, timeSpan);
+			cloudQueue.AddMessage(cloudQueueMessage, timeSpan);
 		}
 
 		// Pop a message from the queue.
-		public static TModel PopMessage<TModel>() where TModel : class
+		public TModel PopMessage<TModel>() where TModel : class
 		{
 			Trace.WriteLine("Message popped", "VisualBitcoin.Storage.Queue Information");
             try
             {
-                var cloudQueueMessage = CloudQueue.GetMessage();
+                var cloudQueueMessage = cloudQueue.GetMessage();
                 var content = cloudQueueMessage.AsString;
                 var message = Coding.Decode(content);
                 var model = Serialization.FromXml<TModel>(message);

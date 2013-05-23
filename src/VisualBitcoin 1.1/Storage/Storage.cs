@@ -5,17 +5,7 @@ using Microsoft.WindowsAzure.Storage.Blob;
 
 namespace Storage
 {
-	public interface IStorage
-	{
-		void UploadContainer(CloudBlobClient blobClient, string containerName);
-		void DownloadBlobToFile(CloudBlobClient blobClient, string containerName, string blobName, string destFileName);
-		String DownloadBlobToString(string blobName);
-		void DeleteBlob(CloudBlobClient blobClient, string containerName, string blobName);
-		void DeleteContainer(CloudBlobClient blobClient, string containerName);
-		CloudBlobContainer RetrieveContainer(CloudBlobClient blobClient, string containerName);
-	}
-
-	public class Storage : IStorage
+	public class Storage
 	{
 		public void UploadContainer(CloudBlobClient blobClient, string containerName)
 		{
@@ -48,11 +38,8 @@ namespace Storage
 			}
 		}
 
-		public String DownloadBlobToString(string blobName)
+		public String DownloadBlobToString(CloudBlockBlob blockBlob)
 		{
-			// Retrieve reference to a blob.
-			CloudBlockBlob blockBlob = Blob.DefaultContainer.GetBlockBlobReference(blobName);
-
 			string text;
 			using (var memoryStream = new MemoryStream())
 			{
