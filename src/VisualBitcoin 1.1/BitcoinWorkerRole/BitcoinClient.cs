@@ -57,7 +57,7 @@ namespace BitcoinWorkerRole
 			maximumNumberOfBlocks = 0;
 			numberOfBlocks = 0;
             minimalHeight = block.Height;
-			blockLimit = false;
+			blockLimit = true;
 			firstBlock = block;
 			lastBlock = block;
 
