@@ -186,7 +186,7 @@ namespace BitcoinWorkerRole
                 
                 Trace.WriteLine("\"\" != \"" + nextBlock.Hash + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
                 
-                UploadTransactionsFromBlock(nextBlock); // Upload Transactions first because the message in the queue must be sent after everything is done.
+                //UploadTransactionsFromBlock(nextBlock); // Upload Transactions first because the message in the queue must be sent after everything is done.
 				UploadNewBlock(nextBlock);
                 lastBlock = nextBlock;
                 if (lastBlock.NextBlock == null) // Need to retrieve blocks in the main chain if LastBlock is an orphan.

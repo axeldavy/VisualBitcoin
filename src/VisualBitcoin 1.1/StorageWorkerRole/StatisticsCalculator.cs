@@ -24,12 +24,12 @@ namespace StorageWorkerRole
             {
                 Block[] list = { null, null, null, null, null, null, null, null, null, null };
                 List<Block> blocklist = new List<Block>(list);
-                blob.UploadBlock("Last_Blocks", (List<Block>)blocklist);
+                //blob.UploadBlock("Last_Blocks", (List<Block>)blocklist);
                 this.blocklist = blocklist;
             }
             else
             {
-                this.blocklist = blob.GetLastBlocks(); 
+                //this.blocklist = blob.GetLastBlocks(); 
             }
             if (blob.GetStatistics<Statistics>("General_Statistics") == null)
             {
@@ -64,6 +64,10 @@ namespace StorageWorkerRole
 		//TODO: initialiser à 10 null
 		private void SortBlocks(Block block)
 		{
+            if (this.blocklist == null)
+            {
+                this.blocklist = new List<Block>();
+            }
 			blocklist.Add(block);
 			blocklist.Sort(CompareBlock);
 			blocklist.RemoveAt(0);

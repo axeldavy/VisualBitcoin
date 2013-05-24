@@ -2,11 +2,11 @@
     ViewBag.Title = "Explorer";
 }
 
-@model List<WebRole.Models.BlockModel>
+@model List<Storage.Models.Block>
 
 <h2 class="red">@ViewBag.Title</h2>
 
-@{foreach(WebRole.Models.BlockModel modelItem in Model)
+@{foreach(Storage.Models.Block modelItem in Model)
     {
         <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Hash)</a></h3>
         <div>

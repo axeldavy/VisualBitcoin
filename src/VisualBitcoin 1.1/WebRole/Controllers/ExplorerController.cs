@@ -4,7 +4,9 @@ using System.Web.Mvc;
 using Storage;
 using Storage.Models;
 using WebRole.Models;
-
+using Microsoft.WindowsAzure.Storage.Blob;
+using Microsoft.WindowsAzure.Storage;
+using Microsoft.WindowsAzure;
 
 namespace WebRole.Controllers
 {
@@ -18,8 +20,12 @@ namespace WebRole.Controllers
 
 		public ActionResult Index()
 		{
-            /* TODO: Show blocks on Explorer page*/
-			return View();
+            var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
+            CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
+            Blob blob = new Blob(storageAccount);
+
+            List<Block> blocklist = blob.GetBlockList();
+            return View(blocklist);
 		}
 	}
 }
