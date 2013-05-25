@@ -210,6 +210,7 @@ namespace BitcoinWorkerRole
 
 		private void UploadNewBlock(Block block)
 		{
+            block.Amount = UploadTransactionsFromBlock(block); // Upload Transactions first because the message in the queue must be sent after everything is done.
 			blob.UploadBlock(block.Hash, block);
 			queue.PushMessage(new BlockReference(block.Hash));
 
@@ -221,13 +222,17 @@ namespace BitcoinWorkerRole
 
 		}
 
-		private void UploadTransactionsFromBlock(Block block)
+        // Returns the amount of bit coins transferred in that block
+		private double UploadTransactionsFromBlock(Block block)
 		{
 			IEnumerable<Transaction> trans = GetTransactionsFromBlock(block);
+            double amount = 0;
 			foreach (Transaction t in trans)
 			{
+                amount += t.Amount;
 				blob.UploadTransaction(t.TransactionId, t);
 			}
+            return amount;
 		}
 
         private void UploadOrphanBlocks(string blockHash) 
@@ -314,7 +319,7 @@ namespace BitcoinWorkerRole
 			var size = (int)obj["size"];
 			var height = (int)obj["height"];
 			return new Block(hash, version, previousBlock, hashList, merkleRoot, time, numberOnce,
-				numberOfTransactions, size, height, transactionIds);
+				numberOfTransactions, size, height, transactionIds, 0);
 		}
 
 

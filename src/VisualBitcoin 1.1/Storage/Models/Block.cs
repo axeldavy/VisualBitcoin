@@ -16,8 +16,7 @@ namespace Storage.Models
 		public int Size { get; set; }
 		public int Height { get; set; }
 		public string[] TransactionIds { get; set; }
-
-
+        public double Amount { get; set; }
 
 		// Constructors.
 		public Block()
@@ -33,11 +32,12 @@ namespace Storage.Models
 			Size = 0;
 			Height = 0;
 			TransactionIds = new string[0];
+            Amount = 0;
 		}
 
 		public Block(string hash, string version, string previousBlock, List<string> nextBlock,
 		             string merkleRoot, int time, long numberOnce, int numberOfTransactions, int size,
-		             int height, string[] transactionIds)
+		             int height, string[] transactionIds, double amount)
 		{
 			Hash = hash;
 			Version = version;
@@ -50,6 +50,7 @@ namespace Storage.Models
 			Size = size;
 			Height = height;
 			TransactionIds = transactionIds;
+            Amount = amount;
 		}
 	}
 }
