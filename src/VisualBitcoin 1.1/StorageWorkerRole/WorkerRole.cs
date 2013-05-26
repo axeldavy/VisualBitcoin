@@ -19,9 +19,7 @@ namespace StorageWorkerRole
 
             while (true)
 			{
-				// TODO: check queue and process data.
                 StatisticsCalculator.Main();
-				Thread.Sleep(500);
 				Trace.WriteLine("Working",
 					"VisualBitcoin.StorageWorkerRole.WorkerRole Information");
 			}
@@ -40,7 +38,6 @@ namespace StorageWorkerRole
 			var resetQueueMessagesEnable = bool.Parse(resetQueueMessagesEnableString);
 			WindowsAzure.Start(connectionString, resetBlobBlocksEnable, resetQueueMessagesEnable);
 
-            // TODO: needed three BlobContainers: for brute blocks, for clear blocks, for transactions
             Trace.WriteLine("On start", "VisualBitcoin.StorageWorkerRole.Statistics Information");
             StatisticsCalculator.initialise();
             

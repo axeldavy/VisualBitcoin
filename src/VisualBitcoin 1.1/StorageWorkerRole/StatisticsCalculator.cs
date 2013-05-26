@@ -19,37 +19,22 @@ namespace StorageWorkerRole
 
 			UpdateStatitistics(block);
 			SortBlocks(block);
-
-			/*
-			 * Can't add this because I can't test it(((
-			//Blob.DeleteBlockBlob(hash);
-            
-			//Sending clear block to the Blob storage
-			Blob.UploadBlockBlob<BlockClear>(clearBlock.Hash, clearBlock);
-			//Sending transactions to the Blob storage
-			foreach (Transactions singleTransaction in parsed.Item2)
-			{
-				Blob.UploadBlockBlob<Transactions>(singleTransaction.Txid, singleTransaction);
-			}*/
 		}
-
-		//List<Block> Lastblocks = new List<Block>();
-
+        
 		private static int CompareBlock(Block x, Block y)
 		{
             if (x == null)
                 return -1;
 
-            if (y == null)   // to verify: can x and y be null at the same time?
-                return 1;    // x and y can be null at the same time (Christophe)
+            if (y == null)   
+                return 1;  
                             
-            if (x.Time <= y.Time) // won't crash if x or y is null (proposed clean up could have crashed if y == null)
+            if (x.Time <= y.Time) 
                 return -1;
 
             return 1; 
 		}
 
-		//TODO: initialiser à 10 null
 		private static void SortBlocks(Block block)
 		{
 			var blocklist = Blob.DownloadBlockBlob<List<Block>>("Last_Blocks");
@@ -64,7 +49,7 @@ namespace StorageWorkerRole
             var stat = Blob.DownloadBlockBlob<Statistics>("General_Statistics");
             //Charts
             var chartsNbTrans = Blob.DownloadBlockBlob<List<int>>("Charts_Number_Of_Transactions");
-            var chartsSizeBlock = Blob.DownloadBlockBlob<List<int>>("Charts_Size_Block");
+            var chartsSizeBlock = Blob.DownloadBlockBlob<List<double>>("Charts_Size_Block");
             var chartsHeighBlock = Blob.DownloadBlockBlob<List<int>>("Charts_Height_Block");
             var chartsTime = Blob.DownloadBlockBlob<List<int>>("Charts_Time"); //abscisse
 
@@ -78,8 +63,7 @@ namespace StorageWorkerRole
             stat.StandardDeviationTime = Math.Sqrt(stat.VarianceTime);
 
             // Statistics blocks (BTC)
-            // Change with BTC
-            stat.SumBtc += Convert.ToUInt64(x.Size);
+            stat.SumBtc += Convert.ToUInt64(x.Amount);
             stat.AverageBtc = stat.SumBtc / stat.NumberOfBlocks;
             stat.VarianceBtc = Variance(stat.SumBtc, stat.AverageBtc, stat.NumberOfBlocks);
             stat.StandardDeviationBtc = Math.Sqrt(stat.VarianceBtc);
@@ -91,11 +75,11 @@ namespace StorageWorkerRole
             stat.StandardDevTrans = Math.Sqrt(stat.VarianceTrans);
 
             chartsNbTrans.Add(x.NumberOfTransactions);
-            chartsSizeBlock.Add(x.Size);
+            chartsSizeBlock.Add(x.Amount);
             chartsHeighBlock.Add(x.Height);
             chartsTime.Add(x.Time);
-            Blob.UploadBlockBlob("Charts_Number_Of_Transactions", (List<int>) chartsSizeBlock);
-            Blob.UploadBlockBlob("Charts_Size_Block", (List<int>)chartsSizeBlock);
+            Blob.UploadBlockBlob("Charts_Number_Of_Transactions", (List<int>) chartsNbTrans);
+            Blob.UploadBlockBlob("Charts_Size_Block", (List<double>)chartsSizeBlock);
             Blob.UploadBlockBlob("Charts_Height_Block", (List<int>)chartsHeighBlock);
             Blob.UploadBlockBlob("Charts_Time", (List<int>)chartsTime);//abscisse
 
