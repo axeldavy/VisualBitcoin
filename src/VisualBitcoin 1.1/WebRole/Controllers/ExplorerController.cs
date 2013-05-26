@@ -24,7 +24,7 @@ namespace WebRole.Controllers
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             Blob blob = new Blob(storageAccount);
 
-            List<Block> blocklist = blob.GetBlockList();
+            List<Block> blocklist = blob.GetBlockList(10);
             return View(blocklist);
 		}
 	}

@@ -187,15 +187,17 @@ namespace Storage
             return DownloadFromBlockBlob<List<Block>>(blockBlob);
         }
 
-		public List<Block> GetBlockList()
+        // Get top <num> of blocks in the block list
+		public List<Block> GetBlockList(int num)
 		{
 			Trace.WriteLine("Block list download", "VisualBitcoin.Storage.Blob Information");
 			List<string> blobBlocksList = GetListFromContainer(BlockContainer);
             List<Block> blocklist = new List<Block>();
 
-            foreach (string s in blobBlocksList)
+            for (int i = 0; i < num; i++) 
             {
-                blocklist.Add(GetBlock(s));
+                Block block = GetBlock(blobBlocksList.ElementAt(i));
+                blocklist.Add(block);
             }
 			return blocklist;
 		}
