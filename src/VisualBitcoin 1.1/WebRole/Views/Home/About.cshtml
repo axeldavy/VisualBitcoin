@@ -26,15 +26,15 @@
 				<div class="entry">
 
 <p>
-    VisualBitcoin is a cloud-hosted information website that tracks Bitcoin transactions in real time. VisualBitcoin
-    was started as a student project of &Eacute;cole Normale Supérieure, Paris. This
-    site was produced for monitoring bitcoin’s transactions online.
+    VisualBitcoin is a cloud-hosted information website that tracks bitcoin transactions in real time. VisualBitcoin
+    was started as a student project at &Eacute;cole Normale Supérieure, Paris. This
+    site was produced for monitoring bitcoin transactions online.
     <br />
-    Bitcoin is a digital currency which is based on the cryptography. You can read more
-    on <a href="http://bitcoin.org/about.html">Bitcoin</a>.
+    Bitcoin is a digital currency whose transfer is based on the cryptographic protocols. You can read more
+    on about it <a href="http://bitcoin.org/about.html">here</a>.
     <br />
     This project consists of <a href="#Client">Bitcoin client</a>, <a href="#Worker Role" >Bitcoin worker role</a>, <a href="#Storage Implementation">Storage implementation</a>, 
-    <a href="#Storage Worker Role">Storage worker role</a> and <a href="#Web Role">Web role</a> . This project is created for Windows Azure virtual machine. It uses Windows Azure Storage and other cloud technologies of Windows Corporation. 
+    <a href="#Storage Worker Role">Storage worker role</a> and <a href="#Web Role">Web role</a> . This project is created for Windows Azure virtual machine; it uses Windows Azure Storage and other cloud technologies of the Windows Corporation. 
     <br />
 </p>
 
@@ -48,13 +48,13 @@
 <br/>
 <a id="Client"></a>
 <details> <summary><b>Bitcoin client</b></summary><br/>
-            For our application we use standard bitcoin client. It is launched on the Windows Azure Virtual Machine (VM). We are taking new transactions and information about blocks from it.
+            For our application we use the standard bitcoin client, launched on the Windows Azure Virtual Machine (VM), from which we take new transactions and information about blocks.
 </details>
 <br/>
 <a id="Worker Role"></a>
 <details> <summary><b>Bitcoin Worker Role</b></summary>
             <br/>
-Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry point class which connects to the bitcoin client on the VM. BitcoinClient class takes data from the Bitcoin Client. It also converts received data to the XML format and extracts transactions from the blocks. It uses Storage implementation for uploading data to the Azure Storage. Blocks are saved to the BocksContainer and Transactions are saved to the Transactions container. Also this part adds messages to the queue about which block should be processed next.
+Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry point class that connects to the bitcoin client on the VM. BitcoinClient class takes data from the Bitcoin Client. It also converts received data to the XML format and extracts transactions from the blocks. It uses Storage implementation for uploading data to the Azure Storage. Blocks are saved to the BocksContainer and Transactions are saved to the Transactions container. Also this part adds messages to the queue with regards to which block should be processed next.
     <details>
         <summary style="font: bold">Schema</summary> 
         <img alt="Schema couldn't be loaded." src="~/Content/Schemas/WorkerRole.png"/>
@@ -65,25 +65,24 @@ Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry po
 <details> <summary><b>Storage implementation</b> </summary>
 <br/>This is a service part of the project for communicating with Windows Azure Storage. It contains with:
 <ul>
-    <li>Serilization – saving different data models to the storage in  XML formatl; </li>
+    <li>Serilization – saving different data models to the storage in  XML format; </li>
     <li>Models – in this folder different structures of data are described. All these models are serialized; </li>
 	<li>Coding /not implemented/ – zipping and unzipping data to minimize data exchange; </li>
-	<li>Managing Windows Azure Storage – staring and connecting to different containers.</li>
+	<li>Managing Windows Azure Storage – starting and connecting to different containers.</li>
 </ul>
-<br/>We use three containers and a queue of Windows Azure Storage. 
-<br/>In the BlockContainer we save information of the blocks like a XML file. We use block’s hash to name each file. In these files all information about bitcoin blocks are saved. To minimize file’s size we removed transactions and added just their hashes. 
-<br/>In the TransactionsContainer we saved transactions XML by their hashes. Also we added hash of the block which is owned this transaction to the XML structure. 
-<br/>In the HigherContainer we save transactions’ hashes by time to accelerate data processing and access to the data from the UI.
+<br/>We use three containers and a queue in Windows Azure Storage. 
+<br/>In the BlockContainer we save information of the blocks like a XML file. We use the block’s hash to name each file. In these files all information about bitcoin blocks are saved. To minimize the file’s size we removed transactions and added just their hashes. 
+<br/>In the TransactionsContainer we saved transactions XML by their hashes. Also we added the hash of the block owned by this transaction to the XML structure. 
+<br/>In the StatContainer we save transactions’ hashes by time to accelerate data processing and access to the data from the UI.
     <br/>
     <details> <summary><b>Models</b></summary>
     <br/> 
     <ul>
         <li><span style="font:bold">Bitcoin worker role.</span> Saves all necessary data for Worker Role Client for back-up.</li>
-        <li><span style="font:bold">Block.</span> Representes block which is used in Bitcoin network, but an array of transactions is changed to the array of theirs IDs. </li>
+        <li><span style="font:bold">Block.</span> Represents block which is used in Bitcoin network. </li>
 	    <li><span style="font:bold">Block reference.</span> Reference to the block. Reference name is realized like a hash. </li>
-	    <li><span style="font:bold">Transactions.</span> Represents transaction of the bitcoin network. Also models <span style="font:italic">VIn, VOut</span> and <span style="font:italic">Prev_Out</span>
-             are used for representing different fields of the transactions.</li>
-        <li><span style="font:bold">Statistic.</span> Saves different type of the statistics on Time, Blocks, Transactions.</li>
+	    <li><span style="font:bold">Transaction.</span> Represents transaction of the bitcoin network.</li>
+        <li><span style="font:bold">Statistics.</span> Saves different kinds of statistics on Time, Blocks, Transactions.</li>
     </ul>
 
     </details>
@@ -91,7 +90,7 @@ Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry po
 <br/>
 <a id="Storage Worker Role"></a>
 <details> <summary><b>Storage Worker Role </b></summary>
-<br/>In this project we have made data processing, adding references to the higher container, collecting statistical information and saving it to the storage.<br/>
+<br/>In this project we process data, add references to the statistics container, and collect statistical information and save it to the storage.<br/>
     <details>
         <summary><b>Schema</b></summary> 
         <br/> <img alt="Schema couldn't be loaded." src="~/Content/Schemas/StorageWorkerRole.png"/>
@@ -101,7 +100,7 @@ Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry po
 <br/>
 <a id="Web Role"></a>
 <details> <summary><b>Web Role</b></summary>
-    <br/>A web site with a user interface (UI). Connect to the blob storage and represents requested data. Allows to constructing charts, navigating in blocks and transactions. From each block you can see and discover information on transactions which belongs to it.
+    <br/>A web site with a user interface (UI). Connect to the blob storage and represent requested data. Allows the constructing of charts and the navigation in blocks and transactions. From each block you can see and discover information on transactions which belongs to it.
     <br/>
     <details>
         <summary><b>Schema</b></summary> 
