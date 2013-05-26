@@ -52,10 +52,10 @@ namespace StorageWorkerRole
             if (x == null)
                 return -1;
 
-            if (y == null)   // to verify: can x and y be null at the same time?
-                return 1;    // x and y can be null at the same time (Christophe)
+            if (y == null)   
+                return 1;  
                             
-            if (x.Time <= y.Time) // won't crash if x or y is null (proposed clean up could have crashed if y == null)
+            if (x.Time <= y.Time) 
                 return -1;
 
             return 1; 
@@ -79,7 +79,7 @@ namespace StorageWorkerRole
             Statistics stat = blob.GetStatistics<Statistics>("General_Statistics");
             //Charts
             List<int> chartsNbTrans = blob.GetStatistics<List<int>>("Charts_Number_Of_Transactions");
-            List<int> chartsSizeBlock = blob.GetStatistics<List<int>>("Charts_Size_Block");
+            List<double> chartsSizeBlock = blob.GetStatistics<List<double>>("Charts_Size_Block");
             List<int> chartsHeighBlock = blob.GetStatistics<List<int>>("Charts_Height_Block");
             List<int> chartsTime = blob.GetStatistics<List<int>>("Charts_Time"); //abscisse
 
@@ -93,8 +93,7 @@ namespace StorageWorkerRole
             stat.StandardDeviationTime = Math.Sqrt(stat.VarianceTime);
 
             // Statistics blocks (BTC)
-            // Change with BTC
-            stat.SumBtc += Convert.ToUInt64(x.Size);
+            stat.SumBtc += Convert.ToUInt64(x.Amount);
             stat.AverageBtc = stat.SumBtc / stat.NumberOfBlocks;
             stat.VarianceBtc = Variance(stat.SumBtc, stat.AverageBtc, stat.NumberOfBlocks);
             stat.StandardDeviationBtc = Math.Sqrt(stat.VarianceBtc);
@@ -106,13 +105,15 @@ namespace StorageWorkerRole
             stat.StandardDevTrans = Math.Sqrt(stat.VarianceTrans);
 
             chartsNbTrans.Add(x.NumberOfTransactions);
-            chartsSizeBlock.Add(x.Size);
+            chartsSizeBlock.Add(x.Amount);
             chartsHeighBlock.Add(x.Height);
             chartsTime.Add(x.Time);
+
             blob.UploadStatistics("Charts_Number_Of_Transactions", chartsSizeBlock);
             blob.UploadStatistics("Charts_Size_Block", chartsSizeBlock);
             blob.UploadStatistics("Charts_Height_Block", chartsHeighBlock);
             blob.UploadStatistics("Charts_Time", chartsTime);//abscisse
+
 
             blob.UploadStatistics("General_Statistics", stat);
         }

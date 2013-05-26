@@ -42,7 +42,6 @@ namespace StorageWorkerRole
             blob = new Blob(storageAccount);
             queue = new Queue(storageAccount.CreateCloudQueueClient());
 
-            // TODO: needed three BlobContainers: for brute blocks, for clear blocks, for transactions
             Trace.WriteLine("On start", "VisualBitcoin.StorageWorkerRole.Statistics Information");
             statCalculator = new StatisticsCalculator(queue, blob);
             
