@@ -1,56 +1,75 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <title>@ViewBag.Title - VisualBitcoin</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="description" content="A cloud-hosted information website tracking Bitcoin transactions in real time" />
-        @Styles.Render("~/bundles/css")
-        @Scripts.Render("~/bundles/js")
-    </head>
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
 
-    <body data-spy="scroll" data-target=".bs-docs-sidebar">
-        <div class="container">
-            <div class="navbar navbar-inverse navbar-fixed-top">
-                <div class="navbar-inner">
-                    <div class="container">
-                        <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </a>
-                        <div class="nav-collapse collapse">
-                            <ul class="nav">
-                                <li>@Html.ActionLink("Home", "Index", "Home")</li>
-                                <li>@Html.ActionLink("Explorer", "Index", "Explorer")</li>
-                                <li>@Html.ActionLink("About", "About", "Home")</li>
-                                <li>@Html.ActionLink("Contact", "Contact", "Home")</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <header class="header">
-            <div class="container">
-                <h1><span class="blue">V</span><span class="red">i</span><span class="yellow">s</span><span class="blue">u</span><span class="green">a</span><span class="red">l</span>Bitcoin</h1>
-                <p class="lead">A cloud-hosted information website tracking Bitcoin transactions in real time</p>
-            </div>
-        </header>
-        <div class="body">
-            <div class="container">
-                @RenderSection("featured", required: false)
-                @RenderBody()
-            </div>
-        </div>
-        
-        <footer class="footer">
-            <p>Designed with <a href="http://twitter.github.io/bootstrap/">Bootstrap</a> and <a href="http://www.microsoft.com/visualstudio/eng/office-dev-tools-for-visual-studio">Visual Studio</a> at the <a href="http://www.di.ens.fr/">&Eacute;cole normale supérieure</a> Paris France</p>
-            <p>Copyright 2013 - All rights reserved</p>
-        </footer>
+Name       : Glissade
+Description: A two-column, fixed-width design with dark color scheme.
+Version    : 1.0
+Released   : 20130326
 
-        
-        @RenderSection("scripts", required: false)
-    </body>
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>VisualBitcoin</title>
+<link href="http://fonts.googleapis.com/css?family=Oxygen:400,700,300" rel="stylesheet" type="text/css" />
+<link href="style.css" rel="stylesheet" type="text/css" media="screen" />
+@Styles.Render("~/bundles/css")
+@Scripts.Render("~/bundles/js")
+
+</head>
+<body>
+<div id="wrapper">
+	<div id="logo" class="container">
+		<h1><a href="#">VisualBitcoin </a></h1>
+		<p>We track Bitcoin transactions in real time.</p>
+	</div>
+    @RenderBody()
+	
+		<div style="clear: both;">&nbsp;</div>
+	</div>
+
+	<!-- end #page --> 
+	
+<div id="footer-bg">
+	<div id="footer-content" class="container">
+		<div id="column1">
+            <h2>The Team</h2>
+			<ul class="list-style2">
+				<li class="first">Program Manager: Axel Davy</li>
+				<li>Back-end Designer: Nohemi Fernandez</li>
+				<li>Back-end Designer: Baptiste Lefebvre</li>
+				<li>Web Designer: Ken Chanseau Saint-Germain</li>
+				<li>Statistician: Christophe Cordero</li>
+			</ul>
+		</div>
+		<div id="column2">
+			<h2>The Project</h2>
+			<ul class="list-style2">
+				<li class="first">For our software engineering class at Ecole Normale Superieure in Paris
+                    we were asked to design a clone of the Blockchain. Here we present to you VisualBitcoin, 
+                    a site that calculates statistics on Bitcoin block and transaction data and presents it 
+                    to you through various visual means. Enjoy! </li>
+			</ul>
+		</div>
+		<div id="column3">
+			<h2>The Links</h2>
+			<ul class="list-style2">
+				<li class="first">For an introduction to bitcoin see <a href="http://www.weusecoins.com">www.weusecoins.com</a></li>
+				<li>For more block chain information see <a href="http://www.blockchain.info">www.blockchain.info</a></li>
+                <li> For more information about our class see <a href="http://vermorel.com/software-engineering/"> www.vermorel.com/software-engineering</a></li>
+			</ul>
+		</div>
+	</div>
+</div>
+<div id="footer">
+	<p>© 2013 at Ecole Normale Superieure in Paris. Design by <a href="http://www.freecsstemplates.org/" rel="nofollow">FreeCSSTemplates.org</a>. </p>
+</div>
+<!-- end #footer -->
+    @RenderSection("scripts", required: false)
+</body>
 </html>

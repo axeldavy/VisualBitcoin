@@ -1,6 +1,15 @@
-﻿@{
-    ViewBag.Title = "About";
-}
+﻿	<div id="menu-wrapper">
+		<div id="menu" class="container">
+			<ul>
+				<li>@Html.ActionLink("Home", "Index", "Home")</li>
+				<li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
+				<li><a href="#">Stats</a></li>
+				<li><a href="#">Transactions</a></li>
+				<li class="current_page_item">@Html.ActionLink("About Us", "About", "Home")</li>
+				<li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+			</ul>
+		</div>
+	</div>
 
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
 <script src="~/Scripts/jquery.details.js"></script>
@@ -12,12 +21,14 @@
 </script>
 
 
-<h2 class="green">@ViewBag.Title</h2>
+<div id="page" class="container">
+		<div id="content">
+			<div class="post">
+				<h2 class="title">What is VisualBitcoin?</h2>
+				<div class="entry">
 
-
-<h3 class="blue">Overview</h3>
 <p>
-    A cloud-hosted information website tracking Bitcoin transactions in real time. VisualBitcoin
+    VisualBitcoin is a cloud-hosted information website that tracks Bitcoin transactions in real time. VisualBitcoin
     was started as a student project of &Eacute;cole Normale Supérieure, Paris. This
     site was produced for monitoring bitcoin’s transactions online.
     <br />
@@ -96,9 +107,9 @@ A web site with a user interface (UI). Connect to the blob storage and represent
     </details>
 
 </details>
+<br />
 
-
-<h3 class="red">License</h3>
+<h3>License</h3>
     &copy; Copyright 2013 Axel Davy, Nohemi Fernandez, Baptiste Lefebre,  Ken Chenseau Sain-Germain, Christophe Cordero, Denys Kanunikov
     <br/>
     <br/>
@@ -109,3 +120,8 @@ A web site with a user interface (UI). Connect to the blob storage and represent
     <br/>
     <br/>
     THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.</p>
+
+                       </div>
+                </div>
+            </div>
+    </div>

@@ -1,31 +1,46 @@
-﻿@{
-    ViewBag.Title = "Contact";
-}
-
-<h2 class="red">@ViewBag.Title</h2>
-
+﻿	<div id="menu-wrapper">
+		<div id="menu" class="container">
+			<ul>
+				<li>@Html.ActionLink("Home", "Index", "Home")</li>
+				<li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
+				<li><a href="#">Stats</a></li>
+				<li><a href="#">Transactions</a></li>
+				<li>@Html.ActionLink("About Us", "About", "Home")</li>
+				<li class="current_page_item">@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+			</ul>
+		</div>
+	</div>
+<div id="page" class="container">
+		<div id="content">
+			<div class="post">
+				<h2 class="title">Email the Team</h2>
+				<div class="entry">
 <p>
-    <span class="label">Axel Davy</span>
+    <b>Axel Davy</b>
     <span>axel (dot) davy (at) ens (dot) fr</span>
 </p>
 <p>
-    <span class="label">Nohemi Fernandez</span>
+    <b>Nohemi Fernandez</b>
     <span> nf68 (at) cornell (dot) edu</span>
 </p>
 <p>
-    <span class="label">Baptiste Lefebvre</span>
+    <b>Baptiste Lefebvre</b>
     <span>baptiste (dot) lefebvre (at) ens (dot) fr</span>
 </p>
 <p>
-    <span class="label">Ken Chanseau Saint-Germain</span>
+    <b>Ken Chanseau Saint-Germain</b>
     <span>chanseau (at) clipper (dot) ens (dot) fr</span>
 </p>
 <p>
-    <span class="label">Christophe Cordero</span>
+    <b>Christophe Cordero</b>
     <span>cordero (dot) christophe (at) gmail (dot) com</span>
 </p>
 <p>
-    <span class="label">Denys Kanunikov</span>
-    <span>denys (dot) kanunikov (at) ens (dot) fr</a></span>
+    <b>Denys Kanunikov</b>
+    <span>denys (dot) kanunikov (at) ens (dot) fr</span>
 </p>
 
+                    </div>
+                </div>
+            </div>
+    </div>

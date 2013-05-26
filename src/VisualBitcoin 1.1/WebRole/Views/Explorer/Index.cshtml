@@ -1,10 +1,24 @@
-﻿@{
-    ViewBag.Title = "Explorer";
-}
+﻿	<div id="menu-wrapper">
+		<div id="menu" class="container">
+			<ul>
+				<li>@Html.ActionLink("Home", "Index", "Home")</li>
+				<li class="current_page_item">@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
+				<li><a href="#">Stats</a></li>
+				<li><a href="#">Transactions</a></li>
+				<li>@Html.ActionLink("About Us", "About", "Home")</li>
+				<li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+			</ul>
+		</div>
+	</div>
+<div id="page" class="container">
+		<div id="content">
+			<div class="post">
+				<h2 class="title">Block Explorer</h2>
+				<div class="entry">
+					<p>Below you will find a detailed report of the ten most recent blocks in the blockchain.</p>
 
 @model List<Storage.Models.Block>
 
-<h2 class="red">@ViewBag.Title</h2>
 
 @{foreach(Storage.Models.Block modelItem in Model)
     {
@@ -79,3 +93,9 @@
     </div>
     }
 }
+                </div>
+			
+            </div>
+
+		</div>
+    </div>			
