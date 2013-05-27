@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Collections.Generic;
 using Storage;
 using Storage.Models;
@@ -12,7 +13,11 @@ namespace StorageWorkerRole
         private const ulong InitialTime = 1230940800;
         private Blob blob;
         private Queue queue;
-        private List<Block> blocklist; 
+        private List<Block> blocklist;
+	    private List<int> intlist;
+        private List<int> intlist2;
+        private List<int> intlist3;
+        private List<double> intlist4;
 
         public StatisticsCalculator(Queue queue, Blob blob)
         {
@@ -30,6 +35,30 @@ namespace StorageWorkerRole
                 Statistics statini = new Statistics();
                 blob.UploadStatistics("General_Statistics", statini);
             }
+            if (blob.GetStatistics<List<int>>("Charts_Number_Of_Transactions") == null)
+            {
+                int[] list2 = {};
+                intlist = new List<int>(list2);
+                blob.UploadStatistics("Charts_Number_Of_Transactions", intlist);
+            }
+            if (blob.GetStatistics<List<int>>("Charts_Height_Block") == null)
+            {
+                int[] list3 = { };
+                intlist2 = new List<int>(list3);
+                blob.UploadStatistics("Charts_Height_Block", intlist2);
+            }
+            if (blob.GetStatistics<List<int>>("Charts_Time") == null)
+            {
+                int[] list4 = { };
+                intlist3 = new List<int>(list4);
+                blob.UploadStatistics("Charts_Time", intlist3);
+            }
+            if (blob.GetStatistics<List<double>>("Charts_Size_Block") == null)
+            {
+                double[] list5 = { };
+                intlist4 = new List<double>(list5);
+                blob.UploadStatistics("Charts_Size_Block", intlist4);
+            }
             this.blocklist = blob.GetStatistics<List<Block>>("Last_Blocks");
         }
 
@@ -37,7 +66,6 @@ namespace StorageWorkerRole
         {
             var hash = queue.PopMessage<string>();
             var block = blob.GetBlock(hash);
-
             UpdateStatitistics(block);
             SortBlocks(block);
         }
@@ -100,7 +128,7 @@ namespace StorageWorkerRole
             chartsHeighBlock.Add(x.Height);
             chartsTime.Add(x.Time);
 
-            blob.UploadStatistics("Charts_Number_Of_Transactions", chartsSizeBlock);
+            blob.UploadStatistics("Charts_Number_Of_Transactions", chartsNbTrans);
             blob.UploadStatistics("Charts_Size_Block", chartsSizeBlock);
             blob.UploadStatistics("Charts_Height_Block", chartsHeighBlock);
             blob.UploadStatistics("Charts_Time", chartsTime);//abscisse

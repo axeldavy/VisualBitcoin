@@ -60,6 +60,7 @@ namespace BitcoinWorkerRole
             UploadNewBlock(block);
 			firstBlock = block;
 			lastBlock = block;
+		    UploadBackup();
 		}
 
 		public BitcoinClient(Blob blob, Queue queue, int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
@@ -184,6 +185,7 @@ namespace BitcoinWorkerRole
                               
 				UploadNewBlock(nextBlock);
                 lastBlock = nextBlock;
+                UploadBackup();
                 if (lastBlock.NextBlock == null) // Need to retrieve blocks in the main chain if LastBlock is an orphan.
                 {
                     UploadOrphanBlocks(nextBlock.Hash);
@@ -202,19 +204,21 @@ namespace BitcoinWorkerRole
             }
 			return block;
 		}
+        private void UploadBackup()
+        {
+           var bitcoinWorkerRoleBackup = 
+                new BitcoinWorkerRoleBackup(maximumNumberOfBlocks, numberOfBlocks, firstBlock.Hash, lastBlock.Hash, firstBlock.Height);
+			blob.UploadBackup(bitcoinWorkerRoleBackup); 
 
+        }
 		private void UploadNewBlock(Block block)
 		{
             Trace.WriteLine("\"\" != \"" + block.Hash + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
             block.Amount = UploadTransactionsFromBlock(block);
 			blob.UploadBlock(block.Hash, block);
-			queue.PushMessage(new BlockReference(block.Hash));
+			queue.PushMessage(block.Hash);
 
-			numberOfBlocks += 1;
-
-			var bitcoinWorkerRoleBackup = 
-                new BitcoinWorkerRoleBackup(maximumNumberOfBlocks, numberOfBlocks, firstBlock.Hash, lastBlock.Hash, firstBlock.Height);
-			blob.UploadBackup(bitcoinWorkerRoleBackup);
+			numberOfBlocks += 1;		
 
 		}
 

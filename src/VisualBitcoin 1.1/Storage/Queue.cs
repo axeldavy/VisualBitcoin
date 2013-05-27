@@ -52,32 +52,34 @@ namespace Storage
 			Trace.WriteLine("Message pushed", "VisualBitcoin.Storage.Queue Information");
 
 			var message = Serialization.ToXml(model);
-			var content = Coding.Code(message);
-			var cloudQueueMessage = new CloudQueueMessage(content);
-			const int days = 7;
+            var content = Coding.Code(message);
+            var cloudQueueMessage = new CloudQueueMessage(content);
+            const int days = 7;
 			const int hours = 0;
 			const int minutes = 0;
 			const int seconds = 0;
-			var timeSpan = new TimeSpan(days, hours, minutes, seconds);
-
+            var timeSpan = new TimeSpan(days, hours, minutes, seconds);
+            
 			cloudQueue.AddMessage(cloudQueueMessage, timeSpan);
 		}
 
 		// Pop a message from the queue.
 		public TModel PopMessage<TModel>() where TModel : class
 		{
-			Trace.WriteLine("Message popped", "VisualBitcoin.Storage.Queue Information");
+			
             try
             {
+               
                 var cloudQueueMessage = cloudQueue.GetMessage();
                 var content = cloudQueueMessage.AsString;
                 var message = Coding.Decode(content);
                 var model = Serialization.FromXml<TModel>(message);
-
+                cloudQueue.DeleteMessage(cloudQueueMessage);
                 return model;
             }
             catch
             {
+                
                 Thread.Sleep(500);
                 return PopMessage<TModel>();
             }

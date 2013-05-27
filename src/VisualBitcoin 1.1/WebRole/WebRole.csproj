@@ -142,14 +142,9 @@
     <Compile Include="WebRole.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Content\bootstrap\css\bootstrap-responsive.css" />
-    <Content Include="Content\bootstrap\css\bootstrap-responsive.min.css" />
-    <Content Include="Content\bootstrap\css\bootstrap.css" />
-    <Content Include="Content\bootstrap\css\bootstrap.min.css" />
-    <Content Include="Content\bootstrap\img\glyphicons-halflings-white.png" />
-    <Content Include="Content\bootstrap\img\glyphicons-halflings.png" />
-    <Content Include="Content\bootstrap\js\bootstrap.js" />
-    <Content Include="Content\bootstrap\js\bootstrap.min.js" />
+    <Content Include="Content\images\bitcoin.jpg" />
+    <Content Include="Content\images\blockchain.jpg" />
+    <Content Include="Content\images\transaction.jpg" />
     <Content Include="Content\Schemas\Main schema.png" />
     <Content Include="Content\Schemas\StorageWorkerRole.png" />
     <Content Include="Content\Schemas\WebRole.png" />
@@ -209,9 +204,6 @@
     <Content Include="Content\themes\base\minified\jquery.ui.slider.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.tabs.min.css" />
     <Content Include="Content\themes\base\minified\jquery.ui.theme.min.css" />
-    <Content Include="Content\images\img01.jpg" />
-    <Content Include="Content\images\img02.jpg" />
-    <Content Include="Content\images\img03.jpg" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <None Include="Scripts\jquery-1.7.1.intellisense.js" />
@@ -264,6 +256,11 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Content\bootstrap\css\" />
+    <Folder Include="Content\bootstrap\img\" />
+    <Folder Include="Content\bootstrap\js\" />
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
