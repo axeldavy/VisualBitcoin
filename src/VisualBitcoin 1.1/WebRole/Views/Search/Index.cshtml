@@ -1,0 +1,54 @@
+﻿	<div id="menu-wrapper">
+		<div id="menu" class="container">
+			<ul>
+				<li class="current_page_item">@Html.ActionLink("Home", "Index", "Home")</li>
+			    <li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
+			    <li>@Html.ActionLink("Search","Index","Search")</li>
+				<li><a href="#">Stats</a></li>
+				<li><a href="#">Transactions</a></li>
+				<li>@Html.ActionLink("About Us", "About", "Home")</li>
+				<li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+			</ul>
+		</div>
+	</div>
+
+
+@model WebRole.Models.SearchModel
+
+
+
+<h1>@ViewBag.Title</h1>
+
+
+
+ @using (Html.BeginForm())
+
+ {
+
+     <div>
+
+         <fieldset>
+
+             <legend>Search for:</legend>
+
+             <div class="blockname">
+
+                 @Html.TextBoxFor(o => o.Name)
+
+
+
+             </div>  
+
+              <p>
+
+                 <input type="submit" value="SearchEnter" />
+
+             </p>
+
+         </fieldset>
+
+     </div>
+
+     }
+
+ 

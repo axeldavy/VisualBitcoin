@@ -1,0 +1,164 @@
+﻿@{
+
+    ViewBag.Title = "Search results";
+
+}
+
+
+
+@model List<WebRole.Models.BlockModel>
+
+
+
+<h1>@ViewBag.Title</h1>
+
+
+
+@{foreach(WebRole.Models.BlockModel modelItem in Model)
+
+    {
+
+        <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Hash)</a></h3>
+
+        <div>
+
+            <table>
+
+                <tr>
+
+                    <th>
+
+                        @Html.DisplayNameFor(model => modelItem.Version)
+
+                    </th>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItemProperty => modelItem.Version)
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        @Html.DisplayNameFor(model => modelItem.PreviousBlock)
+
+                    </th>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItemProperty => modelItem.PreviousBlock)
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        @Html.DisplayNameFor(model => modelItem.MerkleRoot)
+
+                    </th>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItemProperty => modelItem.MerkleRoot)
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        @Html.DisplayNameFor(model => modelItem.Time)
+
+                    </th>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItemProperty => modelItem.Time)
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        @Html.DisplayNameFor(model => modelItem.NumberOnce)
+
+                    </th>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItemProperty => modelItem.NumberOnce)
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        @Html.DisplayNameFor(model => modelItem.NumberOfTransactions)
+
+                    </th>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItemProperty => modelItem.NumberOfTransactions)
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        @Html.DisplayNameFor(model => modelItem.Size)
+
+                    </th>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItemProperty => modelItem.Size)
+
+                    </td>
+
+                </tr>
+
+                <tr>
+
+                    <th>
+
+                        @Html.DisplayNameFor(model => modelItem.Height)
+
+                    </th>
+
+                    <td>
+
+                        @Html.DisplayFor(modelItemProperty => modelItem.Height)
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+    </div>
+
+    }
+
+}
+
+
+
