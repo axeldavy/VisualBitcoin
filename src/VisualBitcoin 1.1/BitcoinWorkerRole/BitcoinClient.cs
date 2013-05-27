@@ -53,15 +53,13 @@ namespace BitcoinWorkerRole
 			{
 				block = GetBlockByHash(firstBlockHash);
 			}
-
 			maximumNumberOfBlocks = 0;
 			numberOfBlocks = 0;
             minimalHeight = block.Height;
-			blockLimit = true;
+			blockLimit = false;
+            UploadNewBlock(block);
 			firstBlock = block;
 			lastBlock = block;
-
-			UploadNewBlock(block);
 		}
 
 		public BitcoinClient(Blob blob, Queue queue, int maximumNumberOfBlocksInTheStorage, int numberOfBlocksInTheStorage,
@@ -183,10 +181,7 @@ namespace BitcoinWorkerRole
                 JObject nextBlockJObject = Invoke("listsinceblock", new object[] { lastBlock.Hash, lastHeight - lastBlock.Height }) as JObject;
                 Block nextBlock = GetBlockByHash((string) nextBlockJObject["lastblock"]);
                 lastBlock = UpdateNextBlockHash(lastBlock);               
-                
-                Trace.WriteLine("\"\" != \"" + nextBlock.Hash + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
-                
-                //UploadTransactionsFromBlock(nextBlock); // Upload Transactions first because the message in the queue must be sent after everything is done.
+                              
 				UploadNewBlock(nextBlock);
                 lastBlock = nextBlock;
                 if (lastBlock.NextBlock == null) // Need to retrieve blocks in the main chain if LastBlock is an orphan.
@@ -210,7 +205,8 @@ namespace BitcoinWorkerRole
 
 		private void UploadNewBlock(Block block)
 		{
-            block.Amount = UploadTransactionsFromBlock(block); // Upload Transactions first because the message in the queue must be sent after everything is done.
+            Trace.WriteLine("\"\" != \"" + block.Hash + "\"", "VisualBitcoin.BitcoinWorkerRole.BitcoinClient Information");
+            block.Amount = UploadTransactionsFromBlock(block);
 			blob.UploadBlock(block.Hash, block);
 			queue.PushMessage(new BlockReference(block.Hash));
 
@@ -252,6 +248,7 @@ namespace BitcoinWorkerRole
 			Transaction[] transactionsFromBlock = new Transaction[idList.Count()];
 
 			int count = 0;
+            
 			foreach (string id in idList)
 			{
 				JObject transaction = DecodeTransaction(id);
@@ -262,11 +259,11 @@ namespace BitcoinWorkerRole
                         amount = amount + (double)v["value"]; // assert > 0
                     else throw new Exception("type error in BlockandTransactionTransfer");
                 }
-
                 transactionsFromBlock[count] = 
                     new Transaction((int)transaction["version"], (ulong)transaction["locktime"], id, amount);
 
                 count += 1;
+
 			}
 
 			return transactionsFromBlock;

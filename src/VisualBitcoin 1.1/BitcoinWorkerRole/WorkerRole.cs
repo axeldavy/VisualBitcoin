@@ -27,7 +27,7 @@ namespace BitcoinWorkerRole
 				while (_isStopRequested && _isBitcoinClientConnexionEnable)
 				{
 					Trace.WriteLine("Working", "VisualBitcoin.BitcoinWorkerRole.WorkerRole Information");
-
+                    
 					Thread.Sleep(5000);
 
 					bitcoinClient.UploadNewBlocks();
@@ -49,6 +49,7 @@ namespace BitcoinWorkerRole
 
 			try
 			{
+                
 				// Storage configuration and start.
 				var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
 				var resetBlobBlocksEnableString = CloudConfigurationManager.GetSetting("ResetBlobBlocksEnable");
@@ -59,7 +60,7 @@ namespace BitcoinWorkerRole
 				var resetQueueMessagesEnable = bool.Parse(resetQueueMessagesEnableString);
                 CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
                 blob = new Blob(storageAccount);
-                queue = new Queue(storageAccount.CreateCloudQueueClient()); 
+                queue = new Queue(storageAccount.CreateCloudQueueClient());
 
 				_isStopRequested = true;
 				_isBitcoinClientConnexionEnable = bool.Parse(isBitcoinClientConnexionEnableString);
