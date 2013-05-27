@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using Storage;
 using Storage.Models;
 
@@ -20,22 +19,18 @@ namespace StorageWorkerRole
             this.queue = queue;
             this.blob = blob;
 
-            if (blob.GetBlock("Last_Blocks") == null)
+            if (blob.GetStatistics<List<Block>>("Last_Blocks") == null)
             {
                 Block[] list = { null, null, null, null, null, null, null, null, null, null };
-                List<Block> blocklist = new List<Block>(list);
-                //blob.UploadBlock("Last_Blocks", (List<Block>)blocklist);
-                this.blocklist = blocklist;
-            }
-            else
-            {
-                //this.blocklist = blob.GetLastBlocks(); 
+                blocklist = new List<Block>(list);
+                blob.UploadStatistics<List<Block>>("Last_Blocks", blocklist);
             }
             if (blob.GetStatistics<Statistics>("General_Statistics") == null)
             {
                 Statistics statini = new Statistics();
                 blob.UploadStatistics("General_Statistics", statini);
             }
+            this.blocklist = blob.GetStatistics<List<Block>>("Last_Blocks");
         }
 
         public void PerformBlockStatistics()
@@ -58,20 +53,16 @@ namespace StorageWorkerRole
             if (x.Time <= y.Time) 
                 return -1;
 
-            return 1; 
+            return 1;
 		}
 
-		//TODO: initialiser à 10 null
 		private void SortBlocks(Block block)
-		{
-            if (this.blocklist == null)
-            {
-                this.blocklist = new List<Block>();
-            }
+        {
+            this.blocklist = blob.GetStatistics<List<Block>>("Last_Blocks");
 			blocklist.Add(block);
 			blocklist.Sort(CompareBlock);
 			blocklist.RemoveAt(0);
-			blob.UploadBlock("Last_Blocks", (List<Block>) blocklist);
+            blob.UploadStatistics<List<Block>>("Last_Blocks", blocklist);
 		}
 
 		void UpdateStatitistics(Block x)
