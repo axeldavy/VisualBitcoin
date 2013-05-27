@@ -111,5 +111,26 @@ namespace Storage
             return DownloadFromBlockBlob<BitcoinWorkerRoleBackup>(blockBlob);
         }
 
+        public Transaction GetTransaction(string name)
+	    {
+	        CloudBlockBlob blockBlob = TransactionContainer.GetBlockBlobReference(name);
+	        return DownloadFromBlockBlob<Transaction>(blockBlob);
+	    }
+
+        public List<Transaction> GetTransactionList(int max)
+	    {
+            var blobList = TransactionContainer.ListBlobs();
+            List<string> stringlist = blobList.Select(blob => blob.Uri.ToString()).ToList();
+
+	        List<Transaction> translist = new List<Transaction>();
+	
+	        for(int i = 0; i < max; i++)
+	        {
+	            translist.Add(GetTransaction(stringlist.ElementAt(i)));
+	        }
+	        return translist;
+	    }
+
+
 	}
 }

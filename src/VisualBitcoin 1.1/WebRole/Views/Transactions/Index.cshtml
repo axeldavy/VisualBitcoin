@@ -1,0 +1,53 @@
+﻿	<div id="menu-wrapper">
+		<div id="menu" class="container">
+			<ul>
+				<li>@Html.ActionLink("Home", "Index", "Home")</li>
+			    <li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
+			    <li>@Html.ActionLink("Search","Index","Search")</li>
+				<li>@Html.ActionLink("Statistics","Index","Statistics")</li>
+				<li class="current_page_item">@Html.ActionLink("Transactions","Index","Transactions")</li>
+				<li>@Html.ActionLink("About Us", "About", "Home")</li>
+				<li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+			</ul>
+		</div>
+	</div>
+
+<div id="page" class="container">
+		<div id="content">
+			<div class="post">
+				<h2 class="title">Transactions</h2>
+				<div class="entry">
+                <p>Below you will find a detailed report for each of the ten most recent transactions in the blockchain.</p>
+@model List<Storage.Models.Transaction>
+
+@{foreach (Storage.Models.Transaction modelItem in Model)
+    {
+        <h3> @Html.DisplayFor(modelItemProperty => modelItem.TransactionId)</h3>
+        <div>
+            <table>
+                <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Amount)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.Amount)
+                    </td>
+                </tr>
+                 <tr>
+                    <th>
+                        @Html.DisplayNameFor(model => modelItem.Locktime)
+                    </th>
+                    <td>
+                        @Html.DisplayFor(modelItemProperty => modelItem.Locktime)
+                    </td>
+                </tr>
+            </table>
+    </div>
+    }
+}
+				</div>
+			</div>
+		</div>
+    </div>
+
+
