@@ -7,7 +7,7 @@ namespace WebRole.Models
 		// Constructor.
 		public BlockModel(string hash, string version, string previousBlock,
 			string merkleRoot, int time, long numberOnce, int numberOfTransactions,
-			int size, int height)
+			int size, int height, double amount)
 		{
 			Hash = hash;
 			Version = version;
@@ -18,6 +18,7 @@ namespace WebRole.Models
 			NumberOfTransactions = numberOfTransactions;
 			Size = size;
 			Height = height;
+		    Amount = amount;
 		}
 
 		// Properties.
@@ -39,5 +40,7 @@ namespace WebRole.Models
 		public int Size { get; set; }
 		[Display(Name = "Height")]
 		public int Height { get; set; }
+        [Display(Name = "Amount")]
+        public double Amount { get; set; }
 	}
 }
