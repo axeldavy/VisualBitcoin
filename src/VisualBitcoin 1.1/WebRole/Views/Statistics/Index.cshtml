@@ -1,11 +1,11 @@
 ﻿	<div id="menu-wrapper">
 		<div id="menu" class="container">
 			<ul>
-				<li class="current_page_item">@Html.ActionLink("Home", "Index", "Home")</li>
+				<li>@Html.ActionLink("Home", "Index", "Home")</li>
 			    <li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
 			    <li>@Html.ActionLink("Search","Index","Search")</li>
-				<li>@Html.ActionLink("Statistics","Index","Statistics")</li>
-				<li>@Html.ActionLink("Transactions","Transactions","Home")</li>
+				<li class="current_page_item">@Html.ActionLink("Statistics","Index","Statistics")</li>
+				<li>@Html.ActionLink("Transactions","Index","Transactions")</li>
 				<li>@Html.ActionLink("About Us", "About", "Home")</li>
 				<li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
 			</ul>
@@ -14,12 +14,11 @@
 
 @model Storage.Models.Statistics
 
-@{
-    ViewBag.Title = "Statistics";
-}
-
-<h2>Statistics</h2>
-
+<div id="page" class="container">
+		<div id="content">
+			<div class="post">
+				<h2 class="title">Statistics</h2>
+				<div class="entry">
 <table>
     <tr>
         <th>
@@ -118,3 +117,8 @@
         </td>
     </tr>
 </table>
+
+				</div>
+			</div>
+		</div>
+    </div>
