@@ -5,7 +5,7 @@
 			    <li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
 			    <li>@Html.ActionLink("Search","Index","Search")</li>
 				<li>@Html.ActionLink("Statistics","Index","Statistics")</li>
-				<li><a href="#">Transactions</a></li>
+				<li>@Html.ActionLink("Transactions","Transactions","Home")</li>
 				<li>@Html.ActionLink("About Us", "About", "Home")</li>
 				<li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
 			</ul>
@@ -33,15 +33,15 @@
 
              <div class="blockname">
 
-                 @Html.TextBoxFor(o => o.Name)
-
+                 @Html.TextBoxFor(model => model.Name)
+                 @Html.ValidationMessageFor(model => model.Name)
 
 
              </div>  
 
               <p>
 
-                 <input type="submit" value="SearchEnter" />
+                 <input type="submit" value="Enter" />
 
              </p>
 

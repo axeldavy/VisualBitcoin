@@ -1,12 +1,13 @@
 ﻿	<div id="menu-wrapper">
 		<div id="menu" class="container">
 			<ul>
-				<li>@Html.ActionLink("Home", "Index", "Home")</li>
-				<li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
-				<li><a href="#">Stats</a></li>
-				<li><a href="#">Transactions</a></li>
+				<li class="current_page_item">@Html.ActionLink("Home", "Index", "Home")</li>
+			    <li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
+			    <li>@Html.ActionLink("Search","Index","Search")</li>
+				<li>@Html.ActionLink("Statistics","Index","Statistics")</li>
+				<li>@Html.ActionLink("Transactions","Transactions","Home")</li>
 				<li>@Html.ActionLink("About Us", "About", "Home")</li>
-				<li class="current_page_item">@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+				<li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
 			</ul>
 		</div>
 	</div>
