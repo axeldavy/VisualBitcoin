@@ -1,0 +1,120 @@
+﻿	<div id="menu-wrapper">
+		<div id="menu" class="container">
+			<ul>
+				<li class="current_page_item">@Html.ActionLink("Home", "Index", "Home")</li>
+			    <li>@Html.ActionLink("Block Explorer", "Index", "Explorer")</li>
+			    <li>@Html.ActionLink("Search","Index","Search")</li>
+				<li>@Html.ActionLink("Statistics","Index","Statistics")</li>
+				<li><a href="#">Transactions</a></li>
+				<li>@Html.ActionLink("About Us", "About", "Home")</li>
+				<li>@Html.ActionLink("Contact Us", "Contact", "Home")</li>
+			</ul>
+		</div>
+	</div>
+
+@model Storage.Models.Statistics
+
+@{
+    ViewBag.Title = "Statistics";
+}
+
+<h2>Statistics</h2>
+
+<table>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.TotalTime)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.TotalTime)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.AverageTime)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.AverageTime)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.VarianceTime)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.VarianceTime)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.StandardDeviationTime)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.StandardDeviationTime)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.SumBtc)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.SumBtc)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.AverageBtc)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.AverageBtc)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.StandardDeviationBtc)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.StandardDeviationBtc)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.VarianceBtc)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.VarianceBtc)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.NumberOfTransactions)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.NumberOfTransactions)
+        </td>
+    </tr>
+        <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.AverageTrans)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.AverageTrans)
+        </td>
+    </tr>
+    <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.VarianceTrans)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.VarianceTrans)
+        </td>
+    </tr>
+        <tr>
+        <th>
+            @Html.DisplayNameFor(model => Model.StandardDevTrans)
+        </th>
+        <td>
+            @Html.DisplayFor(modelItemProperty => Model.StandardDevTrans)
+        </td>
+    </tr>
+</table>
