@@ -24,6 +24,8 @@ h1, h2, h3 {
 
 h1 {
 	font-size: 2em;
+    text-decoration: none;
+	color: #3C342E;
 }
 
 h2 {
