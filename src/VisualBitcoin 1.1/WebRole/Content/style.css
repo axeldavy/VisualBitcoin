@@ -1,4 +1,4 @@
-
+﻿
 /*
 Design by Free CSS Templates
 http://www.freecsstemplates.org
@@ -551,4 +551,18 @@ a:hover {
 .wide
 {
      width: 450px;
+}
+
+/*details spoiler*/
+
+
+#details
+details { 
+    display: block; 
+}
+details:before {
+    content: "\25B6 "; 
+   }
+summary {
+    cursor:pointer; 
 }
