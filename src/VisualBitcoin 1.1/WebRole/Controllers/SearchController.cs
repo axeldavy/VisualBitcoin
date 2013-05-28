@@ -38,6 +38,8 @@ namespace WebRole.Controllers
             if (search == null)
                 return View(new Block());
             var block = blob.GetBlock(search);
+            if (block == null)
+                block = new Block();
             return View(block);
         }
 
