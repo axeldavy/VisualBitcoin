@@ -55,10 +55,12 @@
 <details> <summary><b>Bitcoin Worker Role</b></summary>
             <br/>
 Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry point class that connects to the bitcoin client on the VM. BitcoinClient class takes data from the Bitcoin Client. It also converts received data to the XML format and extracts transactions from the blocks. It uses Storage implementation for uploading data to the Azure Storage. Blocks are saved to the BocksContainer and Transactions are saved to the Transactions container. Also this part adds messages to the queue with regards to which block should be processed next.
-    <details>
-        <summary style="font: bold">Schema</summary> 
-        <img alt="Schema couldn't be loaded." src="~/Content/Schemas/WorkerRole.png"/>
-    </details>
+    <br />    
+        <br />
+        <b>Schema</b>
+    <br />    
+    <img alt="Schema couldn't be loaded." src="~/Content/Schemas/WorkerRole.png"/>
+    <br />
 </details>
 <br/>                            
 <a id="Storage Implementation"></a>
@@ -75,7 +77,7 @@ Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry po
 <br/>In the TransactionsContainer we saved transactions XML by their hashes. Also we added the hash of the block owned by this transaction to the XML structure. 
 <br/>In the StatContainer we save transactions’ hashes by time to accelerate data processing and access to the data from the UI.
     <br/>
-    <details> <summary><b>Models</b></summary>
+    <b>Models</b>
     <br/> 
     <ul>
         <li><span style="font:bold">Bitcoin worker role.</span> Saves all necessary data for Worker Role Client for back-up.</li>
@@ -85,16 +87,13 @@ Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry po
         <li><span style="font:bold">Statistics.</span> Saves different kinds of statistics on Time, Blocks, Transactions.</li>
     </ul>
 
-    </details>
 </details>
 <br/>
 <a id="Storage Worker Role"></a>
 <details> <summary><b>Storage Worker Role </b></summary>
-<br/>In this project we process data, add references to the statistics container, and collect statistical information and save it to the storage.<br/>
-    <details>
-        <summary><b>Schema</b></summary> 
+<br/>In this project we process data, add references to the statistics container, and collect statistical information and save it to the storage.<br />
+        <b>Schema</b>
         <br/> <img alt="Schema couldn't be loaded." src="~/Content/Schemas/StorageWorkerRole.png"/>
-    </details>
 
 </details>
 <br/>
@@ -102,10 +101,8 @@ Consists of two classes: WorkerRole and BitcoinClient. WorkerRole is an entry po
 <details> <summary><b>Web Role</b></summary>
     <br/>A web site with a user interface (UI). Connect to the blob storage and represent requested data. Allows the constructing of charts and the navigation in blocks and transactions. From each block you can see and discover information on transactions which belongs to it.
     <br/>
-    <details>
-        <summary><b>Schema</b></summary> 
+        <b>Schema</b> 
         <br/><img alt="Schema couldn't be loaded." src="~/Content/Schemas/WebRole.png"/>
-    </details>
  </details>
 <br />                    
 

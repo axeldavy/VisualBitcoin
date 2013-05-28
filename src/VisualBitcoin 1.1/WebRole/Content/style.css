@@ -1,4 +1,4 @@
-
+﻿
 /*
 Design by Free CSS Templates
 http://www.freecsstemplates.org
@@ -547,3 +547,19 @@ a:hover {
 	height: 50px;
 	background: url(images/img04.png) no-repeat center top;
 }
+
+/*details spoiler*/
+
+
+#details
+details { 
+    display: block; 
+}
+details:before {
+    content: "\25B6 "; 
+   }
+summary {
+    cursor:pointer; 
+}
+
+
