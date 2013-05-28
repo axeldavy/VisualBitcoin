@@ -13,7 +13,6 @@ namespace WebRole.Controllers
 {
     public class SearchController : Controller
     {
-        public SearchModel BlockName = new SearchModel();
         //
         // GET: /Search/
 
@@ -35,17 +34,17 @@ namespace WebRole.Controllers
             var connectionString = CloudConfigurationManager.GetSetting("StorageConnectionString");
             CloudStorageAccount storageAccount = CloudStorageAccount.Parse(connectionString);
             Blob blob = new Blob(storageAccount);
-
-            var blockModelList = new List<BlockModel>();
-            var block = blob.GetBlock(BlockName.Name);
-            blockModelList.Add(BlockModelOfBlock(block));
-            return View(blockModelList);
+            string search = (string)TempData["search"];
+            if (search == null)
+                return View(new Block());
+            var block = blob.GetBlock(search);
+            return View(block);
         }
 
         [HttpPost]
-        public ActionResult Index(SearchModel name)
+        public ActionResult Index(SearchModel search)
         {
-            BlockName = name;
+            TempData["search"] = search.Name;
             return RedirectToAction("SearchResult");
         }
 

@@ -29,11 +29,11 @@
 
          <fieldset>
 
-             <legend>Search for:</legend>
+             <legend>Search for block by hash number below:</legend>
 
              <div class="blockname">
 
-                 @Html.TextBoxFor(model => model.Name)
+                 @Html.TextBoxFor(model => model.Name, new { @class= "wide", maxlength=100 })
                  @Html.ValidationMessageFor(model => model.Name)
 
 

@@ -12,28 +12,14 @@
 		</div>
 	</div>
 
-@{
+@model Storage.Models.Block
 
-    ViewBag.Title = "Search results";
-
-}
-
-
-
-@model List<WebRole.Models.BlockModel>
-
-
-
-<h1>@ViewBag.Title</h1>
-
-
-
-@{foreach(WebRole.Models.BlockModel modelItem in Model)
-
-    {
-
-        <h3> <a href="#">@Html.DisplayFor(modelItemProperty => modelItem.Hash)</a></h3>
-
+<div id="page" class="container">
+		<div id="content">
+			<div class="post">
+				<h2 class="title">Search Results</h2>
+				<div class="entry">
+                    <p> You have searched for block <b> @Model.Hash</b>. </p>
         <div>
 
             <table>
@@ -42,13 +28,13 @@
 
                     <th>
 
-                        @Html.DisplayNameFor(model => modelItem.Version)
+                        Version
 
                     </th>
 
                     <td>
 
-                        @Html.DisplayFor(modelItemProperty => modelItem.Version)
+                        @Model.Version
 
                     </td>
 
@@ -58,13 +44,13 @@
 
                     <th>
 
-                        @Html.DisplayNameFor(model => modelItem.PreviousBlock)
+                        Previous Block
 
                     </th>
 
                     <td>
 
-                        @Html.DisplayFor(modelItemProperty => modelItem.PreviousBlock)
+                        @Model.PreviousBlock
 
                     </td>
 
@@ -74,13 +60,12 @@
 
                     <th>
 
-                        @Html.DisplayNameFor(model => modelItem.MerkleRoot)
-
+                    Merkle root
                     </th>
 
                     <td>
 
-                        @Html.DisplayFor(modelItemProperty => modelItem.MerkleRoot)
+                        @Model.MerkleRoot)
 
                     </td>
 
@@ -90,13 +75,13 @@
 
                     <th>
 
-                        @Html.DisplayNameFor(model => modelItem.Time)
+                        Time
 
                     </th>
 
                     <td>
 
-                        @Html.DisplayFor(modelItemProperty => modelItem.Time)
+                        @Model.Time
 
                     </td>
 
@@ -106,13 +91,13 @@
 
                     <th>
 
-                        @Html.DisplayNameFor(model => modelItem.NumberOnce)
+                        Number Once
 
                     </th>
 
                     <td>
 
-                        @Html.DisplayFor(modelItemProperty => modelItem.NumberOnce)
+                        @Model.NumberOnce
 
                     </td>
 
@@ -122,13 +107,13 @@
 
                     <th>
 
-                        @Html.DisplayNameFor(model => modelItem.NumberOfTransactions)
+                        Number of Transactions
 
                     </th>
 
                     <td>
 
-                        @Html.DisplayFor(modelItemProperty => modelItem.NumberOfTransactions)
+                        @Model.NumberOfTransactions
 
                     </td>
 
@@ -138,13 +123,13 @@
 
                     <th>
 
-                        @Html.DisplayNameFor(model => modelItem.Size)
+                        Size
 
                     </th>
 
                     <td>
 
-                        @Html.DisplayFor(modelItemProperty => modelItem.Size)
+                        @Model.Size
 
                     </td>
 
@@ -154,13 +139,13 @@
 
                     <th>
 
-                        @Html.DisplayNameFor(model => modelItem.Height)
+                       Height
 
                     </th>
 
                     <td>
 
-                        @Html.DisplayFor(modelItemProperty => modelItem.Height)
+                        @Model.Height
 
                     </td>
 
@@ -170,9 +155,9 @@
 
     </div>
 
-    }
-
-}
-
+				</div>
+			</div>
+		</div>
+</div>
 
 
